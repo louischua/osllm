@@ -24,13 +24,11 @@ OpenLLM is an open source project to develop a powerful, flexible, and modular l
 
 ## 📂 Folder Structure
 
-```
 core/                 # Open source components (training, tokenization, inference)
 core/src/             # Python source files
 enterprise/           # Enterprise-only modules (e.g., dashboard, RLHF UI)
 docs/                 # Documentation and community guidelines
 .github/              # GitHub config (PR template, funding, etc.)
-```
 
 ## 🛠️ Tech Stack
 
