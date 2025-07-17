@@ -1,0 +1,1 @@
+This project is dual-licensed under GPLv3 and a commercial license.
