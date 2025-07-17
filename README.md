@@ -47,4 +47,4 @@ OpenLLM is dual-licensed:
 - GPLv3 for community and academic use
 - Commercial license for closed-source or enterprise deployment
 
-Contact us at [sales@yourcompany.com](mailto:sales@yourcompany.com) for licensing details.
+Contact us at [louischua@gmail.com] for licensing details.
