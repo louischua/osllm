@@ -7,10 +7,11 @@ Build an open source large language model (LLM) framework that is modular, scala
 - Open source under GPLv3
 - Commercially licensable for enterprise users
 - Capable of serving both researchers and production teams
+- Fully built from source — without using another pretrained large model for finetuning
 
 ## Core Components
 
-- Tokenizer: Trainable using SentencePiece or custom BPE
+- Tokenizer: Trainable using SentencePiece
 - Model: Transformer-based LLM, GPT-style decoder
 - Training Pipeline: Distributed training, mixed precision, gradient checkpointing
 - Inference: FastAPI-based REST endpoint, ONNX export
@@ -21,7 +22,8 @@ Build an open source large language model (LLM) framework that is modular, scala
 
 ## Key Design Choices
 
-- Use Hugging Face ecosystem to reduce boilerplate
+- The model must be trained from scratch using publicly available datasets — no fine-tuning of existing closed/open large models
+- Use Hugging Face ecosystem to reduce boilerplate (e.g., tokenizers and training utilities only — not model weights)
 - Maintain modularity between pretraining and fine-tuning
 - Build CLI tools for training and inference
 - Allow offline usage and checkpoint sharing
