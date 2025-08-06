@@ -1,0 +1,330 @@
+name: 🚀 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.10"
+
+jobs:
+  # Code Quality Checks
+  lint:
+    name: 🧹 Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black isort flake8 mypy
+          pip install -r requirements.txt
+
+      - name: 🎨 Check code formatting (Black)
+        run: |
+          black --check --diff core/
+
+      - name: 📚 Check import sorting (isort)
+        run: |
+          isort --check-only --diff core/
+
+      - name: 🔍 Lint code (flake8)
+        run: |
+          flake8 core/ --max-line-length=100 --extend-ignore=E203,W503
+
+      - name: 🔧 Type checking (mypy)
+        run: |
+          mypy core/ --ignore-missing-imports
+        continue-on-error: true  # Type checking is not blocking for now
+
+  # Security Checks
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 🛡️ Run security scan (bandit)
+        run: |
+          pip install bandit[toml]
+          bandit -r core/ -f json -o bandit-report.json
+        continue-on-error: true
+
+      - name: 📊 Upload security scan results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-scan-results
+          path: bandit-report.json
+
+  # Dependency Checks
+  dependencies:
+    name: 📦 Dependency Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 🔍 Check for dependency vulnerabilities
+        run: |
+          pip install safety
+          safety check --json --output safety-report.json
+        continue-on-error: true
+
+      - name: 📊 Upload dependency scan results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: dependency-scan-results
+          path: safety-report.json
+
+  # Multi-platform Testing
+  test:
+    name: 🧪 Test Suite
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        exclude:
+          # Reduce matrix size by excluding some combinations
+          - os: windows-latest
+            python-version: "3.8"
+          - os: macos-latest
+            python-version: "3.8"
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov
+          pip install -r requirements.txt
+
+      - name: 🧪 Run unit tests
+        run: |
+          pytest tests/ -v --cov=core --cov-report=xml --cov-report=term-missing
+        continue-on-error: true  # Tests may not exist yet
+
+      - name: 📊 Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10'
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  # Integration Tests
+  integration:
+    name: 🔗 Integration Tests
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🔧 Test CLI help commands
+        run: |
+          python core/src/main.py --help
+          python core/src/main.py prepare-data --help
+          python core/src/main.py train-tokenizer --help
+
+      - name: 📊 Test data preparation (small sample)
+        run: |
+          # Create a small test file
+          mkdir -p data/clean
+          echo "This is a test sentence with more than ten words for testing." > data/clean/test_data.txt
+          echo "Another test sentence to ensure we have enough content for testing purposes." >> data/clean/test_data.txt
+          
+          # Test that our file exists and has content
+          wc -l data/clean/test_data.txt
+          cat data/clean/test_data.txt
+
+      - name: 🔤 Test tokenizer training (small vocab)
+        run: |
+          # Train a very small tokenizer for testing
+          python core/src/main.py train-tokenizer \
+            --input data/clean/test_data.txt \
+            --vocab-size 100 \
+            --output-dir data/test_tokenizer/ \
+            --no-test
+          
+          # Verify tokenizer files were created
+          ls -la data/test_tokenizer/
+          test -f data/test_tokenizer/tokenizer.model
+          test -f data/test_tokenizer/tokenizer.vocab
+
+      - name: 🧹 Cleanup test files
+        run: |
+          rm -rf data/clean/test_data.txt
+          rm -rf data/test_tokenizer/
+
+  # Documentation checks
+  docs:
+    name: 📚 Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Check for broken links
+        run: |
+          # Install markdown link checker
+          npm install -g markdown-link-check
+          
+          # Check all markdown files for broken links
+          find . -name "*.md" -not -path "./venv/*" -not -path "./.git/*" \
+            -exec markdown-link-check {} \;
+        continue-on-error: true
+
+      - name: 📏 Check documentation completeness
+        run: |
+          # Check that key documentation files exist
+          test -f README.md
+          test -f core/README.md
+          test -f docs/training_pipeline.md
+          
+          # Check that CLI commands have help text
+          python core/src/main.py --help | grep -q "OpenLLM"
+          python core/src/main.py prepare-data --help | grep -q "Download and prepare"
+          python core/src/main.py train-tokenizer --help | grep -q "Train a SentencePiece"
+
+  # Performance benchmarks
+  benchmark:
+    name: ⚡ Performance Benchmarks
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install psutil memory-profiler
+
+      - name: ⏱️ Benchmark CLI startup time
+        run: |
+          echo "Measuring CLI startup time..."
+          time python core/src/main.py --help > /dev/null
+
+      - name: 💾 Check memory usage
+        run: |
+          echo "Checking memory usage..."
+          python -c "
+          import psutil
+          import subprocess
+          import sys
+          
+          # Get memory before
+          process = psutil.Process()
+          mem_before = process.memory_info().rss / 1024 / 1024
+          
+          # Run a simple command
+          result = subprocess.run([sys.executable, 'core/src/main.py', '--help'], 
+                                capture_output=True, text=True)
+          
+          # Get memory after
+          mem_after = process.memory_info().rss / 1024 / 1024
+          
+          print(f'Memory usage: {mem_after:.1f} MB')
+          print(f'Memory change: {mem_after - mem_before:.1f} MB')
+          "
+
+  # Release preparation (only on main branch)
+  release-check:
+    name: 🏷️ Release Check
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [lint, test, integration, docs]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Check version consistency
+        run: |
+          # Check that versions are consistent across files
+          grep -q "version.*0\.1\.0" pyproject.toml
+          grep -q "OpenLLM v0\.1\.0" core/src/main.py
+
+      - name: 📋 Check changelog
+        run: |
+          # Check if CHANGELOG.md exists (will be created later)
+          test -f CHANGELOG.md || echo "CHANGELOG.md not found (will be created in future)"
+
+  # All checks passed
+  all-checks:
+    name: ✅ All Checks Passed
+    runs-on: ubuntu-latest
+    needs: [lint, security, dependencies, test, integration, docs]
+    if: always()
+    steps:
+      - name: 🎉 All checks completed
+        run: |
+          echo "All CI/CD checks have completed!"
+          echo "Status summary:"
+          echo "- Linting: ${{ needs.lint.result }}"
+          echo "- Security: ${{ needs.security.result }}"
+          echo "- Dependencies: ${{ needs.dependencies.result }}"
+          echo "- Tests: ${{ needs.test.result }}"
+          echo "- Integration: ${{ needs.integration.result }}"
+          echo "- Documentation: ${{ needs.docs.result }}"
+
+      - name: ❌ Fail if required checks failed
+        if: |
+          needs.lint.result == 'failure' ||
+          needs.test.result == 'failure' ||
+          needs.integration.result == 'failure'
+        run: |
+          echo "Required checks failed!"
+          exit 1

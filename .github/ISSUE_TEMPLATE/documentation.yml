@@ -1,0 +1,158 @@
+name: 📚 Documentation Issue
+description: Report missing, incorrect, or unclear documentation
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation! 📝
+        
+        Clear documentation is crucial for the success of OpenLLM.
+
+  - type: checkboxes
+    id: existing-issues
+    attributes:
+      label: Existing Issues
+      description: Please search existing issues before creating a new one
+      options:
+        - label: I have searched existing issues and this is not a duplicate
+          required: true
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation issue is this?
+      options:
+        - Missing documentation
+        - Incorrect/outdated information
+        - Unclear explanation
+        - Broken link
+        - Typo/grammar error
+        - Missing example
+        - API documentation
+        - Installation guide
+        - Tutorial/guide
+        - README improvement
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: location
+    attributes:
+      label: Documentation Location
+      description: Where is the documentation issue located?
+      options:
+        - README.md (main)
+        - core/README.md
+        - docs/training_pipeline.md
+        - CLI help text
+        - Code comments/docstrings
+        - GitHub wiki
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Describe the documentation issue
+      placeholder: |
+        What is wrong, missing, or unclear in the current documentation?
+        Be specific about what you found confusing or incorrect.
+    validations:
+      required: true
+
+  - type: textarea
+    id: location-details
+    attributes:
+      label: Specific Location
+      description: Help us locate the exact issue
+      placeholder: |
+        - File: docs/training_pipeline.md
+        - Section: "Step 2: Tokenizer Training"
+        - Line number: 95
+        - URL: https://github.com/...
+    validations:
+      required: false
+
+  - type: textarea
+    id: current-content
+    attributes:
+      label: Current Content
+      description: Quote the current text that needs improvement (if applicable)
+      placeholder: |
+        ```
+        Current text that is problematic...
+        ```
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggested-content
+    attributes:
+      label: Suggested Improvement
+      description: What should the documentation say instead?
+      placeholder: |
+        Provide your suggested text or describe what information should be added.
+        
+        ```
+        Suggested replacement text...
+        ```
+    validations:
+      required: false
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: User Impact
+      description: How does this documentation issue affect users?
+      placeholder: |
+        - What were you trying to accomplish?
+        - How did this documentation issue prevent you from succeeding?
+        - What would have helped you understand better?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: audience
+    attributes:
+      label: Target Audience
+      description: Who is most affected by this documentation issue?
+      options:
+        - New users/beginners
+        - Experienced developers
+        - Researchers
+        - Contributors
+        - All users
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other helpful information
+      placeholder: |
+        - Screenshots of confusing UI/output
+        - Links to related documentation
+        - Examples that would be helpful
+        - Similar documentation from other projects
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to help improve the documentation?
+      options:
+        - label: I can help write the improved documentation
+        - label: I can review proposed changes
+        - label: I can provide examples or use cases
+        - label: I can test the updated documentation

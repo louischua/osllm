@@ -24,11 +24,22 @@ OpenLLM is an open source project to develop a powerful, flexible, and modular l
 
 ## 📂 Folder Structure
 
-core/                 # Open source components (training, tokenization, inference)
-core/src/             # Python source files
-enterprise/           # Enterprise-only modules (e.g., dashboard, RLHF UI)
-docs/                 # Documentation and community guidelines
-.github/              # GitHub config (PR template, funding, etc.)
+```
+osllm-1/
+├── core/             # Open source components (training, tokenization, inference)
+│   └── src/          # Python source files
+│       ├── download_and_prepare.py    # SQUAD dataset downloader & processor
+│       └── train_tokenizer.py         # SentencePiece tokenizer trainer
+├── data/             # Training data and model artifacts
+│   ├── raw/          # Downloaded raw data (temporary)
+│   ├── clean/        # Processed training text
+│   │   └── training_data.txt          # ~41k Wikipedia passages from SQUAD
+│   └── tokenizer/    # Trained tokenizer files
+├── enterprise/       # Enterprise-only modules (e.g., dashboard, RLHF UI)
+├── docs/             # Documentation and community guidelines
+│   └── training_pipeline.md           # Complete training guide
+└── .github/          # GitHub config (PR template, funding, etc.)
+```
 
 ## 🛠️ Tech Stack
 

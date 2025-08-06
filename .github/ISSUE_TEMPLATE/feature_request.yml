@@ -1,0 +1,155 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement for OpenLLM
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! 🚀
+        
+        Please provide as much detail as possible to help us understand your request.
+
+  - type: checkboxes
+    id: existing-issues
+    attributes:
+      label: Existing Issues
+      description: Please search existing issues before creating a new one
+      options:
+        - label: I have searched existing issues and this is not a duplicate
+          required: true
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What type of feature are you requesting?
+      options:
+        - New CLI command
+        - Data processing enhancement
+        - Tokenizer improvement
+        - Model architecture feature
+        - Training optimization
+        - Inference capability
+        - Documentation improvement
+        - Developer tooling
+        - Performance optimization
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? What is the motivation?
+      placeholder: |
+        Describe the problem you're trying to solve or the limitation you've encountered.
+        Example: "It's frustrating when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see
+      placeholder: |
+        A clear and concise description of what you want to happen.
+        Include any specific implementation details if you have them.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Have you considered any alternative approaches?
+      placeholder: |
+        Describe any alternative solutions or features you've considered.
+        Why would your proposed solution be better?
+    validations:
+      required: false
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: How would this feature be used?
+      placeholder: |
+        Provide specific examples of how you and others would use this feature:
+        - Use case 1: ...
+        - Use case 2: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: api-design
+    attributes:
+      label: API Design (if applicable)
+      description: If this involves new commands or functions, show what the API might look like
+      placeholder: |
+        ```bash
+        # Example CLI usage
+        python core/src/main.py new-command --option value
+        ```
+        
+        ```python
+        # Example Python API
+        result = new_function(param1, param2)
+        ```
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Critical - Blocking my work
+        - High - Would significantly improve my workflow
+        - Medium - Would be nice to have
+        - Low - Minor improvement
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: Requirements
+      description: Please check all that apply
+      options:
+        - label: This feature should maintain backward compatibility
+        - label: This feature requires documentation updates
+        - label: This feature requires new tests
+        - label: This feature affects the CLI interface
+        - label: This feature affects the Python API
+        - label: This feature requires new dependencies
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or examples
+      placeholder: |
+        - Links to relevant research papers
+        - Screenshots or mockups
+        - Related projects that implement similar features
+        - Performance requirements
+        - etc.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to contribute this feature?
+      options:
+        - label: I'm willing to implement this feature myself
+        - label: I can help with testing
+        - label: I can help with documentation
+        - label: I can provide feedback during development
