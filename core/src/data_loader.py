@@ -187,33 +187,69 @@ class TextDataLoader:
     
     def _tokenize_texts(self, texts: List[str]) -> List[List[int]]:
         """
-        Tokenize a list of text passages.
+        Tokenize a list of text passages using SentencePiece tokenizer.
+        
+        This method converts raw text into token ID sequences suitable for language model training.
+        It handles special tokens (BOS/EOS) and length constraints for efficient training.
+        
+        Text processing pipeline:
+        1. Add BOS (Beginning of Sequence) token to mark sequence start
+        2. Tokenize text using trained SentencePiece model (subword tokenization)
+        3. Truncate sequences that exceed maximum length
+        4. Add EOS (End of Sequence) token to mark sequence end
+        
+        Special token handling:
+        - BOS token helps model learn to generate text from scratch
+        - EOS token signals natural sequence endings
+        - These tokens are crucial for proper autoregressive generation
         
         Args:
-            texts: List of text passages
+            texts: List of text passages (typically Wikipedia passages from SQUAD)
+                  Each passage should be a complete, coherent text segment
             
         Returns:
-            List of token ID sequences
+            List of token ID sequences, where each sequence is a list of integers
+            representing subword tokens from the SentencePiece vocabulary
         """
         tokenized = []
         
         for text in texts:
             try:
-                # Add BOS token at the beginning
+                # Add BOS (Beginning of Sequence) token at the start
+                # BOS token ID=2 by default in SentencePiece, signals sequence start
+                # This helps the model learn proper sequence initialization during generation
                 tokens = [self.tokenizer.bos_id()] + self.tokenizer.encode(text)
                 
-                # Truncate if too long, keep some room for potential EOS
+                # Truncate sequences that exceed maximum context length
+                # Reserve one position for EOS token by using (seq_len - 1)
+                # This ensures we never exceed the model's context window during training
                 if len(tokens) > self.seq_len - 1:
                     tokens = tokens[:self.seq_len - 1]
+                    # NOTE: Truncation may cut off text mid-sentence, but this is acceptable
+                    # for language modeling where the model learns from partial contexts
                 
-                # Add EOS token at the end
+                # Add EOS (End of Sequence) token at the end
+                # EOS token ID=1 by default in SentencePiece, signals sequence completion
+                # This teaches the model when to stop generating text naturally
                 tokens.append(self.tokenizer.eos_id())
+                
+                # Validate tokenization result
+                if len(tokens) <= 2:  # Only BOS + EOS tokens, no actual content
+                    print(f"⚠️  Skipping very short text: {text[:50]}...")
+                    continue
                 
                 tokenized.append(tokens)
                 
             except Exception as e:
+                # Handle tokenization errors gracefully to avoid stopping training
+                # Common causes: encoding issues, very long texts, special characters
                 print(f"⚠️  Failed to tokenize passage: {text[:50]}... Error: {e}")
                 continue
+        
+        # Log tokenization statistics for monitoring
+        if tokenized:
+            avg_length = sum(len(tokens) for tokens in tokenized) / len(tokenized)
+            print(f"📊 Tokenized {len(tokenized)} passages, avg length: {avg_length:.1f} tokens")
         
         return tokenized
     

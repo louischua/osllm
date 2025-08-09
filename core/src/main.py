@@ -180,25 +180,360 @@ def cmd_train_model(args):
 
 
 def cmd_inference(args):
-    """Execute model inference command (placeholder)."""
-    print("🚀 Inference functionality coming soon!")
-    print("This will implement:")
-    print("  • Text generation")
-    print("  • REST API server")
-    print("  • Batch processing")
-    print("  • ONNX model support")
-    return False
+    """
+    Execute model inference command.
+    
+    This function implements text generation using trained OpenLLM models.
+    It supports multiple model formats and provides flexible generation options.
+    
+    Args:
+        args: Namespace containing CLI arguments including:
+            - model_path: Path to trained model directory
+            - prompt: Input text prompt for generation
+            - max_length: Maximum number of tokens to generate
+            - temperature: Sampling temperature (0.1-2.0)
+            - format: Model format (auto-detect by default)
+    
+    Returns:
+        bool: True if inference succeeded, False otherwise
+        
+    Implementation Details:
+        - Auto-detects model format (PyTorch, Hugging Face, ONNX)
+        - Uses inference_server.py's OpenLLMInference class for generation
+        - Supports configurable generation parameters
+        - Handles errors gracefully with informative messages
+    """
+    print("🚀 OpenLLM Model Inference")
+    print("=" * 40)
+    
+    try:
+        # Import inference functionality
+        # We import here to avoid circular imports and handle missing dependencies
+        import sys
+        import os
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        
+        from inference_server import OpenLLMInference
+        
+        # Validate model path exists
+        # Early validation prevents confusing error messages later
+        model_path = Path(args.model_path)
+        if not model_path.exists():
+            print(f"❌ Model path not found: {args.model_path}")
+            print("   Please check the path and try again.")
+            return False
+        
+        # Initialize inference engine
+        # This handles model loading and format detection automatically
+        print(f"📂 Loading model from: {args.model_path}")
+        inference_engine = OpenLLMInference(
+            model_path=str(model_path),
+            model_format=getattr(args, 'format', 'auto')  # Default to auto-detection
+        )
+        
+        # Prepare generation parameters
+        # These parameters control the quality and style of generated text
+        generation_params = {
+            'max_length': args.max_length,
+            'temperature': getattr(args, 'temperature', 0.7),  # Default temperature
+            'top_k': getattr(args, 'top_k', 40),              # Default top-k
+            'top_p': getattr(args, 'top_p', 0.9),             # Default nucleus sampling
+            'num_return_sequences': getattr(args, 'num_sequences', 1)  # Default single sequence
+        }
+        
+        print(f"💭 Generating text for prompt: '{args.prompt}'")
+        print(f"⚙️  Parameters: max_length={generation_params['max_length']}, "
+              f"temperature={generation_params['temperature']}")
+        
+        # Generate text using the inference engine
+        # This is the core functionality that produces the output
+        import time
+        start_time = time.time()
+        
+        generated_texts = inference_engine.generate(
+            prompt=args.prompt,
+            **generation_params
+        )
+        
+        generation_time = time.time() - start_time
+        
+        # Display results with formatting
+        # Clear presentation helps users understand the output
+        print(f"\n✨ Generated Text:")
+        print("-" * 50)
+        
+        for i, text in enumerate(generated_texts, 1):
+            if len(generated_texts) > 1:
+                print(f"\n[Sequence {i}]")
+            print(text)
+        
+        print("-" * 50)
+        print(f"⏱️  Generation time: {generation_time:.2f} seconds")
+        print(f"📊 Tokens generated: ~{len(generated_texts[0].split())}")
+        print(f"🎯 Model: {inference_engine.config.get('model_name', 'OpenLLM')}")
+        
+        return True
+        
+    except ImportError as e:
+        print(f"❌ Missing dependencies for inference: {e}")
+        print("   Please install: pip install fastapi uvicorn")
+        return False
+        
+    except Exception as e:
+        print(f"❌ Inference failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
 def cmd_evaluate(args):
-    """Execute model evaluation command (placeholder)."""
-    print("📊 Evaluation functionality coming soon!")
-    print("This will implement:")
-    print("  • Perplexity calculation")
-    print("  • Downstream task evaluation")
-    print("  • Benchmark comparisons")
-    print("  • Performance metrics")
-    return False
+    """
+    Execute model evaluation command.
+    
+    This function implements comprehensive model evaluation including intrinsic
+    metrics (perplexity) and downstream task performance assessment.
+    
+    Args:
+        args: Namespace containing CLI arguments including:
+            - model_path: Path to trained model directory
+            - eval_data: Path to evaluation dataset (optional)
+            - metrics: Comma-separated list of metrics to compute
+            - output_dir: Directory to save evaluation results
+            - format: Model format (auto-detect by default)
+    
+    Returns:
+        bool: True if evaluation succeeded, False otherwise
+        
+    Implementation Details:
+        - Uses evaluate_model.py's ModelEvaluator class for comprehensive testing
+        - Computes perplexity on held-out data if provided
+        - Runs downstream task evaluation (reading comprehension, sentiment, etc.)
+        - Generates detailed evaluation report with metrics and examples
+        - Saves results to JSON file for further analysis
+    """
+    print("📊 OpenLLM Model Evaluation")
+    print("=" * 40)
+    
+    try:
+        # Import evaluation functionality
+        # We import here to avoid circular imports and handle missing dependencies
+        import sys
+        import os
+        import json
+        from pathlib import Path
+        
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        
+        from evaluate_model import ModelEvaluator
+        
+        # Validate model path exists
+        # Early validation prevents confusing error messages later
+        model_path = Path(args.model_path)
+        if not model_path.exists():
+            print(f"❌ Model path not found: {args.model_path}")
+            print("   Please check the path and try again.")
+            return False
+        
+        # Determine output directory for results
+        # Create output directory if it doesn't exist
+        output_dir = Path(getattr(args, 'output_dir', 'evaluation_results'))
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Parse requested metrics
+        # Default to comprehensive evaluation if not specified
+        requested_metrics = getattr(args, 'metrics', 'perplexity,generation,downstream').split(',')
+        requested_metrics = [m.strip() for m in requested_metrics]
+        
+        print(f"📂 Loading model from: {args.model_path}")
+        print(f"📋 Requested metrics: {', '.join(requested_metrics)}")
+        print(f"💾 Results will be saved to: {output_dir}")
+        
+        # Initialize model evaluator
+        # This handles model loading and tokenizer setup
+        evaluator = ModelEvaluator(
+            model_dir=str(model_path),
+            tokenizer_path=getattr(args, 'tokenizer_path', None)  # Auto-detect if not provided
+        )
+        
+        # Prepare evaluation results container
+        # This will store all evaluation metrics and examples
+        evaluation_results = {
+            'model_info': {
+                'model_path': str(model_path),
+                'model_name': evaluator.config.get('model_name', 'OpenLLM'),
+                'parameters': evaluator.model.get_num_params(),
+                'evaluation_time': None
+            },
+            'metrics': {},
+            'examples': {},
+            'summary': {}
+        }
+        
+        import time
+        start_time = time.time()
+        
+        # 1. Perplexity Evaluation
+        # This measures how well the model predicts the next token
+        if 'perplexity' in requested_metrics:
+            print(f"\n🔍 Computing perplexity...")
+            
+            eval_data_path = getattr(args, 'eval_data', None)
+            if eval_data_path and Path(eval_data_path).exists():
+                # Use provided evaluation data
+                perplexity_result = evaluator.evaluate_perplexity(eval_data_path)
+            else:
+                # Use a subset of training data for perplexity calculation
+                print("   No eval data provided, using default test set")
+                perplexity_result = evaluator.evaluate_perplexity()
+            
+            evaluation_results['metrics']['perplexity'] = perplexity_result
+            
+            print(f"   ✅ Perplexity: {perplexity_result.get('perplexity', 'N/A'):.2f}")
+            print(f"   📊 Loss: {perplexity_result.get('loss', 'N/A'):.4f}")
+        
+        # 2. Text Generation Quality Assessment
+        # This evaluates the coherence and quality of generated text
+        if 'generation' in requested_metrics:
+            print(f"\n✍️  Evaluating text generation quality...")
+            
+            generation_result = evaluator.evaluate_text_generation()
+            evaluation_results['metrics']['generation'] = generation_result
+            evaluation_results['examples']['generation'] = generation_result.get('examples', [])
+            
+            print(f"   ✅ Average quality score: {generation_result.get('average_quality', 'N/A'):.2f}")
+            print(f"   📝 Generated {len(generation_result.get('examples', []))} examples")
+        
+        # 3. Downstream Task Evaluation
+        # This tests specific capabilities like reading comprehension
+        if 'downstream' in requested_metrics:
+            print(f"\n🎯 Evaluating downstream tasks...")
+            
+            downstream_result = evaluator.evaluate_downstream_tasks()
+            evaluation_results['metrics']['downstream'] = downstream_result
+            evaluation_results['examples']['downstream'] = {
+                task: result.get('examples', [])
+                for task, result in downstream_result.items()
+            }
+            
+            # Display summary of downstream results
+            for task_name, task_result in downstream_result.items():
+                accuracy = task_result.get('accuracy', 0) * 100
+                print(f"   ✅ {task_name.replace('_', ' ').title()}: {accuracy:.1f}%")
+        
+        # Calculate total evaluation time
+        evaluation_time = time.time() - start_time
+        evaluation_results['model_info']['evaluation_time'] = evaluation_time
+        
+        # Generate evaluation summary
+        # This provides a high-level overview of model performance
+        summary = {
+            'overall_score': 0.0,  # Will be calculated based on available metrics
+            'strengths': [],
+            'weaknesses': [],
+            'recommendations': []
+        }
+        
+        # Calculate overall score based on available metrics
+        scores = []
+        
+        if 'perplexity' in evaluation_results['metrics']:
+            ppl = evaluation_results['metrics']['perplexity'].get('perplexity', float('inf'))
+            # Convert perplexity to 0-100 score (lower perplexity is better)
+            ppl_score = max(0, 100 - (ppl - 10) * 5)  # Rough conversion
+            scores.append(ppl_score)
+            
+            if ppl < 15:
+                summary['strengths'].append("Good language modeling (low perplexity)")
+            else:
+                summary['weaknesses'].append("High perplexity indicates poor language modeling")
+        
+        if 'generation' in evaluation_results['metrics']:
+            gen_score = evaluation_results['metrics']['generation'].get('average_quality', 0) * 100
+            scores.append(gen_score)
+            
+            if gen_score > 70:
+                summary['strengths'].append("High-quality text generation")
+            else:
+                summary['weaknesses'].append("Text generation needs improvement")
+        
+        if 'downstream' in evaluation_results['metrics']:
+            downstream_scores = []
+            for task_result in evaluation_results['metrics']['downstream'].values():
+                downstream_scores.append(task_result.get('accuracy', 0) * 100)
+            
+            if downstream_scores:
+                avg_downstream = sum(downstream_scores) / len(downstream_scores)
+                scores.append(avg_downstream)
+                
+                if avg_downstream > 50:
+                    summary['strengths'].append("Good performance on downstream tasks")
+                else:
+                    summary['weaknesses'].append("Poor downstream task performance")
+        
+        # Calculate overall score
+        if scores:
+            summary['overall_score'] = sum(scores) / len(scores)
+        
+        # Add recommendations based on performance
+        if summary['overall_score'] < 40:
+            summary['recommendations'].extend([
+                "Consider training for more steps",
+                "Verify training data quality",
+                "Check model architecture and hyperparameters"
+            ])
+        elif summary['overall_score'] < 70:
+            summary['recommendations'].extend([
+                "Model shows promise - consider extended training",
+                "Fine-tune on specific downstream tasks"
+            ])
+        else:
+            summary['recommendations'].append("Model performs well - ready for deployment")
+        
+        evaluation_results['summary'] = summary
+        
+        # Save detailed results to file
+        # This allows for further analysis and comparison between models
+        results_file = output_dir / f"evaluation_results_{int(time.time())}.json"
+        with open(results_file, 'w') as f:
+            json.dump(evaluation_results, f, indent=2, default=str)
+        
+        # Display comprehensive results summary
+        print(f"\n" + "=" * 60)
+        print(f"📊 EVALUATION SUMMARY")
+        print(f"=" * 60)
+        print(f"🎯 Overall Score: {summary['overall_score']:.1f}/100")
+        print(f"⏱️  Evaluation Time: {evaluation_time:.1f} seconds")
+        
+        if summary['strengths']:
+            print(f"\n✅ Strengths:")
+            for strength in summary['strengths']:
+                print(f"   • {strength}")
+        
+        if summary['weaknesses']:
+            print(f"\n⚠️  Areas for Improvement:")
+            for weakness in summary['weaknesses']:
+                print(f"   • {weakness}")
+        
+        if summary['recommendations']:
+            print(f"\n💡 Recommendations:")
+            for rec in summary['recommendations']:
+                print(f"   • {rec}")
+        
+        print(f"\n💾 Detailed results saved to: {results_file}")
+        print(f"🎉 Evaluation completed successfully!")
+        
+        return True
+        
+    except ImportError as e:
+        print(f"❌ Missing dependencies for evaluation: {e}")
+        print("   Please check that all required packages are installed.")
+        return False
+        
+    except Exception as e:
+        print(f"❌ Evaluation failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
 def cmd_test_model(args):

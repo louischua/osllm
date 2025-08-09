@@ -306,4 +306,4 @@ evaluation_results/
 
 # Ignore distributed training artifacts
 nccl_*
-master_*
+master_*.cursorrules

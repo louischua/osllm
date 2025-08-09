@@ -160,21 +160,39 @@ def prepare_training_data(output_path="data/clean/training_data.txt", min_words=
                 
                 print(f"Found {len(contexts)} Wikipedia passages in {os.path.basename(file_path)}")
                 
-                # Clean and filter each context passage
+                # Clean and filter each context passage for high-quality training data
+                # This preprocessing is crucial for effective language model training
                 for context in tqdm(contexts, desc=f"Processing {os.path.basename(file_path)}"):
-                    # Normalize whitespace: collapse multiple spaces, remove extra newlines
-                    # This preserves sentence structure while cleaning formatting
+                    
+                    # Text normalization and cleaning pipeline
+                    # Step 1: Normalize whitespace to ensure consistent formatting
+                    # - Collapse multiple spaces/tabs into single spaces
+                    # - Remove excessive newlines that break sentence flow
+                    # - Strip leading/trailing whitespace
+                    # This preserves natural sentence structure while cleaning artifacts
                     cleaned_text = ' '.join(context.split())
                     
-                    # Skip empty passages after cleaning
+                    # Step 2: Skip empty passages after cleaning
+                    # Empty passages can occur from malformed JSON or pure whitespace
                     if not cleaned_text:
                         continue
-                        
+                    
+                    # Step 3: Quality filtering based on content length
                     # Apply minimum word count filter to ensure substantial content
-                    if len(cleaned_text.split()) >= min_words:
-                        # Write each passage on a new line for easy processing by tokenizers
+                    # Short passages (< min_words) provide insufficient context for language modeling
+                    # Wikipedia passages are typically well-formed, so this mainly catches truncated text
+                    word_count = len(cleaned_text.split())
+                    if word_count >= min_words:
+                        # Write each passage on a new line for easy processing by data loaders
+                        # The line-based format enables efficient streaming during training
+                        # Each line represents one coherent Wikipedia passage
                         f.write(cleaned_text + '\n')
                         total_contexts += 1
+                    
+                    # Optional: Log extremely short passages for monitoring data quality
+                    elif word_count > 0:  # Non-empty but too short
+                        if total_contexts % 1000 == 0:  # Log occasionally to avoid spam
+                            print(f"⚠️  Skipped short passage ({word_count} words): {cleaned_text[:50]}...")
                         
             except Exception as e:
                 print(f"Error processing {file_path}: {e}")

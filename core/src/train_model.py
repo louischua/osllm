@@ -216,22 +216,53 @@ class ModelTrainer:
     
     def _calculate_loss(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """
-        Calculate cross-entropy loss for language modeling.
+        Calculate cross-entropy loss for autoregressive language modeling.
+        
+        This method computes the standard cross-entropy loss used in language model training.
+        The loss measures how well the model predicts the next token in the sequence.
+        
+        Mathematical formulation:
+            Loss = -∑ log(P(target_token | context))
+            where P is the softmax probability distribution over vocabulary
+        
+        Implementation details:
+            - Reshapes 3D tensors to 2D for efficient computation
+            - Uses PyTorch's optimized cross_entropy function
+            - Handles padding tokens by ignoring them in loss calculation
+            - Computes mean loss across all valid positions
+        
+        Why cross-entropy for language modeling:
+            - Natural choice for multi-class classification (next token prediction)
+            - Provides strong gradient signal for correct token probabilities
+            - Mathematically equivalent to minimizing negative log-likelihood
+            - Well-studied optimization properties for neural language models
         
         Args:
-            logits: Model output logits (batch_size, seq_len, vocab_size)
-            targets: Target token IDs (batch_size, seq_len)
+            logits: Raw model predictions of shape (batch_size, seq_len, vocab_size)
+                   Contains unnormalized scores for each token in vocabulary
+                   These will be converted to probabilities via softmax internally
+            targets: Ground truth next tokens of shape (batch_size, seq_len)
+                    Contains token IDs representing the true next tokens
+                    Should be input sequence shifted by one position
             
         Returns:
-            Cross-entropy loss tensor
+            torch.Tensor: Scalar loss value representing prediction error
+                         Lower values indicate better next-token prediction accuracy
         """
-        # Reshape for loss calculation
+        # Reshape tensors from 3D to 2D for efficient loss computation
+        # This converts per-sequence per-position predictions to a flat structure
+        # where each row represents one prediction over the entire vocabulary
         logits = logits.view(-1, logits.size(-1))  # (batch_size * seq_len, vocab_size)
         targets = targets.view(-1)  # (batch_size * seq_len,)
         
-        # Calculate loss (ignore_index=-1 for padding tokens)
+        # Calculate cross-entropy loss with proper handling of special tokens
+        # ignore_index=-1 excludes padding tokens from loss calculation
+        # This prevents the model from learning to predict padding, which would skew training
+        # The function internally applies softmax to logits and computes negative log-likelihood
         loss = nn.functional.cross_entropy(logits, targets, ignore_index=-1)
         
+        # Return scalar loss for backpropagation
+        # This loss will be used to compute gradients via automatic differentiation
         return loss
     
     def _get_memory_usage(self) -> Dict[str, float]:

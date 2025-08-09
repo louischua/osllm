@@ -174,72 +174,172 @@ class CausalSelfAttention(nn.Module):
         """
         Forward pass of causal self-attention.
         
+        This method implements the scaled dot-product attention mechanism with causal masking.
+        The attention mechanism allows each token to attend to all previous tokens in the sequence,
+        but not to future tokens, maintaining the autoregressive property essential for language modeling.
+        
+        Mathematical formulation:
+            Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
+            where Q, K, V are query, key, value matrices derived from input x
+        
+        Implementation details:
+            - Uses batch matrix multiplication for efficiency
+            - Applies causal mask to prevent future token attention
+            - Implements multi-head attention by reshaping and parallel processing
+            - Applies dropout for regularization during training
+        
         Args:
             x: Input tensor of shape (batch_size, seq_len, n_embd)
+               Contains embedded token representations from previous layer
             
         Returns:
             torch.Tensor: Output tensor of shape (batch_size, seq_len, n_embd)
         """
-        B, T, C = x.size()  # batch size, sequence length, embedding dimensionality
+        # Extract tensor dimensions for clear variable naming and validation
+        # B = batch size (number of sequences processed in parallel)
+        # T = sequence length (number of tokens in each sequence) 
+        # C = embedding dimensionality (n_embd from config)
+        B, T, C = x.size()
         
-        # Calculate query, key, values for all heads in batch
+        # Generate query, key, and value projections for all attention heads
+        # The c_attn linear layer outputs 3 * n_embd features, which we split into Q, K, V
+        # This batched approach is more efficient than separate linear layers
+        # Input shape: (B, T, C) -> Output shape: (B, T, 3*C) -> Split to 3x (B, T, C)
         q, k, v = self.c_attn(x).split(self.n_embd, dim=2)
         
-        # Reshape for multi-head attention: (B, T, C) -> (B, nh, T, hs)
+        # Reshape tensors for multi-head attention computation
+        # Transform from (B, T, C) to (B, nh, T, hs) where:
+        # - nh = number of heads (self.n_head)
+        # - hs = head size (self.head_dim = C // nh)
+        # The transpose(1, 2) moves the head dimension before sequence dimension for efficient computation
         q = q.view(B, T, self.n_head, self.head_dim).transpose(1, 2)  # (B, nh, T, hs)
         k = k.view(B, T, self.n_head, self.head_dim).transpose(1, 2)  # (B, nh, T, hs)
         v = v.view(B, T, self.n_head, self.head_dim).transpose(1, 2)  # (B, nh, T, hs)
         
-        # Attention weights: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
+        # Compute scaled dot-product attention scores
+        # Matrix multiplication: Q @ K^T gives attention affinities between all token pairs
+        # Scaling by 1/sqrt(head_dim) prevents softmax saturation for large embedding dimensions
+        # Shape: (B, nh, T, hs) @ (B, nh, hs, T) -> (B, nh, T, T)
+        # The resulting (T, T) matrix represents attention weights from each token to every other token
         att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(self.head_dim))
         
-        # Apply causal mask (prevent attention to future tokens)
+        # Apply causal masking to enforce autoregressive property
+        # The causal mask ensures that token i can only attend to tokens j where j <= i
+        # This prevents the model from "cheating" by looking at future tokens during training
+        # We use -inf for masked positions so they become 0 after softmax
         att = att.masked_fill(self.bias[:, :, :T, :T] == 0, float('-inf'))
         
-        # Softmax to get attention probabilities
+        # Convert attention scores to probabilities using softmax
+        # Each row of the attention matrix now sums to 1, representing a probability distribution
+        # over which tokens to attend to for each query position
         att = F.softmax(att, dim=-1)
+        
+        # Apply dropout to attention weights for regularization
+        # This randomly zeros some attention connections during training to prevent overfitting
         att = self.attn_dropout(att)
         
-        # Apply attention to values: (B, nh, T, T) x (B, nh, T, hs) -> (B, nh, T, hs)
+        # Apply attention weights to value vectors
+        # This weighted combination produces the actual output of the attention mechanism
+        # Shape: (B, nh, T, T) @ (B, nh, T, hs) -> (B, nh, T, hs)
+        # Each output position is a weighted sum of all value vectors, with weights from attention
         y = att @ v
         
-        # Reassemble all head outputs side by side: (B, nh, T, hs) -> (B, T, C)
+        # Concatenate multi-head outputs back to original embedding dimension
+        # Transform from (B, nh, T, hs) back to (B, T, C) where C = nh * hs
+        # The transpose moves head dimension back, and contiguous() ensures memory layout efficiency
+        # This combines information from all attention heads into a single representation
         y = y.transpose(1, 2).contiguous().view(B, T, C)
         
-        # Output projection
+        # Apply final output projection and residual dropout
+        # The output projection allows the model to learn how to best combine multi-head information
+        # Residual dropout provides additional regularization before the residual connection
         y = self.resid_dropout(self.c_proj(y))
         return y
 
 
 class MLP(nn.Module):
     """
-    Multi-Layer Perceptron (Feed-Forward Network).
+    Multi-Layer Perceptron (Feed-Forward Network) for Transformer.
     
-    Two-layer neural network with GELU activation, used after attention
-    in each transformer layer.
+    This implements the position-wise feed-forward network that appears in each transformer layer.
+    The MLP provides additional non-linear transformation capacity beyond what attention provides.
+    
+    Architecture:
+        Input -> Linear(n_embd -> 4*n_embd) -> GELU -> Linear(4*n_embd -> n_embd) -> Dropout -> Output
+    
+    Design rationale:
+        - 4x expansion is standard in transformers (from "Attention Is All You Need")
+        - GELU activation provides smoother gradients than ReLU for language modeling
+        - Dropout prevents overfitting in the feed-forward layers
+        - Two linear layers allow complex non-linear transformations of attention outputs
+    
+    Parameters:
+        - First linear layer: n_embd * 4*n_embd parameters (expansion)
+        - Second linear layer: 4*n_embd * n_embd parameters (projection back)
+        - Total: 8 * n_embd^2 parameters (significant portion of model size)
     """
     
     def __init__(self, config: GPTConfig):
         super().__init__()
+        
+        # First linear layer: expand embedding dimension by 4x
+        # This expansion gives the network more representational capacity
+        # The 4x factor is a standard choice that balances capacity vs efficiency
         self.c_fc = nn.Linear(config.n_embd, 4 * config.n_embd, bias=config.bias)
+        
+        # GELU (Gaussian Error Linear Unit) activation function
+        # GELU provides smoother gradients compared to ReLU and works better for language modeling
+        # It's approximately: GELU(x) = x * Φ(x) where Φ is the CDF of standard normal distribution
         self.gelu = nn.GELU()
+        
+        # Second linear layer: project back to original embedding dimension
+        # This projection allows the network to combine information from the expanded representation
         self.c_proj = nn.Linear(4 * config.n_embd, config.n_embd, bias=config.bias)
+        
+        # Dropout for regularization in the feed-forward network
+        # Applied after the final projection to prevent overfitting
         self.dropout = nn.Dropout(config.dropout)
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
-        Forward pass of MLP.
+        Forward pass of the feed-forward network.
+        
+        This method applies a two-layer MLP with GELU activation to transform
+        the attention outputs. The MLP operates independently on each position
+        in the sequence, providing position-wise non-linear transformations.
+        
+        Mathematical operation:
+            MLP(x) = Dropout(Linear₂(GELU(Linear₁(x))))
+            where Linear₁: R^n_embd -> R^4*n_embd and Linear₂: R^4*n_embd -> R^n_embd
         
         Args:
             x: Input tensor of shape (batch_size, seq_len, n_embd)
+               Contains attended representations from the attention layer
             
         Returns:
             torch.Tensor: Output tensor of shape (batch_size, seq_len, n_embd)
+                         Contains transformed representations ready for residual connection
         """
+        # First linear transformation: expand from n_embd to 4*n_embd dimensions
+        # This expansion provides the network with a higher-dimensional space for computation
+        # Shape: (batch_size, seq_len, n_embd) -> (batch_size, seq_len, 4*n_embd)
         x = self.c_fc(x)
+        
+        # Apply GELU activation function for non-linearity
+        # GELU is smoother than ReLU and provides better gradients for language modeling
+        # It introduces non-linearity while maintaining differentiability everywhere
         x = self.gelu(x)
+        
+        # Second linear transformation: project back to original n_embd dimensions
+        # This projection combines information from the expanded representation
+        # Shape: (batch_size, seq_len, 4*n_embd) -> (batch_size, seq_len, n_embd)
         x = self.c_proj(x)
+        
+        # Apply dropout for regularization before residual connection
+        # Dropout randomly zeros some neurons during training to prevent overfitting
+        # This is particularly important in the feed-forward layers which have many parameters
         x = self.dropout(x)
+        
         return x
 
 
