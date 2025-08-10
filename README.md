@@ -178,6 +178,83 @@ OpenLLM is **dual-licensed** to provide maximum flexibility:
 - 📝 **RLHF (Reinforcement Learning from Human Feedback)** - Alignment training
 - 📝 **Instruction Tuning** - Chat/instruction-following capabilities
 - 📝 **Parameter-Efficient Fine-tuning** - LoRA, AdaLoRA, QLoRA support
+- 📝 **Multi-Modal Foundation Models** - Vision-Language models (see detailed roadmap below)
+
+#### Multi-Modal Capabilities
+- 📝 **Image Understanding** - Process and understand visual content
+- 📝 **Vision-Language Integration** - Combined image and text processing
+- 📝 **Document AI** - OCR, layout understanding, document analysis
+- 📝 **Video Processing** - Temporal visual understanding and generation
+- 📝 **Audio Integration** - Speech recognition and audio-text alignment
+- 📝 **Multi-Modal Generation** - Text-to-image, image-to-text capabilities
+
+##### 🎯 **Multi-Modal Development Roadmap**
+
+**Phase 1: Foundation (Q1 2025)**
+- 📝 **Vision Encoder Integration** - Add CLIP-style vision encoders
+- 📝 **Image Preprocessing Pipeline** - Standardized image processing and augmentation
+- 📝 **Vision-Text Tokenization** - Unified tokenization for text and image patches
+- 📝 **Cross-Modal Attention** - Attention mechanisms between vision and text
+- 📝 **Multi-Modal Data Loader** - Efficient loading of image-text pairs
+
+**Phase 2: Core Models (Q2 2025)**
+- 📝 **Vision-Language Pre-training** - Large-scale image-text pre-training
+- 📝 **Multi-Modal Architecture** - Unified transformer for vision and language
+- 📝 **Image Captioning** - Generate descriptions from images
+- 📝 **Visual Question Answering** - Answer questions about images
+- 📝 **Multi-Modal Embeddings** - Shared representation space for images and text
+
+**Phase 3: Advanced Capabilities (Q3 2025)**
+- 📝 **Document Understanding** - Layout analysis, table extraction, form processing
+- 📝 **OCR Integration** - Text extraction from images and documents
+- 📝 **Chart and Graph Analysis** - Understanding data visualizations
+- 📝 **Multi-Modal Reasoning** - Complex reasoning across modalities
+- 📝 **Fine-Grained Visual Understanding** - Object detection, segmentation integration
+
+**Phase 4: Generation & Production (Q4 2025)**
+- 📝 **Text-to-Image Generation** - Generate images from text descriptions
+- 📝 **Image Editing** - Modify images based on text instructions
+- 📝 **Multi-Modal Chat** - Conversational AI with image understanding
+- 📝 **Production Inference** - Optimized multi-modal model serving
+- 📝 **API Integration** - REST APIs for multi-modal capabilities
+
+**Phase 5: Advanced Modalities (2026)**
+- 📝 **Video Understanding** - Temporal modeling and video analysis
+- 📝 **Audio Integration** - Speech recognition and audio-visual alignment
+- 📝 **3D Understanding** - Point clouds, 3D scene understanding
+- 📝 **Multi-Modal Memory** - Long-term memory across modalities
+- 📝 **Real-Time Processing** - Live video/audio stream processing
+
+##### 🛠️ **Technical Prerequisites for Multi-Modal**
+
+**Infrastructure Requirements:**
+- 📝 **GPU Memory Optimization** - Efficient handling of large image data
+- 📝 **Distributed Training** - Multi-node training for large multi-modal models
+- 📝 **Mixed Precision** - FP16/BF16 for memory efficiency
+- 📝 **Model Parallelism** - Split large models across multiple GPUs
+- 📝 **Data Pipeline Optimization** - Fast loading of image-text datasets
+
+**Architecture Components:**
+- 📝 **Vision Transformers (ViT)** - Image patch embedding and processing
+- 📝 **Cross-Attention Layers** - Information flow between modalities
+- 📝 **Positional Encodings** - 2D positional encoding for images
+- 📝 **Multi-Modal Fusion** - Effective combination of different modalities
+- 📝 **Adaptive Tokenization** - Dynamic sequence lengths for different modalities
+
+**Dataset Integration:**
+- 📝 **COCO Dataset Support** - Image captioning and object detection
+- 📝 **Visual Genome** - Dense visual understanding annotations
+- 📝 **Conceptual Captions** - Large-scale image-text pairs
+- 📝 **TextVQA** - Visual question answering datasets
+- 📝 **DocVQA** - Document understanding datasets
+- 📝 **Custom Dataset Pipeline** - User-provided multi-modal data
+
+**Evaluation Framework:**
+- 📝 **Multi-Modal Benchmarks** - CLIP score, FID, BLEU for captioning
+- 📝 **Visual Understanding Metrics** - VQA accuracy, object detection mAP
+- 📝 **Cross-Modal Retrieval** - Image-text retrieval evaluation
+- 📝 **Human Evaluation** - Quality assessment for generated content
+- 📝 **Bias Detection** - Fairness evaluation across modalities
 
 #### Production Features
 - 📝 **Model Quantization** - INT8/INT4 quantization for deployment
@@ -218,11 +295,30 @@ OpenLLM is **dual-licensed** to provide maximum flexibility:
 - Distributed training
 - Advanced evaluation metrics
 
+#### **v0.4.0 - Multi-Modal Foundation**
+- Vision encoder integration (CLIP-style)
+- Image-text preprocessing pipeline
+- Basic vision-language models
+- Image captioning and VQA
+
+#### **v0.5.0 - Multi-Modal Capabilities**
+- Document understanding and OCR
+- Advanced multi-modal reasoning
+- Cross-modal attention mechanisms
+- Production multi-modal inference
+
 #### **v1.0.0 - Enterprise Ready**
 - RLHF and instruction tuning
+- Multi-modal chat and generation
 - Production-grade inference
 - Enterprise dashboard
 - Professional support services
+
+#### **v1.5.0 - Advanced Multi-Modal**
+- Text-to-image generation
+- Video and audio processing
+- Real-time multi-modal applications
+- 3D understanding capabilities
 
 ### 🤝 **How to Contribute**
 
