@@ -29,19 +29,67 @@ OpenLLM is an open source project to develop a powerful, flexible, and modular l
 
 ```
 osllm-1/
-├── core/             # Open source components (training, tokenization, inference)
-│   └── src/          # Python source files
-│       ├── download_and_prepare.py    # SQUAD dataset downloader & processor
+├── compare_models.py           # Model comparison and benchmarking utility
+├── configs/                    # Model configuration files
+│   ├── large_model.json       # Large model hyperparameters
+│   ├── medium_model.json      # Medium model hyperparameters
+│   └── small_model.json       # Small model hyperparameters
+├── core/                       # Open source components (training, tokenization, inference)
+│   ├── LICENSE                 # Core module license
+│   ├── README.md              # Core module documentation
+│   └── src/                   # Python source files
+│       ├── data_loader.py              # Dataset loading and preprocessing
+│       ├── download_and_prepare.py     # SQUAD dataset downloader & processor
+│       ├── enterprise_integration.py  # Enterprise feature integration
+│       ├── evaluate_model.py          # Model evaluation and metrics
+│       ├── export_model.py            # Model export to various formats
+│       ├── generate_text.py           # Text generation utilities
+│       ├── inference_server.py        # FastAPI inference server
+│       ├── main.py                    # Main CLI interface
+│       ├── model.py                   # Transformer model architecture
+│       ├── test_model.py              # Model testing utilities
+│       ├── train_model.py             # Model training pipeline
 │       └── train_tokenizer.py         # SentencePiece tokenizer trainer
-├── data/             # Training data and model artifacts
-│   ├── raw/          # Downloaded raw data (temporary)
-│   ├── clean/        # Processed training text
-│   │   └── training_data.txt          # ~41k Wikipedia passages from SQUAD
-│   └── tokenizer/    # Trained tokenizer files
-├── enterprise/       # Enterprise-only modules (e.g., dashboard, RLHF UI)
-├── docs/             # Documentation and community guidelines
-│   └── training_pipeline.md           # Complete training guide
-└── .github/          # GitHub config (PR template, funding, etc.)
+├── data/                       # Training data and model artifacts
+│   ├── raw/                    # Downloaded raw data (temporary)
+│   ├── clean/                  # Processed training text
+│   │   └── training_data.txt   # ~41k Wikipedia passages from SQUAD
+│   └── tokenizer/              # Trained tokenizer files
+│       ├── tokenizer_config.json # Tokenizer configuration
+│       ├── tokenizer.model     # Trained SentencePiece model
+│       └── tokenizer.vocab     # Vocabulary file
+├── docs/                       # Documentation and community guidelines
+│   ├── CODE_OF_CONDUCT.md      # Community guidelines
+│   ├── CONTRIBUTING.md         # Contribution guidelines
+│   ├── COPYRIGHT_HEADER.txt    # Standard copyright header
+│   ├── deployment_guide.md     # Deployment instructions
+│   ├── LICENSES.md            # Licensing information
+│   └── training_pipeline.md   # Complete training guide
+├── enterprise/                 # Enterprise-only modules
+│   └── README.md              # Enterprise features documentation
+├── exports/                    # Exported model formats
+│   ├── huggingface/           # Hugging Face compatible exports
+│   │   ├── config.json        # Model configuration
+│   │   ├── generation_config.json # Generation parameters
+│   │   ├── load_hf_model.py   # Hugging Face loader script
+│   │   ├── pytorch_model.bin  # Model weights
+│   │   ├── tokenizer_config.json # Tokenizer config
+│   │   └── tokenizer.model    # Tokenizer model
+│   └── pytorch/               # PyTorch native exports
+│       ├── config.json        # Model configuration
+│       ├── load_model.py      # PyTorch loader script
+│       ├── model.pt          # Model state dict
+│       └── tokenizer.model   # Tokenizer model
+├── LICENSES/                   # License files
+│   ├── LICENSE-COMMERCIAL     # Commercial license terms
+│   ├── LICENSE-DUAL-INFO      # Dual licensing information
+│   ├── LICENSE-GPL-3.0        # GPL-3.0 license text
+│   └── README.md             # License documentation
+├── models/                     # Trained models and checkpoints
+├── pyproject.toml             # Python project configuration
+├── requirements.txt           # Python dependencies
+├── SECURITY.md               # Security policy and reporting
+└── test_trained_model.py     # Model testing script
 ```
 
 ## 🛠️ Tech Stack
