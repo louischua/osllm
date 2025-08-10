@@ -52,6 +52,54 @@ osllm-1/
 - SentencePiece
 - FastAPI for inference API
 
+## 🚀 Getting Started: Training Your Own Foundation Model
+
+**📚 Follow the Complete Training Pipeline**
+
+To understand how to use OpenLLM scripts to generate foundational models from scratch, please follow our comprehensive training guide:
+
+**👉 [Training Pipeline Documentation](docs/training_pipeline.md)**
+
+This step-by-step guide covers the complete process:
+
+### 📋 **Pipeline Overview:**
+1. **📊 Data Preparation** - Download and process SQUAD dataset (~41k Wikipedia passages)
+2. **🔤 Tokenizer Training** - Train SentencePiece BPE tokenizer on your text corpus
+3. **🏗️ Model Architecture** - Set up GPT-style transformer (Small/Medium/Large configs)
+4. **🎯 Model Training** - Pre-train your language model with modern optimization
+5. **📊 Evaluation** - Assess model quality with perplexity and downstream tasks
+6. **📦 Export & Deploy** - Save models for inference (PyTorch/HuggingFace/ONNX formats)
+
+### ⚡ **Quick Start Commands:**
+```bash
+# 1. Prepare training data
+python core/src/download_and_prepare.py
+
+# 2. Train tokenizer  
+python core/src/train_tokenizer.py --input data/clean/training_data.txt --vocab_size 32000
+
+# 3. Train small model (recommended for beginners)
+python core/src/main.py train-model --model-size small --data-file data/clean/training_data.txt --tokenizer-dir data/tokenizer --output-dir models/my-model
+
+# 4. Evaluate trained model
+python core/src/main.py evaluate --model_path models/my-model --metrics perplexity,generation
+
+# 5. Export for inference
+python core/src/main.py export --model_dir models/my-model --format huggingface --output_dir exports/
+```
+
+### 🎯 **Model Sizes Available:**
+- **Small (~25M params)** - Great for learning and CPU training
+- **Medium (~117M params)** - Balanced performance, GPU recommended  
+- **Large (~350M params)** - High quality, requires powerful GPU
+
+### 📖 **Essential Documentation:**
+- **[Complete Training Guide](docs/training_pipeline.md)** - Detailed step-by-step instructions
+- **[Model Architecture](core/src/model.py)** - GPT implementation details
+- **[CLI Usage](core/src/main.py)** - All available commands and options
+
+**💡 Pro Tip:** Start with the small model configuration to familiarize yourself with the training process, then scale up to larger models as needed!
+
 ## 💼 Licensing
 
 OpenLLM is **dual-licensed** to provide maximum flexibility:
