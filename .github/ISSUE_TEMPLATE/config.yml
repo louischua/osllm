@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 General Discussion
+    url: https://github.com/louischua/openllm/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📚 Documentation
+    url: https://github.com/louischua/openllm/blob/main/docs/training_pipeline.md
+    about: Read the comprehensive training pipeline documentation
+  - name: 🚀 Commercial Licensing
+    url: mailto:louischua@gmail.com?subject=OpenLLM%20Commercial%20License%20Inquiry
+    about: Inquire about commercial licensing options
