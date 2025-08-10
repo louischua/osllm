@@ -127,6 +127,116 @@ OpenLLM is **dual-licensed** to provide maximum flexibility:
 
 💬 **Commercial licensing:** Contact us at [louischua@gmail.com]
 
+## 📋 Project Roadmap & To-Do List
+
+### ✅ **Completed Features**
+
+#### Core Training Pipeline
+- ✅ **Data Processing** - SQUAD dataset download and cleaning (~41k passages)
+- ✅ **Tokenizer Training** - SentencePiece BPE tokenizer with 32k vocabulary
+- ✅ **Model Architecture** - GPT-style transformer (Small/Medium/Large configs)
+- ✅ **Training Loop** - Complete training with optimization, checkpointing, logging
+- ✅ **Model Evaluation** - Perplexity, text generation quality, downstream tasks
+- ✅ **Model Export** - PyTorch native, Hugging Face compatible, ONNX formats
+- ✅ **CLI Interface** - Unified command-line tool for all operations
+
+#### Advanced Features
+- ✅ **Inference Server** - FastAPI REST API for model serving
+- ✅ **Text Generation** - Advanced sampling with temperature, top-k, top-p
+- ✅ **Enterprise Integration** - Plugin system for commercial-only features
+- ✅ **Comprehensive Documentation** - Training pipeline, API docs, examples
+
+#### Project Infrastructure
+- ✅ **Dual Licensing** - GPL-3.0 + Commercial license structure
+- ✅ **Professional Documentation** - Code of Conduct, Contributing guidelines
+- ✅ **GitHub Templates** - Issue templates, PR templates
+- ✅ **Copyright Attribution** - Proper licensing headers in all source files
+
+### 🚧 **In Progress**
+
+#### Model Improvements
+- 🔄 **Extended Training** - Scaling models to higher quality (6k+ steps)
+- 🔄 **Performance Optimization** - Memory efficiency and training speed
+- 🔄 **Hardware Support** - GPU optimization and multi-GPU training
+
+#### Testing & Quality
+- 🔄 **Test Suite** - Comprehensive unit and integration tests
+- 🔄 **CI/CD Pipeline** - Automated testing and deployment
+- 🔄 **Model Benchmarking** - Standardized evaluation protocols
+
+### 🔮 **Planned Features**
+
+#### Core Enhancements
+- 📝 **Multi-Language Support** - Training on multilingual datasets
+- 📝 **Custom Datasets** - Support for user-provided training data
+- 📝 **Advanced Architectures** - Support for newer transformer variants
+- 📝 **Distributed Training** - Multi-node training for large models
+- 📝 **Mixed Precision** - FP16/BF16 training for efficiency
+
+#### Advanced Training
+- 📝 **Fine-tuning Pipeline** - Task-specific model adaptation
+- 📝 **RLHF (Reinforcement Learning from Human Feedback)** - Alignment training
+- 📝 **Instruction Tuning** - Chat/instruction-following capabilities
+- 📝 **Parameter-Efficient Fine-tuning** - LoRA, AdaLoRA, QLoRA support
+
+#### Production Features
+- 📝 **Model Quantization** - INT8/INT4 quantization for deployment
+- 📝 **Batch Inference** - Optimized batch processing
+- 📝 **Streaming Generation** - Real-time text streaming
+- 📝 **Model Caching** - Intelligent model loading and caching
+
+#### Enterprise Features (Commercial License)
+- 📝 **Web Dashboard** - Training monitoring and management UI
+- 📝 **Kubernetes Deployment** - Scalable cloud deployment
+- 📝 **Advanced Analytics** - Training metrics and performance monitoring
+- 📝 **Enterprise Support** - Priority support and consulting
+- 📝 **Custom Training Services** - Professional model training assistance
+
+#### Developer Experience
+- 📝 **Jupyter Notebooks** - Interactive tutorials and examples
+- 📝 **Docker Containers** - Pre-configured development environments
+- 📝 **Model Hub Integration** - Easy sharing and discovery of trained models
+- 📝 **Auto-Documentation** - Automated API documentation generation
+
+#### Research & Experimentation
+- 📝 **Experiment Tracking** - Integration with MLflow/Weights & Biases
+- 📝 **Hyperparameter Optimization** - Automated hyperparameter tuning
+- 📝 **Architecture Search** - Neural architecture search capabilities
+- 📝 **Research Baselines** - Standard benchmarks and comparisons
+
+### 🎯 **Priority Milestones**
+
+#### **v0.2.0 - Production Ready**
+- Enhanced model quality and stability
+- Comprehensive testing and CI/CD
+- Docker containerization
+- Performance optimizations
+
+#### **v0.3.0 - Advanced Training**
+- Fine-tuning capabilities
+- Multi-language support
+- Distributed training
+- Advanced evaluation metrics
+
+#### **v1.0.0 - Enterprise Ready**
+- RLHF and instruction tuning
+- Production-grade inference
+- Enterprise dashboard
+- Professional support services
+
+### 🤝 **How to Contribute**
+
+We welcome contributions to any of these areas! Here's how you can help:
+
+- **🐛 Bug Fixes** - Report and fix issues in existing features
+- **📝 Documentation** - Improve guides, tutorials, and API docs
+- **🔬 Research** - Experiment with new architectures and training methods
+- **🚀 Features** - Implement items from our planned features list
+- **🧪 Testing** - Add tests and improve code quality
+- **💼 Enterprise** - Contribute to commercial-licensed features
+
+See our [Contributing Guide](docs/CONTRIBUTING.md) for detailed instructions!
+
 ## 🤝 Contributing
 
 We welcome contributions from the community! Please read our:
