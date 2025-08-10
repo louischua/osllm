@@ -1,6 +1,4 @@
-OpenLLM is dual-licensed under GPL-3.0 and Commercial License.
-For commercial licensing, contact: louischua@gmail.com
-See docs/LICENSES.md for complete dual licensing information.
+(Full text at: https://www.gnu.org/licenses/gpl-3.0.txt)
 
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -676,25 +674,3 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
-
---------------------------------------------------------------------------------
-
-OpenLLM - Open Source Large Language Model
-Copyright (C) 2024 Louis Chua Bean Chong
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-DUAL LICENSING:
-This software is also available under a commercial license for proprietary use.
-For commercial licensing inquiries, contact: louischua@gmail.com
