@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# Copyright (C) 2024 Louis Chua Bean Chong
+#
+# This file is part of OpenLLM.
+#
+# OpenLLM is dual-licensed:
+# 1. For open source use: GNU General Public License v3.0
+# 2. For commercial use: Commercial License (contact for details)
+#
+# See LICENSE and docs/LICENSES.md for full license information.
+
 """
 OpenLLM - Main CLI Entry Point
 
@@ -833,6 +843,22 @@ Examples:
         help="Metrics to compute"
     )
     parser_eval.set_defaults(func=cmd_evaluate)
+
+    # --- Optional: Enterprise module integration ---
+    # Load enterprise-only CLI commands if an external module is available.
+    # This preserves the core's open-source nature while allowing private
+    # extensions to register additional commands without modifying core code.
+    try:
+        from enterprise_integration import load_enterprise_cli
+
+        if load_enterprise_cli(subparsers):
+            print("🧩 Enterprise extensions detected and loaded")
+        else:
+            # No enterprise plugin found (normal for open-source-only usage)
+            pass
+    except Exception:
+        # Never fail core CLI due to enterprise integration issues
+        pass
     
     return parser
 

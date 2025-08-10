@@ -9,10 +9,10 @@ description = "Open Source Large Language Model Training Pipeline"
 readme = "README.md"
 license = {text = "GPLv3"}
 authors = [
-    {name = "OpenLLM Contributors", email = "contributors@openllm.dev"}
+    {name = "Louis Chua Bean Chong", email = "louischua@gmail.com"}
 ]
 maintainers = [
-    {name = "OpenLLM Contributors", email = "contributors@openllm.dev"}
+    {name = "Louis Chua Bean Chong", email = "louischua@gmail.com"}
 ]
 keywords = ["llm", "language-model", "transformer", "nlp", "machine-learning", "pytorch"]
 classifiers = [
@@ -73,11 +73,11 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/openllm"
-Documentation = "https://github.com/yourusername/openllm/blob/main/docs/training_pipeline.md"
-Repository = "https://github.com/yourusername/openllm"
-"Bug Tracker" = "https://github.com/yourusername/openllm/issues"
-Changelog = "https://github.com/yourusername/openllm/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/louischua/openllm"
+Documentation = "https://github.com/louischua/openllm/blob/main/docs/training_pipeline.md"
+Repository = "https://github.com/louischua/openllm"
+"Bug Tracker" = "https://github.com/louischua/openllm/issues"
+Changelog = "https://github.com/louischua/openllm/blob/main/CHANGELOG.md"
 
 [project.scripts]
 openllm = "core.src.main:main"

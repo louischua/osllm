@@ -1,5 +1,8 @@
 # OpenLLM: Open Source Large Language Model
 
+<!-- Copyright (C) 2024 Louis Chua Bean Chong -->
+<!-- This file is part of OpenLLM - dual-licensed under GPLv3 and Commercial License -->
+
 ## 🌟 Overview
 
 OpenLLM is an open source project to develop a powerful, flexible, and modular large language model (LLM) that is openly licensed under GPLv3 for research and community use, with a commercial license available for enterprise applications.
@@ -51,9 +54,23 @@ osllm-1/
 
 ## 💼 Licensing
 
-OpenLLM is dual-licensed:
+OpenLLM is **dual-licensed** to provide maximum flexibility:
 
-- GPLv3 for community and academic use
-- Commercial license for closed-source or enterprise deployment
+### 🆓 GPLv3 (Free for Open Source)
+- ✅ **Perfect for:** Research, education, open source projects
+- ✅ **Free to use** and modify
+- ⚠️ **Requirement:** Share modifications under GPL
 
-Contact us at [louischua@gmail.com] for licensing details.
+### 💼 Commercial License
+- ✅ **Perfect for:** Proprietary software, SaaS, enterprise
+- ✅ **No copyleft** restrictions
+- ✅ **Keep modifications private**
+- ✅ **Enterprise support included**
+
+**Quick Guide:**
+- **Open source project?** → Use GPLv3 (free)
+- **Commercial product?** → Get commercial license
+- **Not sure?** → Start with GPLv3, upgrade later
+
+📄 **Full details:** See [`docs/LICENSES.md`](docs/LICENSES.md)  
+💬 **Commercial licensing:** Contact us at [louischua@gmail.com]

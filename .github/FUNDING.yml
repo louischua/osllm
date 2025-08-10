@@ -9,8 +9,8 @@
 
 # Custom funding URLs
 custom: 
-  - "https://github.com/sponsors"  # Generic GitHub Sponsors link
-  - "https://opencollective.com"   # Open Collective for transparent funding
+  - "https://github.com/sponsors"  (pending)# Generic GitHub Sponsors link
+  - "https://opencollective.com/open-source-llm" (pending)   # Open Collective for transparent funding
 
 # Note: Funding links will be activated when the project has:
 # 1. Set up official sponsorship accounts

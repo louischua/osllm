@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# Copyright (C) 2024 Louis Chua Bean Chong
+#
+# This file is part of OpenLLM.
+#
+# OpenLLM is dual-licensed:
+# 1. For open source use: GNU General Public License v3.0
+# 2. For commercial use: Commercial License (contact for details)
+#
+# See LICENSE and docs/LICENSES.md for full license information.
+
 """
 Language Model Training Script
 
@@ -35,7 +45,7 @@ Requirements:
     - SentencePiece  
     - Our model architecture and data loader
 
-Author: OpenLLM Project
+Author: Louis Chua Bean Chong
 License: GPLv3
 """
 

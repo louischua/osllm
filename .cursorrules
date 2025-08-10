@@ -1,0 +1,201 @@
+# OpenLLM Project - Cursor AI Rules
+# This file defines coding preferences and guidelines for the OpenLLM project
+
+## Core Philosophy: Open Source First
+- Always prioritize open source libraries, frameworks, and tools
+- Avoid proprietary or closed-source dependencies
+- When suggesting alternatives, always mention open source options first
+- Prefer MIT, Apache 2.0, BSD, or GPL-licensed solutions
+
+## Technology Stack Preferences
+### Programming Languages
+- Python 3.10+ (primary language)
+- Use standard library when possible before external dependencies
+
+### Machine Learning & AI
+- PyTorch (preferred over TensorFlow)
+- Hugging Face Transformers and Datasets
+- SentencePiece for tokenization
+- ONNX for model export and interoperability
+- Avoid OpenAI API, Anthropic API, or other closed commercial APIs
+
+### Data Processing
+- Pandas, NumPy for data manipulation
+- Requests for HTTP operations
+- JSON/CSV for data formats
+- SQLite or PostgreSQL for databases (avoid proprietary DBs)
+
+### Development Tools
+- Git for version control
+- GitHub for hosting (project is already there)
+- pytest for testing
+- black or autopep8 for code formatting
+- mypy for type checking
+
+### Infrastructure & Deployment
+- Docker for containerization
+- FastAPI for web APIs
+- Uvicorn/Gunicorn for ASGI/WSGI serving
+- Nginx for reverse proxy
+- Linux (Ubuntu/Debian) for production environments
+
+## Coding Guidelines
+### Documentation
+- Use clear, comprehensive docstrings
+- Include type hints for all functions
+- Provide usage examples in docstrings
+- Maintain README files for each major component
+
+### Code Quality
+- Follow PEP 8 style guidelines
+- Use meaningful variable and function names
+- Keep functions focused and single-purpose
+- Include error handling and logging
+
+### Development Comments & Verbosity
+- ALWAYS provide maximum verbose comments during development
+- Explain the "why" behind code decisions, not just the "what"
+- Include detailed inline comments for complex logic
+- Document assumptions, limitations, and edge cases
+- Add TODO/FIXME/NOTE comments for future improvements
+- Comment all algorithm steps and mathematical operations
+- Explain business logic and domain-specific concepts
+- Include references to papers, articles, or documentation when applicable
+- Use multi-line comments for complex explanations
+- Comment non-obvious variable names and their purposes
+- Document performance considerations and trade-offs
+- Add context comments before major code blocks
+- Explain error handling strategies and recovery mechanisms
+
+### Dependencies
+- Minimize external dependencies
+- Pin dependency versions in requirements.txt
+- Document why each dependency is needed
+- Regularly audit dependencies for security and license compliance
+
+## License Compliance
+- All code must be compatible with GPLv3 license
+- Document license information for all dependencies
+- Avoid GPL-incompatible licenses (e.g., some proprietary licenses)
+- Include proper license headers in source files
+
+## AI/ML Specific Guidelines
+### Model Development
+- Train models from scratch when possible
+- Use publicly available datasets
+- Document training procedures and hyperparameters
+- Provide model architecture diagrams and explanations
+
+### Data Ethics
+- Use only publicly available, ethically sourced data
+- Respect data usage rights and attribution
+- Avoid biased or problematic datasets
+- Document data sources and preprocessing steps
+
+### Reproducibility
+- Set random seeds for reproducible results
+- Document exact versions of all dependencies
+- Provide clear setup and training instructions
+- Save model checkpoints and training logs
+
+## Architecture Patterns
+### Modularity
+- Keep components loosely coupled
+- Use dependency injection patterns
+- Separate concerns (data, model, training, evaluation)
+- Make components easily testable
+
+### Configuration
+- Use configuration files (JSON/YAML) for hyperparameters
+- Avoid hardcoded values
+- Support environment variable overrides
+- Provide sensible defaults
+
+### Error Handling
+- Use specific exception types
+- Provide helpful error messages
+- Log errors with context
+- Graceful degradation when possible
+
+## Performance Considerations
+### Memory Management
+- Optimize for limited memory environments
+- Use gradient accumulation for large effective batch sizes
+- Clean up GPU memory explicitly
+- Monitor memory usage during training
+
+### Computation
+- Support both CPU and GPU training
+- Use mixed precision when beneficial
+- Implement gradient checkpointing for memory savings
+- Profile code to identify bottlenecks
+
+## Security Guidelines
+### Dependencies
+- Regularly update dependencies for security patches
+- Use tools like safety or bandit for security scanning
+- Avoid dependencies with known vulnerabilities
+- Review dependency licenses and security practices
+
+### Data Handling
+- Sanitize user inputs
+- Avoid storing sensitive information in code
+- Use secure communication protocols
+- Implement proper access controls
+
+## Community & Collaboration
+### Code Contributions
+- Welcome contributions from the community
+- Provide clear contribution guidelines
+- Use issue templates for bug reports and features
+- Maintain a friendly, inclusive environment
+
+### Knowledge Sharing
+- Share learnings through documentation
+- Provide tutorials and examples
+- Engage with the open source ML community
+- Credit contributors and inspirations
+
+## When Suggesting Solutions
+1. **First Priority**: Open source, well-maintained libraries
+2. **Second Priority**: Standard library or minimal dependencies
+3. **Last Resort**: Clearly explain if no open source alternative exists
+4. **Always**: Mention licensing implications
+5. **Always**: Consider long-term maintainability and community support
+
+## Example Preferences
+### ✅ Preferred (Open Source)
+- PyTorch over proprietary ML frameworks
+- FastAPI over commercial API frameworks
+- PostgreSQL over Oracle/SQL Server
+- Redis over commercial caching solutions
+- Prometheus/Grafana over commercial monitoring
+- Git over proprietary VCS systems
+
+### ❌ Avoid (Closed Source/Proprietary)
+- OpenAI API calls for model training
+- Proprietary cloud ML services for core functionality
+- Commercial databases for primary storage
+- Closed-source monitoring or logging services
+- Proprietary development tools
+
+## Project-Specific Rules
+### OpenLLM Architecture
+- Maintain clear separation between core (open source) and enterprise modules
+- Core functionality must work without any proprietary dependencies
+- Enterprise features should be optional extensions
+- All training and inference code must be open source
+
+### Model Training
+- No fine-tuning from proprietary models (GPT-4, Claude, etc.)
+- Train from scratch using open datasets
+- Document all data sources and preprocessing
+- Provide reproducible training scripts
+
+### API Design
+- RESTful APIs using FastAPI
+- Clear OpenAPI documentation
+- Support for ONNX model serving
+- No dependencies on commercial API services
+
+Remember: The goal is to build a completely open, transparent, and community-driven language model project that anyone can use, modify, and deploy without restrictions or proprietary dependencies.
