@@ -74,7 +74,7 @@ OpenLLM is **dual-licensed** to provide maximum flexibility:
 
 **License Files:**
 - [`LICENSE`](LICENSE) - GPL-3.0 license text (GitHub recognized)
-- [`LICENSE-COMMERCIAL`](LICENSE-COMMERCIAL) - Commercial license terms
+- [`LICENSES/LICENSE-COMMERCIAL`](LICENSES/LICENSE-COMMERCIAL) - Commercial license terms
 - [`docs/LICENSES.md`](docs/LICENSES.md) - Complete dual licensing guide
 
 💬 **Commercial licensing:** Contact us at [louischua@gmail.com]
