@@ -1,0 +1,167 @@
+name: 🚨 Code of Conduct Violation Report
+description: Report a violation of our community Code of Conduct
+title: "[CoC Violation] "
+labels: ["code-of-conduct", "urgent"]
+assignees:
+  - louischua
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Code of Conduct Violation Report
+        
+        Thank you for helping to maintain a safe and welcoming community. All reports are taken seriously and will be handled with discretion.
+        
+        **Note:** For severe issues (harassment, threats, doxxing), please email directly to `louischua@gmail.com` with subject `[OpenLLM CoC URGENT]`
+
+  - type: checkboxes
+    id: urgency
+    attributes:
+      label: Urgency Level
+      description: How urgent is this violation?
+      options:
+        - label: "🟡 Low - Minor guideline violation"
+        - label: "🟠 Medium - Repeated minor violations or moderate issue"  
+        - label: "🔴 High - Harassment, discrimination, or threats"
+        - label: "🚨 Critical - Immediate safety concern"
+
+  - type: dropdown
+    id: violation_type
+    attributes:
+      label: Type of Violation
+      description: What type of Code of Conduct violation occurred?
+      options:
+        - Harassment or bullying
+        - Discrimination
+        - Inappropriate content
+        - Unprofessional conduct
+        - Disruption of discussions
+        - Spam or self-promotion
+        - Privacy violation
+        - Other (please specify)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Where did this occur?
+      description: Which platform or space did the violation happen on?
+      options:
+        - GitHub Issues
+        - GitHub Pull Requests
+        - GitHub Discussions
+        - Email communication
+        - Social media
+        - Conference/Event
+        - Other (please specify)
+    validations:
+      required: true
+
+  - type: input
+    id: involved_users
+    attributes:
+      label: Involved Users
+      description: GitHub usernames of people involved (if known)
+      placeholder: "@username1, @username2"
+
+  - type: textarea
+    id: incident_description
+    attributes:
+      label: Incident Description
+      description: Please provide a detailed description of what happened
+      placeholder: |
+        Describe the incident including:
+        - What specifically happened
+        - When it occurred (date/time if possible)
+        - Context leading up to the incident
+        - Any attempts to resolve it directly
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or Links
+      description: Links to relevant comments, screenshots, or other evidence
+      placeholder: |
+        Please provide:
+        - Links to specific comments or posts
+        - Screenshots (if helpful)
+        - Any other relevant evidence
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: How has this violation affected you or the community?
+      placeholder: |
+        Describe the impact:
+        - How you were affected
+        - Impact on other community members
+        - Effect on project participation
+
+  - type: dropdown
+    id: reporter_role
+    attributes:
+      label: Your Role
+      description: What is your relationship to the OpenLLM project?
+      options:
+        - Community member
+        - Contributor
+        - Commercial license holder
+        - First-time visitor
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired_outcome
+    attributes:
+      label: Desired Outcome
+      description: What would you like to see happen as a result of this report?
+      placeholder: |
+        What outcome are you hoping for:
+        - Education/warning for the individual
+        - Public or private apology
+        - Temporary suspension
+        - Other specific actions
+
+  - type: checkboxes
+    id: confidentiality
+    attributes:
+      label: Confidentiality Preferences
+      description: How would you like this report to be handled?
+      options:
+        - label: "Keep my identity confidential in any investigation"
+        - label: "I'm okay with my identity being shared with the reported individual"
+        - label: "I prefer this to be handled publicly (if appropriate)"
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Reporting Agreement
+      description: Please confirm you understand the reporting process
+      options:
+        - label: "I have read the [Code of Conduct](https://github.com/louischua/openllm/blob/main/docs/CODE_OF_CONDUCT.md)"
+        - label: "I understand this report will be reviewed by project maintainers"
+        - label: "I confirm this report is made in good faith"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## What Happens Next?
+        
+        1. **Acknowledgment** - You'll receive confirmation within 48 hours
+        2. **Investigation** - We'll review the situation thoroughly
+        3. **Action** - Appropriate measures will be taken based on our CoC
+        4. **Follow-up** - You'll be informed of the outcome (as appropriate)
+        
+        **For urgent matters:** Email `louischua@gmail.com` directly
+        
+        Thank you for helping maintain a welcoming community! 🙏

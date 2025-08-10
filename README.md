@@ -78,3 +78,14 @@ OpenLLM is **dual-licensed** to provide maximum flexibility:
 - [`docs/LICENSES.md`](docs/LICENSES.md) - Complete dual licensing guide
 
 💬 **Commercial licensing:** Contact us at [louischua@gmail.com]
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Please read our:
+- [Contributing Guide](docs/CONTRIBUTING.md) - How to contribute to OpenLLM
+- [Code of Conduct](docs/CODE_OF_CONDUCT.md) - Community guidelines and standards
+
+For questions or support, feel free to:
+- 📝 Open an [issue](https://github.com/louischua/openllm/issues)
+- 💬 Start a [discussion](https://github.com/louischua/openllm/discussions)
+- 📧 Email us at [louischua@gmail.com]
