@@ -1,0 +1,38 @@
+# OpenLLM Dual License
+
+OpenLLM is dual-licensed under the GNU General Public License v3.0 and a Commercial License.
+
+## For Open Source Use: GPLv3
+
+For open source projects, research, education, and GPL-compatible applications, OpenLLM is available under the GNU General Public License v3.0.
+
+**License:** See `core/LICENSE` for the full GPLv3 text.
+
+## For Commercial Use: Commercial License
+
+For proprietary software, closed-source applications, and commercial products where GPL is not suitable, OpenLLM is available under a commercial license.
+
+**Contact:** louischua@gmail.com for commercial licensing inquiries.
+
+## Quick License Guide
+
+| Use Case | License Required |
+|----------|------------------|
+| Open source projects (GPL-compatible) | GPLv3 (Free) |
+| Research & Education | GPLv3 (Free) |
+| Personal projects | GPLv3 (Free) |
+| Commercial/Proprietary software | Commercial License |
+| SaaS platforms | Commercial License |
+| Mobile/Desktop apps | Commercial License |
+
+## Copyright
+
+```
+Copyright (C) 2024 Louis Chua Bean Chong
+
+This project is dual-licensed under:
+- GNU General Public License v3.0 (for open source use)
+- Commercial License (for proprietary use)
+```
+
+For detailed licensing information, see `docs/LICENSES.md`.

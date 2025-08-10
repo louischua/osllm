@@ -1,0 +1,309 @@
+# OpenLLM Project .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# ML/AI specific
+# Large model files
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Dataset files (except sample data)
+data/raw/*
+!data/raw/.gitkeep
+data/clean/*.txt
+!data/clean/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Tokenizer files (generated)
+data/tokenizer/*
+!data/tokenizer/.gitkeep
+
+# Model checkpoints and outputs
+models/
+outputs/
+runs/
+wandb/
+lightning_logs/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Weights & Biases
+wandb/
+
+# TensorBoard logs
+logs/
+tensorboard/
+
+# Hydra
+outputs/
+.hydra/
+
+# Config files with secrets
+config/secrets.yaml
+config/local.yaml
+**/secrets.yaml
+**/local.yaml
+
+# Enterprise directory (not in open source)
+enterprise/
+!enterprise/README.md
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Log files
+*.log
+logs/
+
+# Cache directories
+.cache/
+cache/
+__pycache__/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Documentation builds
+docs/_build/
+docs/build/
+site/
+
+# PyTorch specific
+*.pth
+*.pt
+checkpoints/
+
+# Transformers cache
+transformers_cache/
+.cache/huggingface/
+
+# ONNX files
+*.onnx
+
+# Conda
+.conda/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# PyCharm
+.idea/
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# Local development
+local/
+scratch/
+playground/
+experiments/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+*.lnk
+
+# Linux
+*~
+
+# macOS
+.AppleDouble
+.LSOverride
+Icon
+.DocumentRevisions-V100
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Package files
+*.deb
+*.rpm
+*.msi
+*.dmg
+*.iso
+
+# Compressed files (unless specifically needed)
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+
+# Node.js (if using any JS tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+.dockerignore
+Dockerfile.local
+docker-compose.override.yml
+
+# Kubernetes
+*.kubeconfig
+k8s/secrets/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# AWS
+.aws/
+
+# Google Cloud
+.gcloud/
+*.json
+
+# Azure
+.azure/
+
+# API keys and secrets
+.env
+.env.local
+.env.*.local
+config.json
+secrets.json
+credentials.json
+service-account.json
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Redis dump
+dump.rdb
+
+# Large files (use Git LFS if needed)
+*.bin
+*.dat
+*.model
+*.vocab
+
+# Ignore specific large training data
+squad_*.json
+training_data_large.txt
+wikipedia_*.txt
+
+# Ignore benchmark results
+benchmark_results/
+evaluation_results/
+
+# Ignore distributed training artifacts
+nccl_*
+master_*.cursorrules

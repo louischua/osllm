@@ -1,0 +1,44 @@
+# OpenLLM Project Dependencies
+# Core ML and NLP libraries
+torch>=2.0.0
+transformers>=4.30.0
+tokenizers>=0.13.0
+sentencepiece>=0.1.99
+
+# Data processing and utilities
+requests>=2.31.0
+tqdm>=4.65.0
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Development and testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.0.0
+flake8>=6.0.0
+isort>=5.12.0
+mypy>=1.4.0
+
+# Inference and serving (optional, for future use)
+fastapi>=0.100.0
+uvicorn>=0.22.0
+
+# Visualization and monitoring (optional)
+matplotlib>=3.7.0
+seaborn>=0.12.0
+wandb>=0.15.0
+
+# Configuration management
+pydantic>=2.0.0
+hydra-core>=1.3.0
+
+# ONNX export support (optional)
+onnx>=1.14.0
+onnxruntime>=1.15.0
+
+# System monitoring
+psutil>=5.9.0
+
+# Development tools
+pre-commit>=3.3.0
+jupyter>=1.0.0

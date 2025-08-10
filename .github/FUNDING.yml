@@ -1,0 +1,20 @@
+# GitHub Sponsors funding configuration for OpenLLM
+# This file is used by GitHub to display funding options on the repository
+
+# GitHub Sponsors (replace with actual GitHub username when sponsorship is set up)
+# github: [username1, username2]
+
+# Open Collective (for transparent community funding)
+# open_collective: openllm
+
+# Custom funding URLs
+custom: 
+  - "https://github.com/sponsors"  (pending)# Generic GitHub Sponsors link
+  - "https://opencollective.com/open-source-llm" (pending)   # Open Collective for transparent funding
+
+# Note: Funding links will be activated when the project has:
+# 1. Set up official sponsorship accounts
+# 2. Established a governance model for fund usage
+# 3. Created a transparent funding policy
+#
+# Current status: Project is in early development, funding options TBD

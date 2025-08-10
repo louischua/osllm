@@ -1,0 +1,88 @@
+# OpenLLM Commercial License
+
+**COMMERCIAL LICENSE AGREEMENT**
+
+This Commercial License Agreement ("Agreement") is entered into between Louis Chua Bean Chong ("Licensor") and the entity or individual purchasing this license ("Licensee").
+
+## 1. GRANT OF RIGHTS
+
+Subject to the terms and conditions of this Agreement, Licensor hereby grants to Licensee a non-exclusive, non-transferable license to:
+
+a) **Use** the OpenLLM software and related documentation in commercial applications
+b) **Modify** the software for internal use and commercial products  
+c) **Distribute** the software as part of commercial products or services
+d) **Create derivative works** for commercial purposes
+e) **Keep modifications private** without obligation to share source code
+
+## 2. PERMITTED USES
+
+This license explicitly permits:
+- Integration into proprietary/closed-source software
+- Commercial distribution and sale of products containing OpenLLM
+- SaaS platforms and web services using OpenLLM
+- Mobile and desktop applications incorporating OpenLLM
+- Enterprise AI solutions and custom implementations
+- Reselling or sublicensing as part of larger solutions
+
+## 3. RESTRICTIONS
+
+Licensee may NOT:
+- Remove copyright notices or license attributions
+- Use Licensor's trademarks without permission
+- Claim ownership of the original OpenLLM software
+- Violate applicable export control laws
+
+## 4. ENTERPRISE FEATURES ACCESS
+
+This commercial license includes access to:
+- Enterprise-only modules and features
+- Priority technical support
+- Commercial deployment assistance
+- Custom feature development (if applicable)
+- Extended warranty and service level agreements
+
+## 5. ATTRIBUTION REQUIREMENTS
+
+Licensee must include the following attribution in their product documentation:
+
+```
+This software contains OpenLLM (https://github.com/louischua/openllm)
+Copyright (C) 2024 Louis Chua Bean Chong
+Licensed under Commercial License
+```
+
+## 6. WARRANTY AND SUPPORT
+
+**Limited Warranty:** Software is provided with a 90-day warranty against material defects.
+
+**Support:** Commercial license includes:
+- Email support with 48-hour response time
+- Access to enterprise documentation
+- Priority bug fixes and updates
+
+## 7. LIABILITY LIMITATION
+
+IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF THIS SOFTWARE.
+
+## 8. TERMINATION
+
+This license automatically terminates if Licensee breaches any terms. Upon termination, Licensee must cease all use and destroy all copies.
+
+## 9. PRICING AND TERMS
+
+**License Fee:** As specified in the accompanying purchase agreement
+**Duration:** Perpetual license with optional annual support subscription
+**Scope:** [To be specified based on use case - per-developer, per-deployment, revenue-based, etc.]
+
+## 10. GOVERNING LAW
+
+This Agreement shall be governed by Singapore law.
+
+---
+
+**For licensing inquiries and purchase:**
+- Email: louischua@gmail.com
+- Website: https://github.com/louischua/openllm
+
+**License Version:** 1.0
+**Effective Date:** [Date]

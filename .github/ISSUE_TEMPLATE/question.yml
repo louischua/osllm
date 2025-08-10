@@ -1,0 +1,119 @@
+name: ❓ Question
+description: Ask a question about using OpenLLM
+title: "[Question]: "
+labels: ["question", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about OpenLLM? We're here to help! 🤝
+        
+        Please check the documentation first, but don't hesitate to ask if you need clarification.
+
+  - type: checkboxes
+    id: documentation-check
+    attributes:
+      label: Documentation Check
+      description: Have you checked the existing documentation?
+      options:
+        - label: I have read the main README.md
+        - label: I have checked docs/training_pipeline.md
+        - label: I have tried the CLI help commands (--help)
+        - label: I have searched existing issues and discussions
+
+  - type: dropdown
+    id: question-category
+    attributes:
+      label: Question Category
+      description: What is your question about?
+      options:
+        - Installation and setup
+        - Data preparation
+        - Tokenizer training
+        - Model training
+        - Performance and optimization
+        - Troubleshooting
+        - Best practices
+        - Architecture and design
+        - Contributing
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: |
+        Please be as specific as possible. Include:
+        - What you're trying to accomplish
+        - What you've already tried
+        - Any specific errors or unexpected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide any relevant context that might help us answer your question
+      placeholder: |
+        - Your use case or project goals
+        - Your level of experience with ML/NLP
+        - Any constraints or requirements
+        - Similar tools you've used before
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (if relevant)
+      description: If your question is technical, please share your environment details
+      placeholder: |
+        - OS: [e.g., Ubuntu 22.04, macOS 13.0, Windows 11]
+        - Python version: [e.g., 3.10.5]
+        - Hardware: [e.g., GPU model, RAM amount]
+        - OpenLLM version: [e.g., v0.1.0, latest commit]
+    validations:
+      required: false
+
+  - type: textarea
+    id: attempted-solutions
+    attributes:
+      label: What Have You Tried?
+      description: Let us know what you've already attempted
+      placeholder: |
+        - Commands you've run
+        - Documentation you've read
+        - Solutions you've tried
+        - Errors you've encountered
+    validations:
+      required: false
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgency
+      description: How urgent is this question for you?
+      options:
+        - Not urgent - just curious
+        - Moderate - would help my project
+        - High - blocking my current work
+        - Critical - urgent deadline
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: follow-up
+    attributes:
+      label: Follow-up
+      description: How can we help beyond answering your question?
+      options:
+        - label: I'd like to help improve documentation based on this question
+        - label: I'm interested in contributing to the project
+        - label: I might have follow-up questions
+        - label: I can help answer similar questions from other users

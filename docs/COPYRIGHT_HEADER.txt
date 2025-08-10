@@ -1,0 +1,42 @@
+# Copyright Header Template for OpenLLM
+
+Add this header to the top of all Python source files:
+
+```python
+# Copyright (C) 2024 Louis Chua Bean Chong
+#
+# This file is part of OpenLLM.
+#
+# OpenLLM is dual-licensed:
+# 1. For open source use: GNU General Public License v3.0
+# 2. For commercial use: Commercial License (contact for details)
+#
+# See LICENSE and docs/LICENSES.md for full license information.
+```
+
+For other file types:
+
+## JavaScript/TypeScript:
+```javascript
+/*
+ * Copyright (C) 2024 Louis Chua Bean Chong
+ *
+ * This file is part of OpenLLM.
+ * OpenLLM is dual-licensed under GPLv3 and Commercial License.
+ * See LICENSE and docs/LICENSES.md for details.
+ */
+```
+
+## Shell scripts:
+```bash
+#!/bin/bash
+# Copyright (C) 2024 Louis Chua Bean Chong
+# This file is part of OpenLLM - dual-licensed under GPLv3 and Commercial License
+# See LICENSE and docs/LICENSES.md for details.
+```
+
+## Markdown/Documentation:
+```markdown
+<!-- Copyright (C) 2024 Louis Chua Bean Chong -->
+<!-- This file is part of OpenLLM - dual-licensed under GPLv3 and Commercial License -->
+```
