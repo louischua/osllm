@@ -19,16 +19,38 @@ OpenLLM is an open source project to develop a powerful, flexible, and modular l
 
 ```python
 # Install and use the pre-trained model
-pip install transformers torch sentencepiece
+pip install torch sentencepiece
 
-from transformers import AutoTokenizer, AutoModelForCausalLM
-tokenizer = AutoTokenizer.from_pretrained("lemms/openllm-small-extended-6k")
-model = AutoModelForCausalLM.from_pretrained("lemms/openllm-small-extended-6k")
+# Load the model and tokenizer
+import torch
+import sentencepiece as spm
+import sys
+import os
+
+# Add the core/src directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'core', 'src'))
+from model import create_model
+
+# Load tokenizer
+tokenizer = spm.SentencePieceProcessor()
+tokenizer.load("data/tokenizer/tokenizer.model")
+
+# Load model
+model = create_model("small")
+checkpoint = torch.load("models/small-extended-6k/best_model.pt", map_location="cpu")
+model.load_state_dict(checkpoint['model_state_dict'])
+model.eval()
 
 # Generate text
-inputs = tokenizer("The future of AI", return_tensors="pt")
-outputs = model.generate(inputs.input_ids, max_new_tokens=50)
-print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+text = "The future of AI"
+tokens = tokenizer.encode(text)
+inputs = torch.tensor([tokens])
+
+with torch.no_grad():
+    outputs = model.generate(inputs, max_new_tokens=50, temperature=0.7)
+    
+generated_text = tokenizer.decode(outputs[0].tolist())
+print(generated_text)
 ```
 
 ## 🚀 Key Features
@@ -132,18 +154,42 @@ We have a pre-trained OpenLLM model available on Hugging Face that you can use i
 
 **🔗 Model:** [lemms/openllm-small-extended-6k](https://huggingface.co/lemms/openllm-small-extended-6k)
 
+**💡 Note:** The Hugging Face model requires custom loading due to the custom architecture. For the simplest experience, use the local model approach below.
+
 ```python
 # Install and use the pre-trained model
-pip install transformers torch sentencepiece
+pip install torch sentencepiece
 
-from transformers import AutoTokenizer, AutoModelForCausalLM
-tokenizer = AutoTokenizer.from_pretrained("lemms/openllm-small-extended-6k")
-model = AutoModelForCausalLM.from_pretrained("lemms/openllm-small-extended-6k")
+# Load the model and tokenizer
+import torch
+import sentencepiece as spm
+import sys
+import os
+
+# Add the core/src directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'core', 'src'))
+from model import create_model
+
+# Load tokenizer
+tokenizer = spm.SentencePieceProcessor()
+tokenizer.load("data/tokenizer/tokenizer.model")
+
+# Load model
+model = create_model("small")
+checkpoint = torch.load("models/small-extended-6k/best_model.pt", map_location="cpu")
+model.load_state_dict(checkpoint['model_state_dict'])
+model.eval()
 
 # Generate text
-inputs = tokenizer("The future of AI", return_tensors="pt")
-outputs = model.generate(inputs.input_ids, max_new_tokens=50)
-print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+text = "The future of AI"
+tokens = tokenizer.encode(text)
+inputs = torch.tensor([tokens])
+
+with torch.no_grad():
+    outputs = model.generate(inputs, max_new_tokens=50, temperature=0.7)
+    
+generated_text = tokenizer.decode(outputs[0].tolist())
+print(generated_text)
 ```
 
 ### **📚 Documentation**
