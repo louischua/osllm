@@ -13,7 +13,7 @@ OpenLLM is an open source project to develop a powerful, flexible, and modular l
 ✅ **Inference Server:** FastAPI-based production-ready server  
 ✅ **Training Pipeline:** Complete end-to-end training workflow  
 ✅ **Documentation:** Comprehensive guides and examples  
-✅ **Testing:** Model evaluation and benchmarking tools
+✅ **Test Suite:** Comprehensive unit and integration tests
 
 ## 🚀 Key Features
 
@@ -161,6 +161,34 @@ print(generated_text)
 - **[🚀 Deployment Guide](docs/deployment-guide.md)** - Production deployment with Docker & Kubernetes
 - **[🏗️ Training Guide](docs/training_pipeline.md)** - Train your own models from scratch
 - **[🗺️ Roadmap](docs/roadmap.md)** - Development roadmap and future plans
+
+### **🧪 Testing**
+
+Our comprehensive test suite ensures code quality and reliability:
+
+- **[🧪 Test Suite](tests/)** - Complete test coverage for all components
+- **[📊 Test Coverage](tests/README.md)** - Detailed testing documentation and guidelines
+- **[⚡ Quick Test Run](tests/run_tests.py)** - Easy test execution with coverage reporting
+
+**Run the tests:**
+```bash
+# Install test dependencies
+pip install -r tests/requirements-test.txt
+
+# Run all tests
+python tests/run_tests.py
+
+# Run specific test modules
+python -m pytest tests/test_model.py -v
+python -m pytest tests/test_training.py -v
+python -m pytest tests/test_inference.py -v
+```
+
+**Test Coverage:**
+- ✅ **Model Architecture** - GPT model, attention, and configuration tests
+- ✅ **Training Pipeline** - Data loading, training loop, and evaluation
+- ✅ **Inference Server** - API endpoints, text generation, and performance
+- ✅ **Integration Tests** - End-to-end workflow validation
 
 ### **📊 Model Performance**
 
