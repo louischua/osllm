@@ -15,45 +15,6 @@ OpenLLM is an open source project to develop a powerful, flexible, and modular l
 ✅ **Documentation:** Comprehensive guides and examples  
 ✅ **Testing:** Model evaluation and benchmarking tools
 
-### **⚡ Quick Start (30 seconds)**
-
-```python
-# Install and use the pre-trained model
-pip install torch sentencepiece huggingface_hub
-
-# Load the model and tokenizer from Hugging Face
-import torch
-import sentencepiece as spm
-from huggingface_hub import hf_hub_download
-import sys
-import os
-
-# Add the core/src directory to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'core', 'src'))
-from model import create_model
-
-# Download and load tokenizer from Hugging Face
-tokenizer = spm.SentencePieceProcessor()
-tokenizer.load(hf_hub_download("lemms/openllm-small-extended-6k", "tokenizer.model"))
-
-# Download and load model from Hugging Face
-model = create_model("small")
-checkpoint = torch.load(hf_hub_download("lemms/openllm-small-extended-6k", "pytorch_model.bin"), map_location="cpu")
-model.load_state_dict(checkpoint)
-model.eval()
-
-# Generate text
-text = "The future of AI"
-tokens = tokenizer.encode(text)
-inputs = torch.tensor([tokens])
-
-with torch.no_grad():
-    outputs = model.generate(inputs, max_new_tokens=50, temperature=0.7)
-    
-generated_text = tokenizer.decode(outputs[0].tolist())
-print(generated_text)
-```
-
 ## 🚀 Key Features
 
 - ✔️ Pretraining and fine-tuning pipeline
