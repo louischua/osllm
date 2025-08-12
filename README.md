@@ -73,6 +73,14 @@ osllm-1/
 │   ├── deployment_guide.md     # Deployment instructions
 │   ├── LICENSES.md            # Licensing information
 │   └── training_pipeline.md   # Complete training guide
+├── tests/                      # Comprehensive test suite
+│   ├── __init__.py            # Test package initialization
+│   ├── README.md              # Test suite documentation and guidelines
+│   ├── requirements-test.txt  # Test dependencies
+│   ├── run_tests.py           # Main test runner with coverage reporting
+│   ├── test_model.py          # Model architecture and configuration tests
+│   ├── test_training.py       # Training pipeline and data loader tests
+│   └── test_inference.py      # Inference server and API tests
 ├── enterprise/                 # Enterprise-only modules
 │   └── README.md              # Enterprise features documentation
 ├── exports/                    # Exported model formats
