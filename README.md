@@ -124,7 +124,7 @@ osllm-1/
 - SentencePiece
 - FastAPI for inference API
 
-## 🚀 Getting Started: Using OpenLLM Models
+## 🚀 Getting Started
 
 ### **🎯 Quick Start: Use Our Pre-trained Model**
 
@@ -133,486 +133,36 @@ We have a pre-trained OpenLLM model available on Hugging Face that you can use i
 **🔗 Model:** [lemms/openllm-small-extended-6k](https://huggingface.co/lemms/openllm-small-extended-6k)
 
 ```python
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
+# Install and use the pre-trained model
+pip install transformers torch sentencepiece
 
-# Load the pre-trained model
-model_name = "lemms/openllm-small-extended-6k"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name)
+from transformers import AutoTokenizer, AutoModelForCausalLM
+tokenizer = AutoTokenizer.from_pretrained("lemms/openllm-small-extended-6k")
+model = AutoModelForCausalLM.from_pretrained("lemms/openllm-small-extended-6k")
 
 # Generate text
-prompt = "The history of artificial intelligence"
-inputs = tokenizer(prompt, return_tensors="pt")
-
-with torch.no_grad():
-    outputs = model.generate(
-        inputs.input_ids,
-        max_new_tokens=50,
-        temperature=0.7,
-        top_k=40,
-        do_sample=True
-    )
-
-generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-print(generated_text)
+inputs = tokenizer("The future of AI", return_tensors="pt")
+outputs = model.generate(inputs.input_ids, max_new_tokens=50)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 ```
 
-### **🖥️ Using the Inference Server**
+### **📚 Documentation**
 
-For production deployment and API access, use our FastAPI inference server:
+- **[📖 User Guide](docs/user-guide.md)** - Complete usage instructions and examples
+- **[🚀 Deployment Guide](docs/deployment-guide.md)** - Production deployment with Docker & Kubernetes
+- **[🏗️ Training Guide](docs/training_pipeline.md)** - Train your own models from scratch
+- **[🗺️ Roadmap](docs/roadmap.md)** - Development roadmap and future plans
 
-#### **1. Start the Inference Server**
+### **📊 Model Performance**
 
-```bash
-# Start the server with the pre-trained model
-python core/src/main.py inference \
-    --model-path exports/huggingface-6k/huggingface \
-    --host 0.0.0.0 \
-    --port 8000
-```
-
-#### **2. API Endpoints**
-
-Once the server is running, you can access these endpoints:
-
-**Text Generation:**
-```bash
-curl -X POST "http://localhost:8000/generate" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "prompt": "The history of artificial intelligence",
-       "max_tokens": 50,
-       "temperature": 0.7,
-       "top_k": 40
-     }'
-```
-
-**Model Information:**
-```bash
-curl "http://localhost:8000/model-info"
-```
-
-**Health Check:**
-```bash
-curl "http://localhost:8000/health"
-```
-
-#### **3. Python Client Example**
-
-```python
-import requests
-import json
-
-# Server configuration
-SERVER_URL = "http://localhost:8000"
-
-def generate_text(prompt, max_tokens=50, temperature=0.7, top_k=40):
-    """Generate text using the OpenLLM inference server."""
-    
-    payload = {
-        "prompt": prompt,
-        "max_tokens": max_tokens,
-        "temperature": temperature,
-        "top_k": top_k
-    }
-    
-    response = requests.post(f"{SERVER_URL}/generate", json=payload)
-    
-    if response.status_code == 200:
-        result = response.json()
-        return result["generated_text"]
-    else:
-        raise Exception(f"Error: {response.status_code} - {response.text}")
-
-# Example usage
-try:
-    generated = generate_text("Machine learning algorithms")
-    print(f"Generated: {generated}")
-except Exception as e:
-    print(f"Error: {e}")
-```
-
-#### **4. Docker Deployment**
-
-```dockerfile
-# Dockerfile for OpenLLM inference server
-FROM python:3.10-slim
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-
-EXPOSE 8000
-
-CMD ["python", "core/src/main.py", "inference", \
-     "--model-path", "exports/huggingface-6k/huggingface", \
-     "--host", "0.0.0.0", "--port", "8000"]
-```
-
-```bash
-# Build and run
-docker build -t openllm-inference .
-docker run -p 8000:8000 openllm-inference
-```
-
-### **📊 Model Performance & Testing**
-
-Our pre-trained model has been thoroughly tested and evaluated:
-
-#### **🧪 Test Results (6k Model)**
 - **Model Size:** 35.8M parameters
 - **Training Steps:** 6,000
-- **Final Training Loss:** 5.4302
-- **Average Perplexity:** 816.04
 - **Context Length:** 512 tokens
 - **Tokenizer:** SentencePiece BPE (32k vocabulary)
 
-#### **🎯 Sample Generation Results**
-```
-Prompt: "The history of artificial intelligence"
-Generated: "is the only 'core' of the two main classes. The two-speaking areas is the largest largest city in the world..."
+**💡 Pro Tip:** For production use, check out our [deployment guide](docs/deployment-guide.md) for Docker and Kubernetes setup!
 
-Prompt: "Machine learning algorithms"
-Generated: ", and is the most popular-term development of the world's economic and cultural rights. By 2014, the United Kingdom..."
 
-Prompt: "The future of technology"
-Generated: "has been the first one of the most popular culture. These institutions were established in the 1980s..."
-```
-
-#### **📈 Performance Characteristics**
-- **Strengths:** Coherent text structure, proper tokenization, stable generation
-- **Areas for Improvement:** High perplexity, repetitive output, context drift
-- **Best Use Cases:** Basic text generation, educational purposes, research experiments
-
-### **📚 Training Your Own Foundation Model**
-
-**📚 Follow the Complete Training Pipeline**
-
-To understand how to use OpenLLM scripts to generate foundational models from scratch, please follow our comprehensive training guide:
-
-**👉 [Training Pipeline Documentation](docs/training_pipeline.md)**
-
-This step-by-step guide covers the complete process:
-
-### 📋 **Pipeline Overview:**
-1. **📊 Data Preparation** - Download and process SQUAD dataset (~41k Wikipedia passages)
-2. **🔤 Tokenizer Training** - Train SentencePiece BPE tokenizer on your text corpus
-3. **🏗️ Model Architecture** - Set up GPT-style transformer (Small/Medium/Large configs)
-4. **🎯 Model Training** - Pre-train your language model with modern optimization
-5. **📊 Evaluation** - Assess model quality with perplexity and downstream tasks
-6. **📦 Export & Deploy** - Save models for inference (PyTorch/HuggingFace/ONNX formats)
-
-### ⚡ **Quick Start Commands:**
-```bash
-# 1. Prepare training data
-python core/src/download_and_prepare.py
-
-# 2. Train tokenizer  
-python core/src/train_tokenizer.py --input data/clean/training_data.txt --vocab_size 32000
-
-# 3. Train small model (recommended for beginners)
-python core/src/main.py train-model --model-size small --data-file data/clean/training_data.txt --tokenizer-dir data/tokenizer --output-dir models/my-model
-
-# 4. Evaluate trained model
-python core/src/main.py evaluate --model_path models/my-model --metrics perplexity,generation
-
-# 5. Export for inference
-python core/src/main.py export --model_dir models/my-model --format huggingface --output_dir exports/
-```
-
-### 🎯 **Model Sizes Available:**
-- **Small (~25M params)** - Great for learning and CPU training
-- **Medium (~117M params)** - Balanced performance, GPU recommended  
-- **Large (~350M params)** - High quality, requires powerful GPU
-
-### 📖 **Essential Documentation:**
-- **[Complete Training Guide](docs/training_pipeline.md)** - Detailed step-by-step instructions
-- **[Model Architecture](core/src/model.py)** - GPT implementation details
-- **[CLI Usage](core/src/main.py)** - All available commands and options
-
-**💡 Pro Tip:** Start with the small model configuration to familiarize yourself with the training process, then scale up to larger models as needed!
-
-## 📖 **Complete User Guide**
-
-### **🎯 Getting Started with OpenLLM**
-
-#### **Option 1: Use Pre-trained Model (Recommended for Beginners)**
-
-1. **Install Dependencies:**
-```bash
-pip install transformers torch sentencepiece requests
-```
-
-2. **Load and Use the Model:**
-```python
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
-
-# Load the model
-model_name = "lemms/openllm-small-extended-6k"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name)
-
-# Generate text
-def generate_text(prompt, max_length=100, temperature=0.7):
-    inputs = tokenizer(prompt, return_tensors="pt")
-    
-    with torch.no_grad():
-        outputs = model.generate(
-            inputs.input_ids,
-            max_new_tokens=max_length,
-            temperature=temperature,
-            top_k=40,
-            do_sample=True,
-            pad_token_id=tokenizer.eos_token_id
-        )
-    
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-# Example usage
-result = generate_text("The future of artificial intelligence")
-print(result)
-```
-
-#### **Option 2: Use Inference Server (Recommended for Production)**
-
-1. **Clone and Setup:**
-```bash
-git clone https://github.com/louischua/openllm.git
-cd openllm
-pip install -r requirements.txt
-```
-
-2. **Start the Server:**
-```bash
-python core/src/main.py inference \
-    --model-path exports/huggingface-6k/huggingface \
-    --host 0.0.0.0 \
-    --port 8000
-```
-
-3. **Use the API:**
-```python
-import requests
-
-def query_model(prompt, max_tokens=50):
-    response = requests.post("http://localhost:8000/generate", json={
-        "prompt": prompt,
-        "max_tokens": max_tokens,
-        "temperature": 0.7,
-        "top_k": 40
-    })
-    return response.json()["generated_text"]
-
-# Test the model
-result = query_model("Explain machine learning")
-print(result)
-```
-
-### **🔧 Advanced Usage**
-
-#### **Custom Generation Parameters**
-
-```python
-# Advanced generation with custom parameters
-def advanced_generate(prompt, **kwargs):
-    inputs = tokenizer(prompt, return_tensors="pt")
-    
-    generation_config = {
-        "max_new_tokens": kwargs.get("max_tokens", 50),
-        "temperature": kwargs.get("temperature", 0.7),
-        "top_k": kwargs.get("top_k", 40),
-        "top_p": kwargs.get("top_p", 0.9),
-        "do_sample": kwargs.get("do_sample", True),
-        "num_beams": kwargs.get("num_beams", 1),
-        "pad_token_id": tokenizer.eos_token_id
-    }
-    
-    with torch.no_grad():
-        outputs = model.generate(inputs.input_ids, **generation_config)
-    
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-# Examples
-creative_text = advanced_generate("Write a story about", temperature=0.9, max_tokens=100)
-focused_text = advanced_generate("Explain quantum physics", temperature=0.3, max_tokens=80)
-```
-
-#### **Batch Processing**
-
-```python
-def batch_generate(prompts, max_tokens=50):
-    """Generate text for multiple prompts efficiently."""
-    results = []
-    
-    for prompt in prompts:
-        result = generate_text(prompt, max_tokens)
-        results.append({"prompt": prompt, "generated": result})
-    
-    return results
-
-# Example
-prompts = [
-    "The history of computers",
-    "Machine learning applications",
-    "Future of technology"
-]
-
-batch_results = batch_generate(prompts)
-for result in batch_results:
-    print(f"Prompt: {result['prompt']}")
-    print(f"Generated: {result['generated']}\n")
-```
-
-### **🚀 Production Deployment**
-
-#### **Docker Deployment**
-
-```dockerfile
-# Dockerfile
-FROM python:3.10-slim
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-
-EXPOSE 8000
-
-CMD ["python", "core/src/main.py", "inference", \
-     "--model-path", "exports/huggingface-6k/huggingface", \
-     "--host", "0.0.0.0", "--port", "8000"]
-```
-
-```bash
-# Build and run
-docker build -t openllm-inference .
-docker run -p 8000:8000 openllm-inference
-```
-
-#### **Kubernetes Deployment**
-
-```yaml
-# deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: openllm-inference
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: openllm-inference
-  template:
-    metadata:
-      labels:
-        app: openllm-inference
-    spec:
-      containers:
-      - name: openllm
-        image: openllm-inference:latest
-        ports:
-        - containerPort: 8000
-        resources:
-          requests:
-            memory: "2Gi"
-            cpu: "1"
-          limits:
-            memory: "4Gi"
-            cpu: "2"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: openllm-service
-spec:
-  selector:
-    app: openllm-inference
-  ports:
-  - port: 80
-    targetPort: 8000
-  type: LoadBalancer
-```
-
-### **📊 Monitoring and Logging**
-
-#### **Health Checks**
-
-```python
-import requests
-import time
-
-def monitor_server(server_url="http://localhost:8000"):
-    """Monitor server health and performance."""
-    
-    try:
-        # Health check
-        health = requests.get(f"{server_url}/health")
-        print(f"Health: {health.status_code}")
-        
-        # Model info
-        info = requests.get(f"{server_url}/model-info")
-        print(f"Model Info: {info.json()}")
-        
-        # Performance test
-        start_time = time.time()
-        response = requests.post(f"{server_url}/generate", json={
-            "prompt": "Test",
-            "max_tokens": 10
-        })
-        end_time = time.time()
-        
-        print(f"Response time: {end_time - start_time:.2f}s")
-        print(f"Status: {response.status_code}")
-        
-    except Exception as e:
-        print(f"Error: {e}")
-
-# Run monitoring
-monitor_server()
-```
-
-### **🔍 Troubleshooting**
-
-#### **Common Issues and Solutions**
-
-1. **Out of Memory Errors:**
-```python
-# Reduce model precision
-model = AutoModelForCausalLM.from_pretrained(
-    model_name, 
-    torch_dtype=torch.float16,  # Use half precision
-    device_map="auto"  # Auto device mapping
-)
-```
-
-2. **Slow Generation:**
-```python
-# Optimize generation parameters
-outputs = model.generate(
-    inputs.input_ids,
-    max_new_tokens=50,
-    do_sample=True,
-    temperature=0.7,
-    top_k=40,
-    use_cache=True,  # Enable caching
-    pad_token_id=tokenizer.eos_token_id
-)
-```
-
-3. **Tokenization Issues:**
-```python
-# Handle long sequences
-def safe_tokenize(text, max_length=512):
-    tokens = tokenizer.encode(text)
-    if len(tokens) > max_length:
-        tokens = tokens[:max_length]
-    return torch.tensor([tokens])
-```
 
 ## 💼 Licensing
 
@@ -1234,6 +784,20 @@ We welcome contributions to any of these areas! Here's how you can help:
 - **💼 Enterprise** - Contribute to commercial-licensed features
 
 See our [Contributing Guide](docs/CONTRIBUTING.md) for detailed instructions!
+
+## 🗺️ **Development Roadmap**
+
+For detailed information about our development plans, milestones, and future features, see our comprehensive roadmap:
+
+**📋 [Complete Development Roadmap](docs/roadmap.md)**
+
+This includes:
+- ✅ **Completed Features** - What we've built so far
+- 🚧 **In Progress** - Current development work
+- 🔮 **Planned Features** - Future capabilities
+- 🎯 **Priority Milestones** - Version releases and timelines
+- 🏆 **Competitive Analysis** - Market positioning
+- ⚠️ **Risk Assessment** - Challenges and mitigation strategies
 
 ## 🤝 Contributing
 
