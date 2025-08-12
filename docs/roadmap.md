@@ -30,6 +30,13 @@
 
 ### 🚧 **In Progress**
 
+#### Version 0.1.0 Preparation
+- 🔄 **Full Pipeline Testing** - End-to-end validation of training pipeline
+- 🔄 **Model Evaluation** - Comprehensive performance assessment and benchmarking
+- 🔄 **Documentation Polish** - Final review and completion of all guides
+- 🔄 **Test Suite Development** - Unit and integration tests for core functionality
+- 🔄 **Release Preparation** - Version tagging, release notes, and distribution
+
 #### Model Improvements
 - 🔄 **Extended Training** - Scaling models to higher quality (6k+ steps)
 - 🔄 **Performance Optimization** - Memory efficiency and training speed
@@ -297,6 +304,33 @@
 - **Contingency:** Scaled-down development, community infrastructure sharing, cloud credits
 
 ## 🎯 **Priority Milestones**
+
+### **v0.1.0 - Core Foundation** (Q1 2025)
+**MVP Requirements (Must Have):**
+- ✅ **Working Training Pipeline** - Complete end-to-end training from data to model
+- ✅ **Basic Model Quality** - Perplexity <60 on evaluation set, coherent text generation
+- ✅ **Inference Server** - Functional REST API for model serving
+- ✅ **Documentation** - Complete setup and usage guides
+- ✅ **Testing** - Basic test suite covering core functionality
+
+**Enhanced Features (Nice to Have):**
+- 📝 Performance benchmarks and comparisons
+- 📝 Docker containerization
+- 📝 Example notebooks and tutorials
+- 📝 Community contribution guidelines
+
+**Success Metrics:**
+- 📊 Training pipeline works end-to-end without errors
+- 📊 Model generates coherent text for 100+ tokens
+- 📊 Inference server responds within 5 seconds
+- 📊 Documentation covers all major use cases
+
+**Immediate Next Steps:**
+1. **Run Full Pipeline Test** - Execute complete training pipeline from scratch
+2. **Model Evaluation** - Assess current model quality and performance
+3. **Documentation Review** - Ensure all guides are complete and accurate
+4. **Testing Implementation** - Add basic test suite
+5. **Release Preparation** - Tag v0.1 and create release notes
 
 ### **v0.2.0 - Production Foundation** (Q3 2025)
 **MVP Requirements (Must Have):**
