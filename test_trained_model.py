@@ -107,7 +107,7 @@ def main():
     # Configuration
     device = "cpu"
     model_size = "small"
-    checkpoint_path = "models/small-extended-6k/best_model.pt"
+    checkpoint_path = "models/small-extended-7k/best_model.pt"
     tokenizer_path = "data/tokenizer/tokenizer.model"
     
     # Check if files exist
