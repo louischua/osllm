@@ -5,7 +5,7 @@
 
 ## 🌟 Overview
 
-This guide explains how to train the OpenLLM model on Hugging Face Hub's training infrastructure. This allows you to leverage HF Hub's compute resources and training features without needing local GPU hardware.
+This guide explains how to train the OpenLLM model locally and integrate with Hugging Face Hub for model distribution and versioning. This approach leverages HF Hub's model hosting capabilities while using your preferred compute resources.
 
 ## 🎯 Training Objective
 
@@ -69,21 +69,19 @@ TrainingArguments(
 
 ### **Step 3: Launch Training Job**
 
-#### **Option A: Using HF Hub Web Interface**
+#### **Option A: Local Training with HF Hub Integration (Recommended)**
 
-1. **Go to** [Hugging Face Training Hub](https://huggingface.co/training)
-2. **Select** "New Training Job" or "Start Training"
+1. **Train locally** using the provided script
+2. **Use HF Hub** for model distribution and versioning
 3. **Configure**:
-   - **Repository**: Your forked OpenLLM repo
    - **Script**: `hf_training_script.py`
    - **Model**: `lemms/openllm-small-extended-7k`
-   - **Dataset**: Your training data
-   - **Compute**: CPU (recommended) or GPU
-   - **Duration**: 2 hours
+   - **Output**: Automatically pushes to HF Hub
+   - **Compute**: Your local machine or cloud provider
 
-**Alternative**: Go to your repository on HF Hub and look for the "Train" button.
+**Alternative**: Use Google Colab, AWS SageMaker, or other cloud providers with HF Hub integration.
 
-#### **Option B: Using HF CLI**
+#### **Option B: Using HF CLI for Model Management**
 
 ```bash
 # Install HF CLI
@@ -92,28 +90,27 @@ pip install huggingface_hub
 # Login to HF Hub
 huggingface-cli login
 
-# Launch training job
-huggingface-cli launch-training \
-    --repo-id your-username/openllm \
-    --script hf_training_script.py \
-    --compute cpu \
-    --duration 2h
+# Run training locally
+python hf_training_script.py
+
+# Or use HF CLI for model operations
+huggingface-cli upload-model \
+    --repo-id lemms/openllm-small-extended-8k \
+    --local-dir ./results
 ```
 
-#### **Option C: Using HF Hub API**
+#### **Option C: Using HF Hub API for Model Management**
 
 ```python
 from huggingface_hub import HfApi
 
 api = HfApi()
 
-# Create training job
-api.create_training_job(
-    repo_id="your-username/openllm",
-    script="hf_training_script.py",
-    compute="cpu",
-    duration="2h",
-    model="lemms/openllm-small-extended-7k"
+# Upload model after training
+api.upload_folder(
+    folder_path="./results",
+    repo_id="lemms/openllm-small-extended-8k",
+    repo_type="model"
 )
 ```
 
@@ -264,9 +261,9 @@ python -c "from data_loader import TextDataLoader; dl=TextDataLoader('data/clean
 
 ## 🔗 Useful Links
 
-- **[Hugging Face Training Hub](https://huggingface.co/training)** - Training platform
-- **[HF Hub Documentation](https://huggingface.co/docs/hub/training)** - Official docs
-- **[HF Hub Training Guide](https://huggingface.co/docs/hub/training)** - Training tutorials
+- **[Hugging Face Hub](https://huggingface.co/)** - Model hosting and distribution
+- **[HF Hub Documentation](https://huggingface.co/docs/hub/)** - Official docs
+- **[HF Hub Model Upload Guide](https://huggingface.co/docs/hub/models-uploading)** - Model upload tutorials
 - **[OpenLLM Repository](https://github.com/louischua/openllm)** - Source code
 - **[7k Model](https://huggingface.co/lemms/openllm-small-extended-7k)** - Starting model
 
