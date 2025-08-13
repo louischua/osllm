@@ -71,8 +71,8 @@ TrainingArguments(
 
 #### **Option A: Using HF Hub Web Interface**
 
-1. **Go to** [Hugging Face Training](https://huggingface.co/spaces/huggingface/training)
-2. **Select** "New Training Job"
+1. **Go to** [Hugging Face Training Hub](https://huggingface.co/training)
+2. **Select** "New Training Job" or "Start Training"
 3. **Configure**:
    - **Repository**: Your forked OpenLLM repo
    - **Script**: `hf_training_script.py`
@@ -80,6 +80,8 @@ TrainingArguments(
    - **Dataset**: Your training data
    - **Compute**: CPU (recommended) or GPU
    - **Duration**: 2 hours
+
+**Alternative**: Go to your repository on HF Hub and look for the "Train" button.
 
 #### **Option B: Using HF CLI**
 
@@ -262,8 +264,9 @@ python -c "from data_loader import TextDataLoader; dl=TextDataLoader('data/clean
 
 ## 🔗 Useful Links
 
-- **[Hugging Face Training](https://huggingface.co/spaces/huggingface/training)** - Training platform
+- **[Hugging Face Training Hub](https://huggingface.co/training)** - Training platform
 - **[HF Hub Documentation](https://huggingface.co/docs/hub/training)** - Official docs
+- **[HF Hub Training Guide](https://huggingface.co/docs/hub/training)** - Training tutorials
 - **[OpenLLM Repository](https://github.com/louischua/openllm)** - Source code
 - **[7k Model](https://huggingface.co/lemms/openllm-small-extended-7k)** - Starting model
 
