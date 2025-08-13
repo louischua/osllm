@@ -1,3 +1,38 @@
+---
+language:
+- en
+license:
+- gpl-3.0
+- other
+tags:
+- text-generation
+- language-model
+- open-source
+- gpt
+- transformer
+- causal-lm
+datasets:
+- squad
+metrics:
+- perplexity
+- loss
+library_name: transformers
+pipeline_tag: text-generation
+model-index:
+- name: OpenLLM Small Extended 7K
+  results:
+  - task:
+      type: text-generation
+    dataset:
+      type: squad
+      name: Wikipedia passages from SQuAD
+    metrics:
+      - type: loss
+        value: 2.1
+      - type: perplexity
+        value: 8.2
+---
+
 # OpenLLM Small Extended 7K Model
 
 <!-- Copyright (C) 2024 Louis Chua Bean Chong -->
