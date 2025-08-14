@@ -199,13 +199,38 @@ psutil>=5.9.0             # System and process utilities
 # and provide stable training performance
 """
         
-        # Write the requirements file to the Space directory
-        requirements_path = space_dir / "requirements.txt"
-        with open(requirements_path, "w") as f:
-            f.write(requirements_content)
+        # Copy HF Space-specific files from the main repository
+        # These files are essential for the Space to function properly
+        print("   📋 Copying HF Space-specific files...")
         
-        print(f"   ✅ Created: {requirements_path}")
-        print("      Contains all necessary dependencies for training")
+        # Copy app.py (Gradio interface)
+        if os.path.exists("hf_space_app.py"):
+            app_dest = space_dir / "app.py"
+            shutil.copy2("hf_space_app.py", app_dest)
+            print(f"      ✅ Copied: hf_space_app.py -> {app_dest}")
+        else:
+            print("      ⚠️ File not found: hf_space_app.py")
+        
+        # Copy README.md (Space documentation)
+        if os.path.exists("hf_space_README.md"):
+            readme_dest = space_dir / "README.md"
+            shutil.copy2("hf_space_README.md", readme_dest)
+            print(f"      ✅ Copied: hf_space_README.md -> {readme_dest}")
+        else:
+            print("      ⚠️ File not found: hf_space_README.md")
+        
+        # Copy requirements.txt (Space dependencies)
+        if os.path.exists("hf_space_requirements.txt"):
+            req_dest = space_dir / "requirements.txt"
+            shutil.copy2("hf_space_requirements.txt", req_dest)
+            print(f"      ✅ Copied: hf_space_requirements.txt -> {req_dest}")
+        else:
+            # Fallback to generated requirements if HF Space file doesn't exist
+            requirements_path = space_dir / "requirements.txt"
+            with open(requirements_path, "w") as f:
+                f.write(requirements_content)
+            print(f"      ✅ Created: {requirements_path}")
+            print("         Contains all necessary dependencies for training")
         
         print("✅ HF Space structure created successfully")
         print("   The Space is now ready for file upload and deployment")
