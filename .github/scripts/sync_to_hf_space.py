@@ -98,6 +98,7 @@ def create_space_structure():
     - Copies core training files from the main repository
     - Generates HF Space-specific configuration files
     - Creates dependency and documentation files
+    - Uploads all files to the HF Space repository
     
     Directory Structure Created:
     ├── training/          # Core training modules copied from main repo
@@ -106,10 +107,10 @@ def create_space_structure():
     ├── configs/          # Model configuration files
     ├── requirements.txt  # Python dependencies for the Space
     └── README.md         # Space documentation
-    
+
     Returns:
         None
-        
+
     Note:
         This function uses a temporary directory to avoid conflicts with
         existing files and ensures clean file operations.
@@ -208,6 +209,56 @@ psutil>=5.9.0             # System and process utilities
         
         print("✅ HF Space structure created successfully")
         print("   The Space is now ready for file upload and deployment")
+        
+        # Step 3: Upload files to HF Space
+        print("\n📋 Step 3: Uploading files to Hugging Face Space...")
+        upload_files_to_hf_space(space_dir)
+
+def upload_files_to_hf_space(space_dir):
+    """
+    Upload all files from the local space directory to the Hugging Face Space.
+    
+    This function uploads all the prepared files to the target HF Space repository,
+    ensuring that the Space has all the necessary training infrastructure and files.
+    
+    Args:
+        space_dir (Path): Path to the local space directory containing files to upload
+        
+    Returns:
+        None
+        
+    Note:
+        This function uses the HF_TOKEN environment variable for authentication
+        and uploads files to the lemms/openllm Space repository.
+    """
+    
+    print("📤 Uploading files to Hugging Face Space...")
+    print("   This process uploads all training infrastructure files to the HF Space")
+    
+    # Configuration for the target Hugging Face Space
+    space_repo = "lemms/openllm"
+    
+    # Initialize the Hugging Face API client
+    api = HfApi()
+    
+    try:
+        # Upload all files from the space directory
+        # This uploads the entire directory structure to the HF Space
+        api.upload_folder(
+            folder_path=str(space_dir),
+            repo_id=space_repo,
+            repo_type="space",
+            commit_message="feat: Sync training infrastructure from main repository"
+        )
+        
+        print(f"✅ Files uploaded successfully to {space_repo}")
+        print(f"   Space URL: https://huggingface.co/spaces/{space_repo}")
+        print("   All training infrastructure files are now available in the Space")
+        
+    except Exception as e:
+        print(f"❌ Error uploading files to HF Space: {e}")
+        print("   Please check the HF_TOKEN and repository permissions")
+        raise
 
 def main():
     """
@@ -247,8 +298,8 @@ def main():
     setup_hf_space()
     
     # Step 2: Create the complete file structure for the Space
-    # This includes copying files and generating configuration
-    print("\n📋 Step 2: Creating Space file structure...")
+    # This includes copying files, generating configuration, and uploading to HF
+    print("\n📋 Step 2: Creating and uploading Space file structure...")
     create_space_structure()
     
     # Report successful completion
@@ -256,10 +307,10 @@ def main():
     print("✅ OpenLLM repository sync process completed successfully!")
     print("=" * 60)
     print("\n📋 Next steps:")
-    print("   1. Upload the generated files to your Hugging Face Space")
-    print("   2. Configure the Space settings in the HF Hub interface")
-    print("   3. Test the training functionality in the Space")
-    print("   4. Monitor the Space for any issues or improvements needed")
+    print("   1. Check the Hugging Face Space for uploaded files")
+    print("   2. Test the training functionality in the Space")
+    print("   3. Monitor the Space for any issues or improvements needed")
+    print("   4. Future updates will be automatically synced")
     print("\n🔗 Space URL: https://huggingface.co/spaces/lemms/openllm")
 
 if __name__ == "__main__":
