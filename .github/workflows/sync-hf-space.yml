@@ -1,38 +1,113 @@
 name: Sync with Hugging Face Space
 
+# This workflow automatically synchronizes the main GitHub repository with the
+# Hugging Face Space repository whenever changes are made to core functionality.
+# It ensures that the training infrastructure in the HF Space stays up-to-date
+# with the latest developments in the main repository.
+
 on:
+  # Trigger the workflow on pushes to the main branch
   push:
     branches: [main]
+    # Only trigger when changes are made to specific paths that affect
+    # the training infrastructure or core functionality
     paths:
-      - 'core/**'
-      - 'configs/**'
-      - 'data/**'
-      - 'docs/**'
-      - 'tests/**'
-      - '.github/workflows/sync-hf-space.yml'
+      - 'core/**'                    # Core training and model code
+      - 'configs/**'                 # Model configuration files
+      - 'data/**'                    # Training data and datasets
+      - 'docs/**'                    # Documentation updates
+      - 'tests/**'                   # Test suite changes
+      - '.github/workflows/sync-hf-space.yml'  # This workflow itself
+
+  # Allow manual triggering of the workflow for testing or forced sync
+  workflow_dispatch:
+    # This enables manual workflow execution from the GitHub Actions UI
+    # Useful for testing changes or forcing a sync when needed
 
 jobs:
   sync-hf-space:
+    # Job name that clearly describes the purpose
+    name: Synchronize with Hugging Face Space
+    
+    # Run on the latest Ubuntu runner for maximum compatibility
     runs-on: ubuntu-latest
     
+    # Environment variables and secrets configuration
+    env:
+      # Set Python version for consistent behavior
+      PYTHON_VERSION: '3.10'
+      
     steps:
-    - name: Checkout main repo
+    # Step 1: Checkout the main repository
+    - name: Checkout main repository
       uses: actions/checkout@v4
       with:
+        # Use the default GitHub token for repository access
+        # This token has read access to the repository contents
         token: ${{ secrets.GITHUB_TOKEN }}
+        # Fetch the full history to ensure we have all necessary files
+        fetch-depth: 0
+        # Use the main branch as the source
+        ref: main
     
-    - name: Setup Python
+    # Step 2: Set up Python environment
+    - name: Setup Python environment
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        # Use Python 3.10 for compatibility with the project
+        # This version is stable and widely supported
+        python-version: ${{ env.PYTHON_VERSION }}
+        # Cache pip dependencies to speed up subsequent runs
+        cache: 'pip'
     
-    - name: Install dependencies
+    # Step 3: Install required dependencies
+    - name: Install synchronization dependencies
       run: |
+        # Install the Hugging Face Hub library for API access
+        # This library provides functions to interact with HF repositories
         pip install huggingface_hub
+        
+        # Install GitPython for advanced Git operations if needed
+        # This provides programmatic access to Git functionality
         pip install gitpython
+        
+        # Display installed versions for debugging
+        echo "Installed dependencies:"
+        pip list | grep -E "(huggingface_hub|gitpython)"
     
-    - name: Sync to HF Space
+    # Step 4: Execute the synchronization script
+    - name: Synchronize to Hugging Face Space
       env:
+        # Use the HF_TOKEN secret for authentication with Hugging Face Hub
+        # This token must have write access to the target Space repository
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        
+        # Set environment variables for the sync script
+        HF_SPACE_REPO: "lemms/openllm"
+        SYNC_VERBOSE: "true"
       run: |
+        # Execute the main synchronization script
+        # This script handles all the file copying and repository setup
         python .github/scripts/sync_to_hf_space.py
+        
+        # Display completion message
+        echo "✅ Synchronization completed successfully"
+        echo "🔗 Space URL: https://huggingface.co/spaces/${{ env.HF_SPACE_REPO }}"
+    
+    # Step 5: Report completion status
+    - name: Report synchronization status
+      run: |
+        echo "🔄 Synchronization workflow completed"
+        echo "📋 Summary:"
+        echo "  - Source: GitHub repository (main branch)"
+        echo "  - Target: Hugging Face Space (${{ env.HF_SPACE_REPO }})"
+        echo "  - Status: Successfully synchronized"
+        echo "  - Next: Check the HF Space for updated files"
+        
+        # Create a summary for the workflow run
+        echo "## 📊 Synchronization Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ **Status**: Completed successfully" >> $GITHUB_STEP_SUMMARY
+        echo "- 🔄 **Source**: GitHub main branch" >> $GITHUB_STEP_SUMMARY
+        echo "- 🎯 **Target**: HF Space (${{ env.HF_SPACE_REPO }})" >> $GITHUB_STEP_SUMMARY
+        echo "- 📅 **Timestamp**: $(date -u)" >> $GITHUB_STEP_SUMMARY
+        echo "- 🔗 **Space URL**: https://huggingface.co/spaces/${{ env.HF_SPACE_REPO }}" >> $GITHUB_STEP_SUMMARY
