@@ -1,0 +1,17 @@
+# Core ML dependencies
+torch>=2.0.0
+transformers>=4.30.0
+datasets>=2.12.0
+tokenizers>=0.13.0
+sentencepiece>=0.1.99
+huggingface_hub>=0.34.0
+accelerate>=0.20.0
+
+# Gradio for UI
+gradio>=4.0.0
+
+# Utilities
+numpy>=1.24.0
+pandas>=2.0.0
+tqdm>=4.65.0
+psutil>=5.9.0

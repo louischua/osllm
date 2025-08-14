@@ -1,0 +1,38 @@
+name: Sync with Hugging Face Space
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'core/**'
+      - 'configs/**'
+      - 'data/**'
+      - 'docs/**'
+      - 'tests/**'
+      - '.github/workflows/sync-hf-space.yml'
+
+jobs:
+  sync-hf-space:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout main repo
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install huggingface_hub
+        pip install gitpython
+    
+    - name: Sync to HF Space
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        python .github/scripts/sync_to_hf_space.py
