@@ -1,6 +1,7 @@
 name: Sync with Hugging Face Space
 
 # This workflow automatically synchronizes the main GitHub repository with the
+# Updated to trigger sync for app fix deployment
 # Hugging Face Space repository whenever changes are made to core functionality.
 # It ensures that the training infrastructure in the HF Space stays up-to-date
 # with the latest developments in the main repository.
