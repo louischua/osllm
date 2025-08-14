@@ -203,13 +203,17 @@ psutil>=5.9.0             # System and process utilities
         # These files are essential for the Space to function properly
         print("   📋 Copying HF Space-specific files...")
         
-        # Copy app.py (Gradio interface)
-        if os.path.exists("hf_space_app.py"):
+        # Copy app.py (Gradio interface) - Use the fixed version
+        if os.path.exists("hf_space_app_fixed.py"):
+            app_dest = space_dir / "app.py"
+            shutil.copy2("hf_space_app_fixed.py", app_dest)
+            print(f"      ✅ Copied: hf_space_app_fixed.py -> {app_dest}")
+        elif os.path.exists("hf_space_app.py"):
             app_dest = space_dir / "app.py"
             shutil.copy2("hf_space_app.py", app_dest)
             print(f"      ✅ Copied: hf_space_app.py -> {app_dest}")
         else:
-            print("      ⚠️ File not found: hf_space_app.py")
+            print("      ⚠️ File not found: hf_space_app_fixed.py or hf_space_app.py")
         
         # Copy README.md (Space documentation)
         if os.path.exists("hf_space_README.md"):
