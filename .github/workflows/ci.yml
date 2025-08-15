@@ -495,7 +495,7 @@ jobs:
           echo "- Integration: ${{ needs.integration.result }}"
           echo "- Documentation: ${{ needs.docs.result }}"
 
-             - name: ❌ Fail if critical checks failed
+      - name: ❌ Fail if critical checks failed
         if: |
           needs.validate.result == 'failure' ||
           needs.lint.result == 'failure' ||
