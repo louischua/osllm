@@ -146,7 +146,13 @@ jobs:
         
         # Display installed versions for debugging
         echo "Installed dependencies:"
-        pip list | grep -E "(huggingface_hub|gitpython)"
+        pip list | grep -i "huggingface_hub" || echo "huggingface_hub not found in pip list"
+        pip list | grep -i "gitpython" || echo "gitpython not found in pip list"
+        
+        # Verify installations work
+        echo "Verifying installations..."
+        python -c "import huggingface_hub; print(f'✅ huggingface_hub {huggingface_hub.__version__}')" || echo "❌ huggingface_hub import failed"
+        python -c "import git; print(f'✅ gitpython {git.__version__}')" || echo "❌ gitpython import failed"
     
     # Step 4: Create backup before sync
     - name: Create backup before sync
