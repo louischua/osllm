@@ -1,6 +1,6 @@
-# 🚀 Hugging Face Space Setup Guide for OpenLLM Training (GitHub Secrets)
+# 🚀 Hugging Face Space Setup Guide for OpenLLM Training (HF Access Token)
 
-This guide will help you set up proper authentication for Hugging Face Spaces using GitHub secrets so that your OpenLLM training and model uploads work correctly.
+This guide will help you set up proper authentication for Hugging Face Spaces using HF access token so that your OpenLLM training and model uploads work correctly.
 
 ## 🎯 Overview
 
@@ -16,26 +16,24 @@ The issue you encountered was that training completed successfully in Hugging Fa
 4. Select "Write" role for full access
 5. Copy the generated token
 
-### Step 2: Set Up GitHub Repository Secrets
+### Step 2: Set Up HF Access Token in Space Settings
 
-1. Go to your GitHub repository:
+1. Go to your Hugging Face Space settings:
    ```
-   https://github.com/your-username/your-repo
+   https://huggingface.co/spaces/YOUR_USERNAME/YOUR_SPACE_NAME/settings
    ```
 
-2. Click on the "Settings" tab
+2. Navigate to "Repository secrets" section
 
-3. In the left sidebar, click "Secrets and variables" → "Actions"
+3. Click "New secret"
 
-4. Click "New repository secret"
-
-5. Add a new secret:
+4. Add a new secret:
    - **Name**: `HF_TOKEN`
-   - **Value**: Your Hugging Face token from Step 1
+   - **Value**: Your Hugging Face access token from Step 1 (starts with `hf_`)
 
-6. Click "Add secret"
+5. Click "Add secret"
 
-**Note**: Hugging Face Spaces automatically have access to GitHub repository secrets, so you don't need to set them separately in the Space.
+**Note**: This token will be automatically available to your Space as the `HF_TOKEN` environment variable.
 
 ### Step 3: Verify Authentication in Your Space
 
@@ -47,15 +45,15 @@ import os
 from huggingface_hub import HfApi, whoami
 
 def verify_space_auth():
-    """Verify authentication is working in the Space using GitHub secrets."""
-    print("🔐 Verifying Space Authentication (GitHub Secrets)")
+    """Verify authentication is working in the Space using HF access token."""
+    print("🔐 Verifying Space Authentication (HF Access Token)")
     
-    # Check if HF_TOKEN is set (from GitHub secrets)
+    # Check if HF_TOKEN is set (from Space settings)
     token = os.getenv("HF_TOKEN")
     if not token:
         print("❌ HF_TOKEN not found in Space environment")
-        print("   - Please set HF_TOKEN in your GitHub repository secrets")
-        print("   - Go to GitHub repository → Settings → Secrets and variables → Actions")
+        print("   - Please set HF_TOKEN in your Space settings")
+        print("   - Go to Space settings → Repository secrets")
         return False
     
     try:
@@ -69,7 +67,7 @@ def verify_space_auth():
         print(f"✅ Authentication successful!")
         print(f"   - Username: {username}")
         print(f"   - Token: {token[:8]}...{token[-4:]}")
-        print(f"   - Source: GitHub secrets")
+        print(f"   - Source: HF access token in Space settings")
         
         # Test API access
         api = HfApi()
@@ -96,7 +94,7 @@ from huggingface_hub import HfApi, login, create_repo
 import json
 
 class SpaceTrainingManager:
-    """Manages training and upload in Hugging Face Spaces using GitHub secrets."""
+    """Manages training and upload in Hugging Face Spaces using HF access token."""
     
     def __init__(self):
         self.api = None

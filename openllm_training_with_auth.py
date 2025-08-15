@@ -26,20 +26,20 @@ class OpenLLMTrainingManager:
         self.username = None
         
     def setup_authentication(self):
-        """Setup authentication using Space's access token."""
-        print("🔐 Setting up authentication...")
+        """Setup authentication using HF access token."""
+        print("🔐 Setting up HF authentication...")
         
         try:
             # In Hugging Face Spaces, authentication should be automatic
             # The Space's access token is used by default
             user_info = whoami()
             self.username = user_info.get('name', 'unknown')
-            print(f"✅ Authentication successful!")
-            print(f"👤 User: {self.username}")
+            print(f"✅ HF authentication successful!")
+            print(f"👤 HF User: {self.username}")
             
         except Exception as e:
-            print(f"❌ Authentication failed: {e}")
-            print("💡 Make sure the Space has proper access token configured")
+            print(f"❌ HF authentication failed: {e}")
+            print("💡 Make sure HF_TOKEN is set in Space settings with HF access token")
             sys.exit(1)
     
     def create_model_config(self, model_size="small", steps=8000):

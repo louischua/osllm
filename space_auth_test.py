@@ -88,21 +88,23 @@ def test_space_authentication():
     except Exception as e:
         print(f"❌ Authentication failed: {e}")
         print(f"\n🔧 TROUBLESHOOTING STEPS:")
-        print(f"1. Check Space Settings:")
+        print(f"1. Set HF Access Token in Space Settings:")
         print(f"   - Go to https://huggingface.co/spaces/{space_id}/settings")
         print(f"   - Navigate to 'Repository secrets' section")
         print(f"   - Add HF_TOKEN with your Hugging Face access token")
         print(f"   - Token should have 'Write' permissions")
         
-        print(f"\n2. Alternative: Use Space's Built-in Token:")
+        print(f"\n2. Create HF Access Token:")
         print(f"   - Go to https://huggingface.co/settings/tokens")
         print(f"   - Create a new token with 'Write' permissions")
+        print(f"   - Copy the token (starts with 'hf_')")
         print(f"   - Add it to Space secrets as HF_TOKEN")
         
-        print(f"\n3. Verify Token Permissions:")
+        print(f"\n3. Verify HF Access Token:")
+        print(f"   - Token must start with 'hf_' (Hugging Face format)")
         print(f"   - Token must have 'Write' access to repositories")
         print(f"   - Token must be valid and not expired")
-        print(f"   - Token must be associated with the correct user account")
+        print(f"   - Token must be associated with the correct HF account")
         
         print(f"\n4. Check Space Configuration:")
         print(f"   - Ensure Space is connected to GitHub repository")

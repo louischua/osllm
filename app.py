@@ -99,10 +99,10 @@ def create_space_interface():
             
             if hf_token:
                 result += f"✅ HF_TOKEN found: {hf_token[:8]}...{hf_token[-4:]}\n"
-                result += "   - Source: GitHub secrets\n"
+                result += "   - Source: HF access token in Space settings\n"
             else:
                 result += "❌ HF_TOKEN not found\n"
-                result += "   - Please set HF_TOKEN in GitHub repository secrets\n"
+                result += "   - Please set HF_TOKEN in Space settings with HF access token\n"
             
             result += f"\n📁 Available modules: {'✅' if MODULES_AVAILABLE else '❌'}"
             
