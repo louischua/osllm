@@ -28,14 +28,31 @@ def test_space_authentication():
     space_id = os.environ.get('SPACE_ID', 'lemms/openllm')
     print(f"📁 Space ID: {space_id}")
     
-    # Check for Space access token
-    # In Hugging Face Spaces, the access token should be automatically available
-    # through the Space's own authentication mechanism
+    # Check for various authentication methods
+    print(f"\n🔐 Checking authentication methods...")
+    
+    # Method 1: Check for HF_TOKEN environment variable
+    hf_token = os.environ.get('HF_TOKEN')
+    if hf_token:
+        print(f"✅ HF_TOKEN found in environment")
+        print(f"   Token: {hf_token[:8]}...{hf_token[-4:]}")
+    else:
+        print(f"⚠️ HF_TOKEN not found in environment")
+    
+    # Method 2: Check for HUGGING_FACE_HUB_TOKEN
+    hf_hub_token = os.environ.get('HUGGING_FACE_HUB_TOKEN')
+    if hf_hub_token:
+        print(f"✅ HUGGING_FACE_HUB_TOKEN found in environment")
+        print(f"   Token: {hf_hub_token[:8]}...{hf_hub_token[-4:]}")
+    else:
+        print(f"⚠️ HUGGING_FACE_HUB_TOKEN not found in environment")
+    
+    # Method 3: Check for Space's built-in authentication
     try:
         # Try to get current user info (this will use Space's access token)
         api = HfApi()
         user_info = whoami()
-        print(f"✅ Authentication successful!")
+        print(f"✅ Space authentication successful!")
         print(f"👤 User: {user_info}")
         
         # Test API access by listing Space files
@@ -70,10 +87,28 @@ def test_space_authentication():
         
     except Exception as e:
         print(f"❌ Authentication failed: {e}")
-        print(f"\n💡 Troubleshooting:")
-        print(f"   - Ensure the Space has proper access token configured")
-        print(f"   - Check Space settings for authentication configuration")
-        print(f"   - Verify the Space has necessary permissions")
+        print(f"\n🔧 TROUBLESHOOTING STEPS:")
+        print(f"1. Check Space Settings:")
+        print(f"   - Go to https://huggingface.co/spaces/{space_id}/settings")
+        print(f"   - Navigate to 'Repository secrets' section")
+        print(f"   - Add HF_TOKEN with your Hugging Face access token")
+        print(f"   - Token should have 'Write' permissions")
+        
+        print(f"\n2. Alternative: Use Space's Built-in Token:")
+        print(f"   - Go to https://huggingface.co/settings/tokens")
+        print(f"   - Create a new token with 'Write' permissions")
+        print(f"   - Add it to Space secrets as HF_TOKEN")
+        
+        print(f"\n3. Verify Token Permissions:")
+        print(f"   - Token must have 'Write' access to repositories")
+        print(f"   - Token must be valid and not expired")
+        print(f"   - Token must be associated with the correct user account")
+        
+        print(f"\n4. Check Space Configuration:")
+        print(f"   - Ensure Space is connected to GitHub repository")
+        print(f"   - Verify Space has proper access to Hugging Face Hub")
+        print(f"   - Check Space logs for detailed error messages")
+        
         return False
 
 def main():
@@ -94,7 +129,7 @@ def main():
         sys.exit(0)
     else:
         print(f"\n❌ Authentication tests failed!")
-        print(f"🔧 Please check Space configuration and try again.")
+        print(f"🔧 Please follow the troubleshooting steps above.")
         sys.exit(1)
 
 if __name__ == "__main__":
