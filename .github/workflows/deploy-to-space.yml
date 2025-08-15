@@ -52,20 +52,60 @@ jobs:
       run: |
         echo "🔍 Validating file contents..."
         
+        # Debug: Show current directory and files
+        echo "Current directory: $(pwd)"
+        echo "Files in current directory:"
+        ls -la
+        
         # Check if files have content
         for file in app.py requirements.txt space_auth_test.py; do
-          if [ ! -s "$file" ]; then
+          if [ ! -f "$file" ]; then
+            echo "❌ $file not found"
+            exit 1
+          elif [ ! -s "$file" ]; then
             echo "❌ $file is empty"
             exit 1
+          else
+            echo "✅ $file has content ($(wc -c < "$file") bytes)"
           fi
-          echo "✅ $file has content"
         done
         
-        # Validate Python syntax
+        # Validate Python syntax with better error handling
         echo "🔍 Validating Python syntax..."
-        python -m py_compile app.py || (echo "❌ app.py has syntax errors" && exit 1)
-        python -m py_compile space_auth_test.py || (echo "❌ space_auth_test.py has syntax errors" && exit 1)
-        python -m py_compile openllm_training_with_auth.py || (echo "❌ openllm_training_with_auth.py has syntax errors" && exit 1)
+        
+        # Check Python version
+        python --version
+        
+        # Validate each file individually with detailed error messages
+        echo "Validating app.py..."
+        if python -m py_compile app.py; then
+          echo "✅ app.py syntax is valid"
+        else
+          echo "❌ app.py has syntax errors"
+          echo "Content preview:"
+          head -20 app.py
+          exit 1
+        fi
+        
+        echo "Validating space_auth_test.py..."
+        if python -m py_compile space_auth_test.py; then
+          echo "✅ space_auth_test.py syntax is valid"
+        else
+          echo "❌ space_auth_test.py has syntax errors"
+          echo "Content preview:"
+          head -20 space_auth_test.py
+          exit 1
+        fi
+        
+        echo "Validating openllm_training_with_auth.py..."
+        if python -m py_compile openllm_training_with_auth.py; then
+          echo "✅ openllm_training_with_auth.py syntax is valid"
+        else
+          echo "❌ openllm_training_with_auth.py has syntax errors"
+          echo "Content preview:"
+          head -20 openllm_training_with_auth.py
+          exit 1
+        fi
         
         echo "✅ All Python files have valid syntax"
 

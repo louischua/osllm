@@ -198,7 +198,11 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           # Run simple tests first (no project imports)
-          python -m pytest tests/test_simple.py -v
+          echo "🔍 Running simple tests on Unix..."
+          python -c "import sys; print(f'Python version: {sys.version}')"
+          python -c "import os; print(f'Current directory: {os.getcwd()}')"
+          python -c "import os; print(f'Files in directory: {os.listdir(\".\")}')"
+          python -m pytest tests/test_simple.py -v --tb=short
         continue-on-error: false
 
       - name: 🧪 Run simple tests (Windows)
@@ -206,7 +210,11 @@ jobs:
         shell: cmd
         run: |
           # Run simple tests first (no project imports)
-          python -m pytest tests/test_simple.py -v
+          echo "🔍 Running simple tests on Windows..."
+          python -c "import sys; print(f'Python version: {sys.version}')"
+          python -c "import os; print(f'Current directory: {os.getcwd()}')"
+          python -c "import os; print(f'Files in directory: {os.listdir(\".\")}')"
+          python -m pytest tests/test_simple.py -v --tb=short
         continue-on-error: false
 
       - name: 🧪 Run basic tests (Unix)
@@ -487,14 +495,25 @@ jobs:
           echo "- Integration: ${{ needs.integration.result }}"
           echo "- Documentation: ${{ needs.docs.result }}"
 
-      - name: ❌ Fail if critical checks failed
+             - name: ❌ Fail if critical checks failed
         if: |
           needs.validate.result == 'failure' ||
           needs.lint.result == 'failure' ||
           needs.test.result == 'failure'
         run: |
-          echo "Critical checks failed!"
-          echo "Please fix the issues above before proceeding."
+          echo "🚨 CRITICAL CHECKS FAILED!"
+          echo "=================================="
+          echo "The following critical checks failed:"
+          echo "- Validation: ${{ needs.validate.result }}"
+          echo "- Linting: ${{ needs.lint.result }}"
+          echo "- Tests: ${{ needs.test.result }}"
+          echo ""
+          echo "🔧 REQUIRED ACTIONS:"
+          echo "1. Fix validation issues (missing files, dependencies)"
+          echo "2. Fix linting issues (code formatting, imports)"
+          echo "3. Fix test failures (especially simple tests)"
+          echo ""
+          echo "❌ Workflow cannot proceed until these issues are resolved."
           exit 1
 
       - name: ⚠️ Warn about non-critical failures
