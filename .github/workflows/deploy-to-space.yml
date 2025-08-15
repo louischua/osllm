@@ -242,10 +242,13 @@ jobs:
             else:
                 print('✅ All critical files deployed')
             
+            # Count documentation files
+            doc_files = [f for f in deployed_files if f.endswith('.md')]
+            
             print(f'\\n📊 Deployment Summary:')
             print(f'  - Total files deployed: {len(deployed_files)}')
             print(f'  - Critical files: {len(critical_files)}')
-            print(f'  - Documentation files: {len([f for f in deployed_files if f.endswith(".md")])}')
+            print(f'  - Documentation files: {len(doc_files)}')
             
             print('\\n🎉 Deployment verification completed successfully!')
             
