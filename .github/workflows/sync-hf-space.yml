@@ -72,12 +72,12 @@ jobs:
         fi
         
         # Validate target directories exist
-        target_dirs = ["core", "configs", "data", "docs", "tests"]
-        missing_dirs = []
+        target_dirs=("core" "configs" "data" "docs" "tests")
+        missing_dirs=()
         
-        for dir_name in target_dirs:
+        for dir_name in "${target_dirs[@]}"; do
           if [ ! -d "$dir_name" ]; then
-            missing_dirs.append("$dir_name")
+            missing_dirs+=("$dir_name")
           else
             echo "✅ $dir_name directory found"
           fi
