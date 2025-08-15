@@ -31,13 +31,13 @@ def test_space_authentication():
     # Check for various authentication methods
     print(f"\n🔐 Checking authentication methods...")
     
-    # Method 1: Check for HF_TOKEN environment variable
+    # Method 1: Check for HF access token environment variable
     hf_token = os.environ.get('HF_TOKEN')
     if hf_token:
-        print(f"✅ HF_TOKEN found in environment")
+        print(f"✅ HF access token found in environment")
         print(f"   Token: {hf_token[:8]}...{hf_token[-4:]}")
     else:
-        print(f"⚠️ HF_TOKEN not found in environment")
+        print(f"⚠️ HF access token not found in environment")
     
     # Method 2: Check for HUGGING_FACE_HUB_TOKEN
     hf_hub_token = os.environ.get('HUGGING_FACE_HUB_TOKEN')
@@ -91,7 +91,7 @@ def test_space_authentication():
         print(f"1. Set HF Access Token in Space Settings:")
         print(f"   - Go to https://huggingface.co/spaces/{space_id}/settings")
         print(f"   - Navigate to 'Repository secrets' section")
-        print(f"   - Add HF_TOKEN with your Hugging Face access token")
+        print(f"   - Add HF_TOKEN with your HF access token")
         print(f"   - Token should have 'Write' permissions")
         
         print(f"\n2. Create HF Access Token:")

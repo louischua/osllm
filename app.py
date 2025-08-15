@@ -98,10 +98,10 @@ def create_space_interface():
                 result += "ℹ️ Running in local environment\n"
             
             if hf_token:
-                result += f"✅ HF_TOKEN found: {hf_token[:8]}...{hf_token[-4:]}\n"
+                result += f"✅ HF access token found: {hf_token[:8]}...{hf_token[-4:]}\n"
                 result += "   - Source: HF access token in Space settings\n"
             else:
-                result += "❌ HF_TOKEN not found\n"
+                result += "❌ HF access token not found\n"
                 result += "   - Please set HF_TOKEN in Space settings with HF access token\n"
             
             result += f"\n📁 Available modules: {'✅' if MODULES_AVAILABLE else '❌'}"
@@ -118,9 +118,9 @@ def create_space_interface():
         
         Welcome to the OpenLLM Training Space! This Space provides a complete environment for training OpenLLM models with automatic Hugging Face authentication and model upload.
         
-        ## 🔐 Authentication
-        
-        This Space uses GitHub secrets for secure authentication. The HF_TOKEN is automatically available from your GitHub repository secrets.
+                 ## 🔐 Authentication
+         
+         This Space uses HF access token for secure authentication. The HF_TOKEN is automatically available from your Space settings.
         
         ## 📋 Available Actions
         
@@ -135,11 +135,11 @@ def create_space_interface():
             env_output = gr.Textbox(label="Environment Status", lines=10, interactive=False)
             env_check_btn.click(check_space_environment, outputs=env_output)
         
-        with gr.Tab("🔐 Authentication Test"):
-            gr.Markdown("Test Hugging Face authentication using GitHub secrets.")
-            auth_test_btn = gr.Button("Run Authentication Test", variant="primary")
-            auth_output = gr.Textbox(label="Authentication Results", lines=15, interactive=False)
-            auth_test_btn.click(run_authentication_test, outputs=auth_output)
+                 with gr.Tab("🔐 Authentication Test"):
+             gr.Markdown("Test Hugging Face authentication using HF access token.")
+             auth_test_btn = gr.Button("Run Authentication Test", variant="primary")
+             auth_output = gr.Textbox(label="Authentication Results", lines=15, interactive=False)
+             auth_test_btn.click(run_authentication_test, outputs=auth_output)
         
         with gr.Tab("🚀 Run Training"):
             gr.Markdown("""
