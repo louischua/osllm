@@ -1,33 +1,26 @@
 # OpenLLM Training Space Requirements
-# Pinned versions for reproducible builds
+# Core dependencies for Space deployment
 
-# Core dependencies
-huggingface_hub==0.19.0
-gradio==4.44.1
-torch==2.1.2
-torchvision==0.16.2
-transformers==4.36.2
-sentencepiece==0.1.99
+# Hugging Face Hub for authentication and model upload
+huggingface_hub>=0.19.0
 
-# Data processing
-numpy==1.24.3
-pandas==2.1.4
-requests==2.31.0
-tqdm==4.66.1
+# Gradio for web interface
+gradio>=4.0.0
 
-# Development and testing
-pytest==7.4.3
-pytest-cov==4.1.0
-black==23.12.1
-isort==5.13.2
-flake8==7.0.0
-mypy==1.8.0
-bandit[toml]==1.7.5
-safety==2.3.5
+# PyTorch for model training
+torch>=2.0.0
+torchvision>=0.15.0
 
-# Performance monitoring
-psutil==5.9.6
-memory-profiler==0.61.0
+# Transformers for model handling
+transformers>=4.35.0
 
-# Git operations
-gitpython==3.1.40
+# SentencePiece for tokenization
+sentencepiece>=0.1.99
+
+# NumPy and other utilities
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Additional utilities
+requests>=2.31.0
+tqdm>=4.65.0
