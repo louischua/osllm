@@ -10,7 +10,7 @@ torchaudio>=2.0.0               # Audio processing utilities
 transformers>=4.30.0            # Pre-trained models and training utilities
 datasets>=2.12.0                # Dataset loading and processing
 tokenizers>=0.13.0              # Fast tokenization library
-sentencepiece>=0.1.99           # SentencePiece tokenization (CRITICAL for OpenLLM models)
+sentencepiece>=0.1.99           # SentencePiece tokenization
 huggingface_hub>=0.34.0         # Hugging Face Hub integration
 accelerate>=0.20.0              # Distributed training acceleration
 
@@ -48,4 +48,3 @@ flake8>=6.0.0                   # Code linting
 # Note: These versions are compatible with Hugging Face Spaces
 # and provide stable training performance for OpenLLM models
 # Gradio 4.44.1 fixes compatibility issues with JSON components
-# SentencePiece is CRITICAL for OpenLLM model tokenization

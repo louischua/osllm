@@ -1,0 +1,164 @@
+name: Deploy to Hugging Face Space
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy-to-space:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install huggingface_hub
+        
+    - name: Deploy to Hugging Face Space
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        SPACE_ID: ${{ secrets.SPACE_ID }}
+      run: |
+        echo "🚀 Deploying scripts to Hugging Face Space..."
+        
+        # List files to be deployed
+        echo "📁 Files to deploy:"
+        ls -la *.py *.md
+        
+        # Deploy authentication test script
+        echo "📤 Deploying space_auth_test.py..."
+        python -c "
+        from huggingface_hub import HfApi
+        api = HfApi()
+        api.upload_file(
+            path_or_fileobj='space_auth_test.py',
+            path_in_repo='space_auth_test.py',
+            repo_id='${{ secrets.SPACE_ID }}',
+            repo_type='space',
+            commit_message='Add authentication test script'
+        )
+        "
+        
+        # Deploy training script
+        echo "📤 Deploying openllm_training_with_auth.py..."
+        python -c "
+        from huggingface_hub import HfApi
+        api = HfApi()
+        api.upload_file(
+            path_or_fileobj='openllm_training_with_auth.py',
+            path_in_repo='openllm_training_with_auth.py',
+            repo_id='${{ secrets.SPACE_ID }}',
+            repo_type='space',
+            commit_message='Add training script with authentication'
+        )
+        "
+        
+        # Deploy integration guide
+        echo "📤 Deploying integrate_auth_into_training.py..."
+        python -c "
+        from huggingface_hub import HfApi
+        api = HfApi()
+        api.upload_file(
+            path_or_fileobj='integrate_auth_into_training.py',
+            path_in_repo='integrate_auth_into_training.py',
+            repo_id='${{ secrets.SPACE_ID }}',
+            repo_type='space',
+            commit_message='Add integration guide'
+        )
+        "
+        
+        # Deploy setup guide
+        echo "📤 Deploying setup_hf_space_auth.py..."
+        python -c "
+        from huggingface_hub import HfApi
+        api = HfApi()
+        api.upload_file(
+            path_or_fileobj='setup_hf_space_auth.py',
+            path_in_repo='setup_hf_space_auth.py',
+            repo_id='${{ secrets.SPACE_ID }}',
+            repo_type='space',
+            commit_message='Add Space authentication setup script'
+        )
+        "
+        
+        # Deploy verification script
+        echo "📤 Deploying verify_space_auth.py..."
+        python -c "
+        from huggingface_hub import HfApi
+        api = HfApi()
+        api.upload_file(
+            path_or_fileobj='verify_space_auth.py',
+            path_in_repo='verify_space_auth.py',
+            repo_id='${{ secrets.SPACE_ID }}',
+            repo_type='space',
+            commit_message='Add Space verification script'
+        )
+        "
+        
+        # Deploy documentation
+        echo "📤 Deploying documentation..."
+        python -c "
+        from huggingface_hub import HfApi
+        api = HfApi()
+        
+        # Upload setup guide
+        api.upload_file(
+            path_or_fileobj='HUGGINGFACE_SPACE_SETUP_GUIDE.md',
+            path_in_repo='HUGGINGFACE_SPACE_SETUP_GUIDE.md',
+            repo_id='${{ secrets.SPACE_ID }}',
+            repo_type='space',
+            commit_message='Add Space setup guide'
+        )
+        
+        # Upload summary
+        api.upload_file(
+            path_or_fileobj='SPACE_AUTHENTICATION_SUMMARY.md',
+            path_in_repo='SPACE_AUTHENTICATION_SUMMARY.md',
+            repo_id='${{ secrets.SPACE_ID }}',
+            repo_type='space',
+            commit_message='Add authentication summary'
+        )
+        
+        # Upload ready summary
+        api.upload_file(
+            path_or_fileobj='SPACE_READY_SUMMARY.md',
+            path_in_repo='SPACE_READY_SUMMARY.md',
+            repo_id='${{ secrets.SPACE_ID }}',
+            repo_type='space',
+            commit_message='Add Space ready summary'
+        )
+        "
+        
+        echo "✅ Deployment completed successfully!"
+        echo "🎉 Scripts are now available in your Hugging Face Space"
+        
+    - name: Verify deployment
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        SPACE_ID: ${{ secrets.SPACE_ID }}
+      run: |
+        echo "🔍 Verifying deployment..."
+        python -c "
+        from huggingface_hub import HfApi
+        api = HfApi()
+        
+        # List files in the Space
+        files = api.list_repo_files(repo_id='${{ secrets.SPACE_ID }}', repo_type='space')
+        print('📁 Files in Space:')
+        for file in files:
+            if file.endswith('.py') or file.endswith('.md'):
+                print(f'  ✅ {file}')
+        
+        print('\\n🎉 Deployment verification completed!')
+        "

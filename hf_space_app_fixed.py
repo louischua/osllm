@@ -690,6 +690,20 @@ class OpenLLMTrainer:
                 print(f"   - Type: model")
                 print(f"   - Source: {config.output_dir}")
                 
+                # Create the repository first if it doesn't exist
+                try:
+                    from huggingface_hub import create_repo
+                    create_repo(
+                        repo_id=repo_id,
+                        repo_type="model",
+                        exist_ok=True,
+                        private=False
+                    )
+                    print(f"✅ Repository {repo_id} ready for upload")
+                except Exception as create_error:
+                    print(f"⚠️ Repository creation warning: {create_error}")
+                    print("   Continuing with upload attempt...")
+                
                 # Upload model files to Hugging Face Hub
                 # This creates a new model repository with all the files
                 self.hf_api.upload_folder(

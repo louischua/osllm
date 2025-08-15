@@ -143,10 +143,7 @@ def main():
                 
                 # Progress Bar
                 # Visual indicator of training progress
-                progress = gr.Progress(
-                    label="Training Progress",
-                    info="Shows the percentage of training steps completed"
-                )
+                progress = gr.Progress()
                 
                 # Training Control Buttons
                 # Buttons to start and stop the training process
