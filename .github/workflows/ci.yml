@@ -130,6 +130,7 @@ jobs:
         with:
           name: security-scan-results
           path: bandit-report.json
+          if-no-files-found: warn
 
   # Dependency Checks
   dependencies:
@@ -157,6 +158,7 @@ jobs:
         with:
           name: dependency-scan-results
           path: safety-report.json
+          if-no-files-found: warn
 
   # Multi-platform Testing
   test:
@@ -192,26 +194,52 @@ jobs:
           pip install pytest==7.4.3 pytest-cov==4.1.0
           pip install -r requirements.txt
 
+      - name: 🧪 Run simple tests (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          # Run simple tests first (no project imports)
+          python -m pytest tests/test_simple.py -v
+        continue-on-error: false
+
+      - name: 🧪 Run simple tests (Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          # Run simple tests first (no project imports)
+          python -m pytest tests/test_simple.py -v
+        continue-on-error: false
+
       - name: 🧪 Run basic tests (Unix)
         if: runner.os != 'Windows'
         run: |
-          # Run basic tests first (no complex imports)
-          python -m pytest tests/test_basic.py -v || echo "⚠️ Basic tests failed"
+          # Run basic tests (with project imports)
+          python -m pytest tests/test_basic.py -v
         continue-on-error: true
 
       - name: 🧪 Run basic tests (Windows)
         if: runner.os == 'Windows'
         shell: cmd
         run: |
-          # Run basic tests first (no complex imports)
-          python -m pytest tests/test_basic.py -v || echo "⚠️ Basic tests failed"
+          # Run basic tests (with project imports)
+          python -m pytest tests/test_basic.py -v
         continue-on-error: true
 
       - name: 🧪 Run full unit tests (Unix)
         if: runner.os != 'Windows'
         run: |
+          # Debug: Show current directory and files
+          echo "Current directory: $(pwd)"
+          ls -la
+          echo "Core src directory:"
+          ls -la core/src/
+          
           # Set up Python path for tests
           export PYTHONPATH="${PYTHONPATH}:${GITHUB_WORKSPACE}/core/src"
+          echo "PYTHONPATH: $PYTHONPATH"
+          
+          # Test basic imports first
+          python -c "import sys; print('Python path:'); [print(p) for p in sys.path]"
+          python -c "import sys; sys.path.insert(0, '${GITHUB_WORKSPACE}/core/src'); import model; print('✅ Model import successful')" || echo "❌ Model import failed"
           
           # Run tests with better error handling
           python -m pytest tests/ -v --cov=core --cov-report=xml --cov-report=term-missing --tb=short || echo "⚠️ Some tests failed"
@@ -221,8 +249,19 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: |
+          # Debug: Show current directory and files
+          echo "Current directory: %CD%"
+          dir
+          echo "Core src directory:"
+          dir core\src
+          
           # Set up Python path for tests
           set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%\core\src
+          echo "PYTHONPATH: %PYTHONPATH%"
+          
+          # Test basic imports first
+          python -c "import sys; print('Python path:'); [print(p) for p in sys.path]"
+          python -c "import sys; sys.path.insert(0, r'%GITHUB_WORKSPACE%\core\src'); import model; print('✅ Model import successful')" || echo "❌ Model import failed"
           
           # Run tests with better error handling
           python -m pytest tests/ -v --cov=core --cov-report=xml --cov-report=term-missing --tb=short || echo "⚠️ Some tests failed"
