@@ -26,21 +26,38 @@ class OpenLLMTrainingManager:
         self.username = None
         
     def setup_authentication(self):
-        """Setup authentication using HF access token."""
-        print("🔐 Setting up HF authentication...")
+        """Setup authentication using Space's built-in access token."""
+        print("🔐 Setting up Space authentication...")
         
         try:
-            # In Hugging Face Spaces, authentication should be automatic
-            # The Space's access token is used by default
+            # Try Space's built-in authentication first (primary method)
             user_info = whoami()
             self.username = user_info.get('name', 'unknown')
-            print(f"✅ HF authentication successful!")
-            print(f"👤 HF User: {self.username}")
+            print(f"✅ Space built-in authentication successful!")
+            print(f"👤 User: {self.username}")
             
         except Exception as e:
-            print(f"❌ HF authentication failed: {e}")
-            print("💡 Make sure HF_TOKEN is set in Space settings with HF access token")
-            sys.exit(1)
+            print(f"❌ Space built-in authentication failed: {e}")
+            print("🔄 Trying HF access token...")
+            
+            # Fallback to HF access token
+            hf_token = os.environ.get('HF_TOKEN')
+            if hf_token:
+                try:
+                    from huggingface_hub import login
+                    login(token=hf_token)
+                    user_info = whoami()
+                    self.username = user_info.get('name', 'unknown')
+                    print(f"✅ HF access token authentication successful!")
+                    print(f"👤 User: {self.username}")
+                except Exception as e2:
+                    print(f"❌ HF access token authentication failed: {e2}")
+                    print("💡 Please check Space authentication configuration")
+                    sys.exit(1)
+            else:
+                print("❌ No authentication method available")
+                print("💡 Please set HF_TOKEN in Space settings or check Space permissions")
+                sys.exit(1)
     
     def create_model_config(self, model_size="small", steps=8000):
         """Create model configuration file."""
