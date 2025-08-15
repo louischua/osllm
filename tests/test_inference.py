@@ -44,8 +44,8 @@ from fastapi.testclient import TestClient
 sys.path.insert(0, str(Path(__file__).parent.parent / "core" / "src"))
 
 from model import GPTConfig, GPTModel
-from inference_server import app, InferenceServer
-from generate_text import generate_text, TextGenerationConfig
+from inference_server import app
+from generate_text import TextGenerator
 
 
 class TestInferenceServer(unittest.TestCase):
