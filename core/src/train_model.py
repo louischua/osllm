@@ -193,29 +193,36 @@ class ModelTrainer:
     def _create_scheduler(self) -> torch.optim.lr_scheduler._LRScheduler:
         """Create learning rate scheduler with warmup and cosine decay."""
         if self.warmup_steps > 0:
-            # Linear warmup
-            warmup_scheduler = LinearLR(
-                self.optimizer,
-                start_factor=0.01,  # Start at 1% of learning rate
-                end_factor=1.0,
-                total_iters=self.warmup_steps
-            )
+            # Use a custom scheduler to avoid deprecation warnings
+            # This implements warmup + cosine decay without SequentialLR
+            class WarmupCosineScheduler(torch.optim.lr_scheduler._LRScheduler):
+                def __init__(self, optimizer, warmup_steps, max_steps, min_lr_factor=0.1):
+                    self.warmup_steps = warmup_steps
+                    self.max_steps = max_steps
+                    self.min_lr_factor = min_lr_factor
+                    super().__init__(optimizer)
+                
+                def get_lr(self):
+                    if self.last_epoch < self.warmup_steps:
+                        # Linear warmup
+                        factor = self.last_epoch / self.warmup_steps
+                        return [base_lr * (0.01 + 0.99 * factor) for base_lr in self.base_lrs]
+                    else:
+                        # Cosine decay
+                        progress = (self.last_epoch - self.warmup_steps) / (self.max_steps - self.warmup_steps)
+                        progress = min(progress, 1.0)  # Clamp to 1.0
+                        factor = 0.5 * (1 + math.cos(math.pi * progress))
+                        factor = self.min_lr_factor + (1 - self.min_lr_factor) * factor
+                        return [base_lr * factor for base_lr in self.base_lrs]
             
-            # Cosine decay after warmup
-            cosine_scheduler = CosineAnnealingLR(
+            scheduler = WarmupCosineScheduler(
                 self.optimizer,
-                T_max=self.max_steps - self.warmup_steps,
-                eta_min=self.learning_rate * 0.1  # Minimum 10% of peak LR
-            )
-            
-            # Combine warmup and cosine decay
-            scheduler = SequentialLR(
-                self.optimizer,
-                schedulers=[warmup_scheduler, cosine_scheduler],
-                milestones=[self.warmup_steps]
+                warmup_steps=self.warmup_steps,
+                max_steps=self.max_steps,
+                min_lr_factor=0.1
             )
         else:
-            # Just cosine decay
+            # Just cosine decay - this should not trigger warnings
             scheduler = CosineAnnealingLR(
                 self.optimizer,
                 T_max=self.max_steps,
