@@ -41,11 +41,19 @@ import requests
 from fastapi.testclient import TestClient
 
 # Add the core/src directory to the path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "core" / "src"))
+core_src_path = str(Path(__file__).parent.parent / "core" / "src")
+sys.path.insert(0, core_src_path)
 
-from model import GPTConfig, GPTModel
-from inference_server import app
-from generate_text import TextGenerator
+# Import after path setup
+try:
+    from model import GPTConfig, GPTModel
+    from inference_server import app
+    from generate_text import TextGenerator
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    print(f"📁 Core src path: {core_src_path}")
+    print(f"📁 Available files: {os.listdir(core_src_path) if os.path.exists(core_src_path) else 'Path not found'}")
+    raise
 
 
 class TestInferenceServer(unittest.TestCase):

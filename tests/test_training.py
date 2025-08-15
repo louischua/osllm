@@ -38,12 +38,20 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 # Add the core/src directory to the path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "core" / "src"))
+core_src_path = str(Path(__file__).parent.parent / "core" / "src")
+sys.path.insert(0, core_src_path)
 
-from model import GPTConfig, GPTModel
-from data_loader import TextDataLoader
-from train_model import ModelTrainer
-from evaluate_model import ModelEvaluator
+# Import after path setup
+try:
+    from model import GPTConfig, GPTModel
+    from data_loader import TextDataLoader
+    from train_model import ModelTrainer
+    from evaluate_model import ModelEvaluator
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    print(f"📁 Core src path: {core_src_path}")
+    print(f"📁 Available files: {os.listdir(core_src_path) if os.path.exists(core_src_path) else 'Path not found'}")
+    raise
 
 
 class TestDataLoader(unittest.TestCase):
@@ -124,12 +132,11 @@ class TestDataLoader(unittest.TestCase):
         mock_tokenizer.vocab_size.return_value = 32000
         
         # Create data loader
-        data_loader = DataLoader(
+        data_loader = TextDataLoader(
             data_file=self.data_file,
-            tokenizer=mock_tokenizer,
-            config=self.config,
-            batch_size=2,
-            block_size=10
+            tokenizer_path="dummy_tokenizer.model",
+            seq_len=10,
+            batch_size=2
         )
         
         # Check that preprocessing was applied
