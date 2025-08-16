@@ -277,7 +277,7 @@ def cmd_inference(args):
 
         # Display results with formatting
         # Clear presentation helps users understand the output
-        print(f"\n✨ Generated Text:")
+        print("\n✨ Generated Text:")
         print("-" * 50)
 
         for i, text in enumerate(generated_texts, 1):
@@ -395,7 +395,7 @@ def cmd_evaluate(args):
         # 1. Perplexity Evaluation
         # This measures how well the model predicts the next token
         if "perplexity" in requested_metrics:
-            print(f"\n🔍 Computing perplexity...")
+            print("\n🔍 Computing perplexity...")
 
             eval_data_path = getattr(args, "eval_data", None)
             if eval_data_path and Path(eval_data_path).exists():
@@ -414,7 +414,7 @@ def cmd_evaluate(args):
         # 2. Text Generation Quality Assessment
         # This evaluates the coherence and quality of generated text
         if "generation" in requested_metrics:
-            print(f"\n✍️  Evaluating text generation quality...")
+            print("\n✍️  Evaluating text generation quality...")
 
             generation_result = evaluator.evaluate_text_generation()
             evaluation_results["metrics"]["generation"] = generation_result
@@ -428,7 +428,7 @@ def cmd_evaluate(args):
         # 3. Downstream Task Evaluation
         # This tests specific capabilities like reading comprehension
         if "downstream" in requested_metrics:
-            print(f"\n🎯 Evaluating downstream tasks...")
+            print("\n🎯 Evaluating downstream tasks...")
 
             downstream_result = evaluator.evaluate_downstream_tasks()
             evaluation_results["metrics"]["downstream"] = downstream_result
@@ -458,7 +458,7 @@ def cmd_evaluate(args):
         scores = []
 
         if "perplexity" in evaluation_results["metrics"]:
-            ppl = evaluation_results["metrics"]["perplexity"].get("perplexity", float("inf"))
+            ppl = evaluation_results["metrics"]["perplexity"].get("perplexity", float("in"))
             # Convert perplexity to 0-100 score (lower perplexity is better)
             ppl_score = max(0, 100 - (ppl - 10) * 5)  # Rough conversion
             scores.append(ppl_score)
@@ -523,29 +523,29 @@ def cmd_evaluate(args):
             json.dump(evaluation_results, f, indent=2, default=str)
 
         # Display comprehensive results summary
-        print(f"\n" + "=" * 60)
-        print(f"📊 EVALUATION SUMMARY")
-        print(f"=" * 60)
+        print("\n" + "=" * 60)
+        print("📊 EVALUATION SUMMARY")
+        print("=" * 60)
         print(f"🎯 Overall Score: {summary['overall_score']:.1f}/100")
         print(f"⏱️  Evaluation Time: {evaluation_time:.1f} seconds")
 
         if summary["strengths"]:
-            print(f"\n✅ Strengths:")
+            print("\n✅ Strengths:")
             for strength in summary["strengths"]:
                 print(f"   • {strength}")
 
         if summary["weaknesses"]:
-            print(f"\n⚠️  Areas for Improvement:")
+            print("\n⚠️  Areas for Improvement:")
             for weakness in summary["weaknesses"]:
                 print(f"   • {weakness}")
 
         if summary["recommendations"]:
-            print(f"\n💡 Recommendations:")
+            print("\n💡 Recommendations:")
             for rec in summary["recommendations"]:
                 print(f"   • {rec}")
 
         print(f"\n💾 Detailed results saved to: {results_file}")
-        print(f"🎉 Evaluation completed successfully!")
+        print("🎉 Evaluation completed successfully!")
 
         return True
 
@@ -613,13 +613,13 @@ def create_parser():
 Examples:
   # Prepare training data from SQUAD dataset
   python core/src/main.py prepare-data --output data/clean/training_data.txt
-  
+
   # Train tokenizer with custom settings
   python core/src/main.py train-tokenizer \\
     --input data/clean/training_data.txt \\
     --vocab-size 32000 \\
     --output-dir data/tokenizer/
-  
+
   # Get help for specific commands
   python core/src/main.py train-tokenizer --help
         """,

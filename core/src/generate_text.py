@@ -98,7 +98,7 @@ class TextGenerator:
         else:
             self.device = device
 
-        print(f"🚀 OpenLLM Text Generator")
+        print("🚀 OpenLLM Text Generator")
         print(f"📂 Model directory: {model_dir}")
         print(f"🖥️  Device: {self.device}")
 
@@ -111,7 +111,7 @@ class TextGenerator:
         # Ensure model and tokenizer are compatible
         self._validate_setup()
 
-        print(f"✅ Text generator initialized successfully!")
+        print("✅ Text generator initialized successfully!")
 
     def _load_model(self):
         """
@@ -145,7 +145,7 @@ class TextGenerator:
         # This contains model weights, configuration, and training metadata
         try:
             checkpoint = torch.load(checkpoint_path, map_location=self.device)
-            print(f"✅ Checkpoint loaded successfully")
+            print("✅ Checkpoint loaded successfully")
         except Exception as e:
             raise RuntimeError(f"Failed to load checkpoint: {e}")
 
@@ -192,7 +192,7 @@ class TextGenerator:
                 # Fallback for different checkpoint formats
                 self.model.load_state_dict(checkpoint)
 
-            print(f"✅ Model weights loaded successfully")
+            print("✅ Model weights loaded successfully")
         except Exception as e:
             raise RuntimeError(f"Failed to load model weights: {e}")
 
@@ -254,8 +254,8 @@ class TextGenerator:
 
         # Infer number of attention heads from attention weights
         # The c_attn weight combines query, key, value projections
-        if f"transformer.h.0.attn.c_attn.weight" in state_dict:
-            attn_weight_shape = state_dict[f"transformer.h.0.attn.c_attn.weight"].shape
+        if "transformer.h.0.attn.c_attn.weight" in state_dict:
+            attn_weight_shape = state_dict["transformer.h.0.attn.c_attn.weight"].shape
             # Shape is [n_embd, 3 * n_embd] for combined Q,K,V
             # So n_head = n_embd / head_dim, assuming head_dim = 64
             n_head = n_embd // 64  # Standard head dimension
@@ -331,10 +331,10 @@ class TextGenerator:
         tokenizer_vocab_size = self.tokenizer.vocab_size()
 
         if model_vocab_size != tokenizer_vocab_size:
-            print(f"⚠️  Warning: Vocabulary size mismatch!")
+            print("⚠️  Warning: Vocabulary size mismatch!")
             print(f"   Model expects: {model_vocab_size}")
             print(f"   Tokenizer has: {tokenizer_vocab_size}")
-            print(f"   This may cause generation issues.")
+            print("   This may cause generation issues.")
 
         # Test basic functionality
         # Quick validation that everything works together
@@ -349,11 +349,11 @@ class TextGenerator:
             with torch.no_grad():
                 outputs = self.model(input_ids)
 
-            print(f"✅ Validation passed: tokenization and model forward pass work")
+            print("✅ Validation passed: tokenization and model forward pass work")
 
         except Exception as e:
             print(f"⚠️  Validation warning: {e}")
-            print(f"   Generation may still work, but there might be issues.")
+            print("   Generation may still work, but there might be issues.")
 
     def generate(
         self,
@@ -608,7 +608,7 @@ class TextGenerator:
             top_k_values, top_k_indices = torch.topk(logits, top_k_tokens)
 
             # Zero out non-top-k logits
-            filtered_logits = torch.full_like(logits, float("-inf"))
+            filtered_logits = torch.full_like(logits, float("-in"))
             filtered_logits[top_k_indices] = top_k_values
             logits = filtered_logits
 
@@ -630,7 +630,7 @@ class TextGenerator:
 
             # Zero out tokens beyond nucleus
             indices_to_remove = sorted_indices[sorted_indices_to_remove]
-            logits[indices_to_remove] = float("-inf")
+            logits[indices_to_remove] = float("-in")
 
         # Convert logits to probabilities and sample
         # Use multinomial sampling for final token selection
@@ -868,7 +868,7 @@ Examples:
             "repetition_penalty": args.repetition_penalty,
         }
 
-        print(f"\n🎯 Generation Settings:")
+        print("\n🎯 Generation Settings:")
         for key, value in generation_kwargs.items():
             print(f"   {key}: {value}")
         print()
@@ -889,9 +889,9 @@ Examples:
 
         # Display results
         # Format and show generated text with clear presentation
-        print(f"\n" + "=" * 60)
-        print(f"📊 GENERATION RESULTS")
-        print(f"=" * 60)
+        print("\n" + "=" * 60)
+        print("📊 GENERATION RESULTS")
+        print("=" * 60)
 
         total_samples = (
             len(results) if isinstance(results[0], str) else sum(len(r) for r in results)
@@ -938,12 +938,12 @@ Examples:
 
                 save_results_to_file(flat_results, args.output_file, flat_prompts)
 
-        print(f"\n🎉 Text generation completed successfully!")
+        print("\n🎉 Text generation completed successfully!")
 
         return True
 
     except KeyboardInterrupt:
-        print(f"\n⚠️  Generation interrupted by user")
+        print("\n⚠️  Generation interrupted by user")
         return False
 
     except Exception as e:

@@ -223,7 +223,7 @@ def prepare_training_data(output_path="data/clean/training_data.txt", min_words=
         try:
             os.remove(file)
             print(f"Removed {file}")
-        except:
+        except Exception:
             pass
 
 

@@ -20,7 +20,7 @@ FEATURES:
 - CPU-optimized training with memory management
 - Gradient accumulation for effective large batch sizes
 - Learning rate scheduling with warmup
-- Model checkpointing and resume capability  
+- Model checkpointing and resume capability
 - Real-time monitoring of loss, perplexity, and speed
 - Memory usage tracking and optimization
 - Automatic mixed precision (if available)
@@ -42,7 +42,7 @@ Usage:
 
 Requirements:
     - PyTorch
-    - SentencePiece  
+    - SentencePiece
     - Our model architecture and data loader
 
 Author: Louis Chua Bean Chong
@@ -56,12 +56,12 @@ import math
 import os
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Dict, Tuple
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
+from torch.optim.lr_scheduler import CosineAnnealingLR
 
 # Import our modules
 try:
@@ -145,7 +145,7 @@ class ModelTrainer:
         # Training state
         self.step = 0
         self.epoch = 0
-        self.best_loss = float("inf")
+        self.best_loss = float("in")
         self.training_log = []
 
         # Performance tracking
@@ -324,7 +324,7 @@ class ModelTrainer:
         self.training_log.append(log_entry)
 
         # Print progress
-        elapsed_time = time.time() - self.start_time if self.start_time else 0
+        _ = time.time() - self.start_time if self.start_time else 0
         eta_seconds = (self.max_steps - step) * step_time if step_time > 0 else 0
         eta_hours = eta_seconds / 3600
 
@@ -388,13 +388,13 @@ class ModelTrainer:
         self.best_loss = checkpoint["best_loss"]
         self.training_log = checkpoint.get("training_log", [])
 
-        print(f"✓ Checkpoint loaded successfully")
+        print("✓ Checkpoint loaded successfully")
         print(f"  Resuming from step: {self.step:,}")
         print(f"  Best loss so far: {self.best_loss:.4f}")
 
     def train(self) -> None:
         """Main training loop."""
-        print(f"\n🚀 Starting training...")
+        print("\n🚀 Starting training...")
         print(f"  Model: {self.model.config.model_name}")
         print(f"  Parameters: {self.model.get_num_params():,}")
         print(f"  Device: {self.device}")
@@ -472,14 +472,14 @@ class ModelTrainer:
                     break
 
         # Final checkpoint
-        print(f"\n🎉 Training completed!")
+        print("\n🎉 Training completed!")
         self._save_checkpoint(self.step, is_best=True)
 
         # Training summary
         total_time = time.time() - self.start_time
         avg_step_time = sum(self.step_times) / len(self.step_times) if self.step_times else 0
 
-        print(f"\n📊 Training Summary:")
+        print("\n📊 Training Summary:")
         print(f"  Steps completed: {self.step:,}")
         print(f"  Total time: {total_time/3600:.2f} hours")
         print(f"  Average time per step: {avg_step_time:.2f}s")
@@ -500,7 +500,7 @@ Examples:
     --model-size small \\
     --max-steps 5000 \\
     --output-dir models/test-small
-  
+
   # Train medium model with custom settings
   python core/src/train_model.py \\
     --model-size medium \\
@@ -593,7 +593,7 @@ Examples:
         model = create_model(args.model_size)
 
         # Create data loader
-        print(f"\n📊 Setting up data loader...")
+        print("\n📊 Setting up data loader...")
         tokenizer_path = os.path.join(args.tokenizer_dir, "tokenizer.model")
 
         data_loader = TextDataLoader(
@@ -605,10 +605,10 @@ Examples:
         )
 
         # Get data statistics
-        data_stats = data_loader.get_data_stats()
+        _ = data_loader.get_data_stats()
 
         # Create trainer
-        print(f"\n🎯 Setting up trainer...")
+        print("\n🎯 Setting up trainer...")
         trainer = ModelTrainer(
             model=model,
             data_loader=data_loader,
@@ -628,7 +628,7 @@ Examples:
         # Start training
         trainer.train()
 
-        print(f"\n🎉 Training completed successfully!")
+        print("\n🎉 Training completed successfully!")
 
     except Exception as e:
         print(f"\n❌ Training failed: {e}")

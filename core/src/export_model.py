@@ -86,7 +86,7 @@ class ModelExporter:
         self.model, self.config, self.training_info = self._load_model()
         self.tokenizer_path = self._find_tokenizer()
 
-        print(f"🔧 ModelExporter initialized")
+        print("🔧 ModelExporter initialized")
         print(f"  Model: {self.config.model_name}")
         print(f"  Parameters: {self.model.get_num_params():,}")
         print(f"  Output directory: {output_dir}")
@@ -386,7 +386,7 @@ PyTorch Model Loader for OpenLLM
 
 Usage:
     from load_model import load_model, generate_text
-    
+
     model, tokenizer, config = load_model(".")
     text = generate_text(model, tokenizer, "Hello world", max_length=50)
     print(text)
@@ -400,25 +400,25 @@ from pathlib import Path
 def load_model(model_dir="."):
     """Load OpenLLM model from PyTorch export."""
     model_dir = Path(model_dir)
-    
+
     # Load config
     with open(model_dir / "config.json", 'r') as f:
         config_data = json.load(f)
-    
+
     model_config = config_data['model_config']
-    
+
     # Recreate model architecture (you'll need to have the model.py file)
     # This is a simplified loader - in practice you'd import your GPTModel class
     print(f"Model config: {model_config}")
     print("Note: You need to import and create the actual model class")
-    
+
     # Load model state
     checkpoint = torch.load(model_dir / "model.pt", map_location='cpu')
-    
+
     # Load tokenizer
     tokenizer = smp.SentencePieceProcessor()
     tokenizer.load(str(model_dir / "tokenizer.model"))
-    
+
     return None, tokenizer, model_config  # Placeholder
 
 def generate_text(model, tokenizer, prompt, max_length=100):
@@ -445,7 +445,7 @@ Usage:
     # from transformers import AutoModel, AutoTokenizer
     # model = AutoModel.from_pretrained(".")
     # tokenizer = AutoTokenizer.from_pretrained(".")
-    
+
     # Manual loading
     from load_hf_model import load_model_manual
     model, tokenizer = load_model_manual(".")
@@ -459,21 +459,21 @@ from pathlib import Path
 def load_model_manual(model_dir="."):
     """Manually load model in HF format."""
     model_dir = Path(model_dir)
-    
+
     # Load config
     with open(model_dir / "config.json", 'r') as f:
         config = json.load(f)
-    
+
     # Load model weights
     state_dict = torch.load(model_dir / "pytorch_model.bin", map_location='cpu')
-    
+
     # Load tokenizer
     tokenizer = smp.SentencePieceProcessor()
     tokenizer.load(str(model_dir / "tokenizer.model"))
-    
+
     print(f"Loaded model: {config['model_type']} with {config['n_layer']} layers")
     print(f"Vocabulary size: {config['vocab_size']}")
-    
+
     return state_dict, tokenizer
 
 if __name__ == "__main__":
@@ -493,7 +493,7 @@ ONNX Inference for OpenLLM
 
 Usage:
     from onnx_inference import ONNXInference
-    
+
     inference = ONNXInference(".")
     output = inference.generate("Hello world", max_length=50)
     print(output)
@@ -514,51 +514,51 @@ class ONNXInference:
     def __init__(self, model_dir="."):
         if ort is None:
             raise ImportError("onnxruntime not available")
-        
+
         model_dir = Path(model_dir)
-        
+
         # Load ONNX model
         self.session = ort.InferenceSession(str(model_dir / "model.onnx"))
-        
+
         # Load metadata
         with open(model_dir / "metadata.json", 'r') as f:
             self.metadata = json.load(f)
-        
+
         # Load tokenizer
         self.tokenizer = smp.SentencePieceProcessor()
         self.tokenizer.load(str(model_dir / "tokenizer.model"))
-        
+
         print(f"ONNX model loaded: {self.metadata['model_config']['model_name']}")
-    
+
     def predict(self, input_ids):
         """Run inference on input token IDs."""
         # Prepare input
         input_data = {"input_ids": input_ids.astype(np.int64)}
-        
+
         # Run inference
         outputs = self.session.run(None, input_data)
         return outputs[0]  # logits
-    
+
     def generate(self, prompt, max_length=50, temperature=0.7):
         """Generate text from prompt."""
         # Tokenize prompt
         tokens = self.tokenizer.encode(prompt)
         input_ids = np.array([tokens], dtype=np.int64)
-        
+
         # Simple greedy generation (can be improved)
         generated = tokens.copy()
-        
+
         for _ in range(max_length):
             if len(generated) >= 512:  # Max sequence length
                 break
-            
+
             # Get current input (last 64 tokens to fit ONNX model)
             current_input = np.array([generated[-64:]], dtype=np.int64)
-            
+
             # Predict next token
             logits = self.predict(current_input)
             next_token_logits = logits[0, -1, :]  # Last position
-            
+
             # Apply temperature and sample
             if temperature > 0:
                 next_token_logits = next_token_logits / temperature
@@ -566,9 +566,9 @@ class ONNXInference:
                 next_token = np.random.choice(len(probs), p=probs)
             else:
                 next_token = np.argmax(next_token_logits)
-            
+
             generated.append(int(next_token))
-        
+
         # Decode generated text
         generated_text = self.tokenizer.decode(generated[len(tokens):])
         return generated_text
@@ -643,20 +643,20 @@ Examples:
     --model_dir models/small-extended-4k \\
     --format pytorch \\
     --output_dir exports/pytorch/
-  
+
   # Export to Hugging Face format
   python core/src/export_model.py \\
     --model_dir models/small-extended-4k \\
     --format huggingface \\
     --output_dir exports/huggingface/
-  
+
   # Export to ONNX with optimizations
   python core/src/export_model.py \\
     --model_dir models/small-extended-4k \\
     --format onnx \\
     --output_dir exports/onnx/ \\
     --optimize_for_inference
-  
+
   # Export to all formats
   python core/src/export_model.py \\
     --model_dir models/small-extended-4k \\
@@ -708,11 +708,11 @@ Examples:
 
         elif args.format == "all":
             results = exporter.export_all_formats(args.optimize_for_inference)
-            print(f"\n✅ All formats exported:")
+            print("\n✅ All formats exported:")
             for fmt, path in results.items():
                 print(f"  {fmt}: {path}")
 
-        print(f"\n🎉 Export completed successfully!")
+        print("\n🎉 Export completed successfully!")
 
     except Exception as e:
         print(f"\n❌ Export failed: {e}")

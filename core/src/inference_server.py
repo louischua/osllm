@@ -142,7 +142,7 @@ class OpenLLMInference:
         self.loaded_at = time.time()
         self.total_requests = 0
 
-        print(f"🚀 OpenLLM Inference Engine initialized")
+        print("🚀 OpenLLM Inference Engine initialized")
         print(f"  Model: {self.config.get('model_name', 'Unknown')}")
         print(f"  Format: {self.detected_format}")
         print(f"  Device: {self.device}")
@@ -179,7 +179,7 @@ class OpenLLMInference:
         # Load tokenizer
         self._load_tokenizer()
 
-        print(f"✅ Model loaded successfully")
+        print("✅ Model loaded successfully")
 
     def _load_pytorch_model(self):
         """Load PyTorch format model."""
@@ -575,7 +575,7 @@ Examples:
     --model_path exports/huggingface/ \\
     --host 0.0.0.0 \\
     --port 8000
-  
+
   # Start server with ONNX model
   python core/src/inference_server.py \\
     --model_path exports/onnx/ \\

@@ -26,12 +26,12 @@ FEATURES:
 
 TOKENIZER OUTPUT:
 - tokenizer.model: SentencePiece model file
-- tokenizer.vocab: Human-readable vocabulary file  
+- tokenizer.vocab: Human-readable vocabulary file
 - tokenizer_config.json: Configuration for Hugging Face integration
 
 Usage:
     python core/src/train_tokenizer.py --input data/clean/training_data.txt --vocab_size 32000
-    
+
 Advanced usage:
     python core/src/train_tokenizer.py \\
         --input data/clean/training_data.txt \\
@@ -98,7 +98,7 @@ def validate_input_file(input_path: str) -> None:
             first_line = f.readline()
             if not first_line.strip():
                 raise ValueError(
-                    f"Training data file appears to be empty or contains only whitespace"
+                    "Training data file appears to be empty or contains only whitespace"
                 )
     except UnicodeDecodeError as e:
         raise ValueError(f"Cannot read training data file as UTF-8: {e}")
@@ -177,7 +177,7 @@ def train_sentencepiece_tokenizer(
         "--normalization_rule_name=identity",  # Keep original text as-is
     ]
 
-    print(f"\nTraining SentencePiece tokenizer...")
+    print("\nTraining SentencePiece tokenizer...")
     print(f"  Algorithm: {model_type.upper()}")
     print(f"  Vocabulary size: {vocab_size:,}")
     print(f"  Character coverage: {character_coverage}")
@@ -231,7 +231,7 @@ def test_tokenizer(model_path: str, test_sentences: list = None) -> None:
         model_path (str): Path to the trained .model file
         test_sentences (list): Optional list of test sentences
     """
-    print(f"\nTesting trained tokenizer...")
+    print("\nTesting trained tokenizer...")
 
     # Load the trained tokenizer
     sp = spm.SentencePieceProcessor()
@@ -267,7 +267,7 @@ def test_tokenizer(model_path: str, test_sentences: list = None) -> None:
 
         # Verify round-trip encoding/decoding
         if decoded.strip() != sentence.strip():
-            print(f"   ⚠️  Warning: Decode mismatch!")
+            print("   ⚠️  Warning: Decode mismatch!")
 
     print("✓ Tokenizer testing completed")
 
@@ -316,7 +316,7 @@ def main():
 Examples:
   # Basic usage with SQUAD data
   python core/src/train_tokenizer.py --input data/clean/training_data.txt --vocab_size 32000
-  
+
   # Advanced configuration
   python core/src/train_tokenizer.py \\
     --input data/clean/training_data.txt \\
@@ -404,20 +404,20 @@ Examples:
             test_tokenizer(model_path)
 
         # Step 6: Print summary
-        print(f"\n🎉 Tokenizer training completed successfully!")
+        print("\n🎉 Tokenizer training completed successfully!")
         print(f"📁 Output directory: {args.output_dir}")
         print(f"📊 Vocabulary size: {config['vocab_size']:,}")
         print(f"⏱️  Training time: {config['training_time_seconds']:.1f}s")
         print(f"📄 Training sentences: {sentence_count:,}")
 
-        print(f"\nFiles created:")
+        print("\nFiles created:")
         print(f"  • {config['model_file']} - SentencePiece model")
         print(f"  • {config['vocab_file']} - Vocabulary file")
         print(f"  • {os.path.join(args.output_dir, 'tokenizer_config.json')} - Hugging Face config")
 
-        print(f"\nTo use this tokenizer in your language model:")
-        print(f"  import sentencepiece as spm")
-        print(f"  sp = spm.SentencePieceProcessor()")
+        print("\nTo use this tokenizer in your language model:")
+        print("  import sentencepiece as spm")
+        print("  sp = spm.SentencePieceProcessor()")
         print(f"  sp.load('{config['model_file']}')")
 
     except Exception as e:

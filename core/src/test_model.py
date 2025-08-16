@@ -86,7 +86,7 @@ class ModelTester:
         else:
             self.device = device
 
-        print(f"🔧 Model Tester initialized")
+        print("🔧 Model Tester initialized")
         print(f"Device: {self.device}")
         print(f"PyTorch version: {torch.__version__}")
 
@@ -136,7 +136,7 @@ class ModelTester:
             param_count = model.get_num_params()
             config = model.config
 
-            print(f"✓ Model created successfully")
+            print("✓ Model created successfully")
             print(f"  Parameters: {param_count:,}")
             print(f"  Layers: {config.n_layer}")
             print(f"  Heads: {config.n_head}")
@@ -194,7 +194,7 @@ class ModelTester:
             logits_train, loss = model(x, targets)
             train_time = time.time() - start_time
 
-            print(f"✓ Forward pass successful")
+            print("✓ Forward pass successful")
             print(f"  Input shape: {x.shape}")
             print(f"  Output shape: {logits.shape}")
             print(f"  Loss: {loss.item():.4f}")
@@ -226,7 +226,7 @@ class ModelTester:
         Returns:
             dict: Memory usage results
         """
-        print(f"\n💾 Testing memory usage...")
+        print("\n💾 Testing memory usage...")
 
         results = {}
 
@@ -284,7 +284,7 @@ class ModelTester:
         Returns:
             dict: Integration test results
         """
-        print(f"\n🔤 Testing tokenizer integration...")
+        print("\n🔤 Testing tokenizer integration...")
 
         if self.tokenizer is None:
             print("⚠️  No tokenizer available, skipping integration test")
@@ -321,7 +321,7 @@ class ModelTester:
                         decoded = self.tokenizer.decode([token_id.item()])
                         prob = top5_tokens.values[len(top5_decoded)].item()
                         top5_decoded.append((decoded, prob))
-                    except:
+                    except Exception:
                         top5_decoded.append(("<??>", 0.0))
 
                 results.append(
@@ -353,7 +353,7 @@ class ModelTester:
         Returns:
             dict: Generation test results
         """
-        print(f"\n✍️  Testing text generation...")
+        print("\n✍️  Testing text generation...")
 
         if self.tokenizer is None:
             print("⚠️  No tokenizer available, skipping generation test")
@@ -365,7 +365,7 @@ class ModelTester:
             input_tensor = torch.tensor([tokens]).to(self.device)
 
             print(f"Prompt: '{prompt}'")
-            print(f"Generating...")
+            print("Generating...")
 
             # Generate
             start_time = time.time()
@@ -476,13 +476,13 @@ def main():
 Examples:
   # Test medium model
   python core/src/test_model.py --model_size medium
-  
+
   # Test all model sizes
   python core/src/test_model.py --all_sizes
-  
+
   # Test with text generation
   python core/src/test_model.py --model_size small --test_generation
-  
+
   # Show hardware recommendations
   python core/src/test_model.py --recommendations
         """,
@@ -558,7 +558,7 @@ Examples:
             json.dump(all_results, f, indent=2)
         print(f"\n💾 Results saved to {args.save_results}")
 
-    print(f"\n🎉 Testing completed!")
+    print("\n🎉 Testing completed!")
 
 
 if __name__ == "__main__":

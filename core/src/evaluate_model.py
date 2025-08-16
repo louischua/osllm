@@ -77,7 +77,7 @@ class ModelEvaluator:
         self.tokenizer = smp.SentencePieceProcessor()
         self.tokenizer.load(tokenizer_path)
 
-        print(f"🔧 ModelEvaluator initialized")
+        print("🔧 ModelEvaluator initialized")
         print(f"  Device: {device}")
         print(f"  Model parameters: {model.get_num_params():,}")
         print(f"  Vocabulary size: {self.tokenizer.vocab_size():,}")
@@ -490,7 +490,7 @@ class ModelEvaluator:
             with open(eval_data_path, "r", encoding="utf-8") as f:
                 eval_texts = [line.strip() for line in f if line.strip()]
         else:
-            print(f"⚠️  Evaluation file not found, using sample texts")
+            print("⚠️  Evaluation file not found, using sample texts")
             eval_texts = [
                 "Artificial intelligence is a rapidly growing field of computer science.",
                 "Machine learning algorithms can learn patterns from data automatically.",
@@ -546,7 +546,7 @@ class ModelEvaluator:
 
         # Check intrinsic metrics
         if "intrinsic_evaluation" in results:
-            perplexity = results["intrinsic_evaluation"].get("perplexity", float("inf"))
+            perplexity = results["intrinsic_evaluation"].get("perplexity", float("in"))
 
             if perplexity < 12:
                 assessment["quality_level"] = "good"
@@ -649,7 +649,7 @@ Examples:
   python core/src/evaluate_model.py \\
     --model_dir models/small-extended-4k \\
     --eval_data data/clean/training_data.txt
-  
+
   # Specific metrics
   python core/src/evaluate_model.py \\
     --model_dir models/small-extended-4k \\
@@ -724,20 +724,20 @@ Examples:
                 json.dump(results, f, indent=2)
             print(f"\n💾 Results saved to {args.output}")
         else:
-            print(f"\n📊 Evaluation Results:")
+            print("\n📊 Evaluation Results:")
             print("=" * 50)
 
             # Print key metrics
             if "intrinsic_evaluation" in results:
                 intrinsic = results["intrinsic_evaluation"]
-                print(f"📈 Intrinsic Metrics:")
+                print("📈 Intrinsic Metrics:")
                 print(f"  Loss: {intrinsic['loss']:.4f}")
                 print(f"  Perplexity: {intrinsic['perplexity']:.2f}")
                 print(f"  Sequences evaluated: {intrinsic['num_sequences']:,}")
 
             if "generation_evaluation" in results:
                 gen_summary = results["generation_evaluation"]["summary"]
-                print(f"\n✍️  Generation Quality:")
+                print("\n✍️  Generation Quality:")
                 print(
                     f"  Avg generation speed: {gen_summary['avg_tokens_per_second']:.1f} tokens/sec"
                 )
@@ -748,12 +748,12 @@ Examples:
             # Quality assessment
             if "quality_assessment" in results:
                 assessment = results["quality_assessment"]
-                print(f"\n🎯 Overall Assessment:")
+                print("\n🎯 Overall Assessment:")
                 print(f"  Quality Level: {assessment['quality_level'].upper()}")
                 for rec in assessment["recommendations"]:
                     print(f"  • {rec}")
 
-        print(f"\n🎉 Evaluation completed successfully!")
+        print("\n🎉 Evaluation completed successfully!")
 
     except Exception as e:
         print(f"\n❌ Evaluation failed: {e}")

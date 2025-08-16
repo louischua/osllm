@@ -52,8 +52,7 @@ import gc
 import os
 import random
 import time
-from pathlib import Path
-from typing import Iterator, List, Optional, Tuple
+from typing import Iterator, List, Tuple
 
 import torch
 
@@ -115,7 +114,7 @@ class TextDataLoader:
         # Set random seed for reproducibility
         random.seed(seed)
 
-        print(f"📊 TextDataLoader initialized")
+        print("📊 TextDataLoader initialized")
         print(f"  Data file: {data_file}")
         print(f"  Total passages: {self.total_lines:,}")
         print(f"  Sequence length: {seq_len}")
@@ -424,7 +423,7 @@ class TextDataLoader:
             "vocabulary_size": self.tokenizer.vocab_size(),
         }
 
-        print(f"✓ Data analysis complete:")
+        print("✓ Data analysis complete:")
         print(f"  Total passages: {stats['total_passages']:,}")
         print(f"  Avg tokens per passage: {stats['avg_tokens_per_passage']:.1f}")
         print(f"  Estimated total tokens: {stats['estimated_total_tokens']:,}")
@@ -448,7 +447,7 @@ def test_data_loader():
         )
 
         # Get data statistics
-        stats = loader.get_data_stats()
+        _ = loader.get_data_stats()
 
         # Test iteration
         print("\n🔄 Testing batch iteration...")
@@ -468,7 +467,7 @@ def test_data_loader():
                 break
 
         test_time = time.time() - start_time
-        print(f"\n✓ Data loader test completed successfully!")
+        print("\n✓ Data loader test completed successfully!")
         print(f"  Processed {batch_count} batches in {test_time:.2f}s")
         print(f"  Average time per batch: {test_time/max(1, batch_count):.2f}s")
 
