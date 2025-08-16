@@ -113,7 +113,9 @@ class TextDataLoader:
 
         # Initialize data attribute for testing compatibility
         # Load a small sample of data for testing purposes
-        self.data = self._read_chunk(0, min(self.chunk_size, 100))  # Load up to 100 passages for testing
+        self.data = self._read_chunk(
+            0, min(self.chunk_size, 100)
+        )  # Load up to 100 passages for testing
 
         # Set random seed for reproducibility
         random.seed(seed)

@@ -514,7 +514,7 @@ class GPTModel(nn.Module):
         # Language modeling head
         # Always compute full logits for training and evaluation
         logits = self.lm_head(x)
-        
+
         if targets is not None:
             # If we have targets, compute loss
             loss = F.cross_entropy(
