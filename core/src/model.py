@@ -241,7 +241,7 @@ class CausalSelfAttention(nn.Module):
         # The causal mask ensures that token i can only attend to tokens j where j <= i
         # This prevents the model from "cheating" by looking at future tokens during training
         # We use -inf for masked positions so they become 0 after softmax
-        att = att.masked_fill(self.bias[:, :, :T, :T] == 0, float("-in"))
+        att = att.masked_fill(self.bias[:, :, :T, :T] == 0, float("-inf"))
 
         # Convert attention scores to probabilities using softmax
         # Each row of the attention matrix now sums to 1, representing a probability distribution
