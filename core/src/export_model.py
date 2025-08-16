@@ -47,19 +47,19 @@ License: GPLv3
 import argparse
 import json
 import os
-import sys
 import shutil
+import sys
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
+import sentencepiece as spm
 import torch
 import torch.nn as nn
-import sentencepiece as spm
 
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from model import GPTModel, create_model, GPTConfig
+from model import GPTConfig, GPTModel, create_model
 
 
 class ModelExporter:

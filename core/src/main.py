@@ -38,8 +38,8 @@ Examples:
 """
 
 import argparse
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Add the current directory to Python path for imports
@@ -47,14 +47,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
     from download_and_prepare import prepare_training_data
+    from test_model import ModelTester
     from train_tokenizer import (
-        train_sentencepiece_tokenizer,
-        validate_input_file,
         count_training_sentences,
         save_huggingface_config,
         test_tokenizer,
+        train_sentencepiece_tokenizer,
+        validate_input_file,
     )
-    from test_model import ModelTester
 except ImportError as e:
     print(f"Error importing modules: {e}")
     print("Make sure you're running this from the correct directory.")
@@ -125,10 +125,11 @@ def cmd_train_model(args):
     print("🏗️  Starting model training...")
 
     try:
-        from train_model import ModelTrainer, create_model
-        from data_loader import TextDataLoader
-        import torch
         import os
+
+        import torch
+        from data_loader import TextDataLoader
+        from train_model import ModelTrainer, create_model
 
         # Determine device
         if args.device == "auto":
@@ -225,8 +226,8 @@ def cmd_inference(args):
     try:
         # Import inference functionality
         # We import here to avoid circular imports and handle missing dependencies
-        import sys
         import os
+        import sys
 
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -335,9 +336,9 @@ def cmd_evaluate(args):
     try:
         # Import evaluation functionality
         # We import here to avoid circular imports and handle missing dependencies
-        import sys
-        import os
         import json
+        import os
+        import sys
         from pathlib import Path
 
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

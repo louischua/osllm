@@ -52,19 +52,19 @@ License: GPLv3
 
 import argparse
 import json
-import time
-import sys
 import os
+import sys
+import time
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
-import torch
 import sentencepiece as spm
+import torch
 
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from model import create_model, GPTModel, GPTConfig
+from model import GPTConfig, GPTModel, create_model
 
 
 class TextGenerator:

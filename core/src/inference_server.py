@@ -39,28 +39,30 @@ License: GPLv3
 """
 
 import argparse
+import asyncio
 import json
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-import asyncio
+from typing import Any, Dict, List, Optional
+
 import uvicorn
 
 # FastAPI imports (open source)
 try:
-    from fastapi import FastAPI, HTTPException, BackgroundTasks
+    from fastapi import BackgroundTasks, FastAPI, HTTPException
     from fastapi.middleware.cors import CORSMiddleware
     from pydantic import BaseModel, Field
 except ImportError:
     raise ImportError("Install FastAPI: pip install fastapi uvicorn[standard]")
 
-import torch
-import sentencepiece as smp
-import numpy as np
+import os
 
 # Import our modules
 import sys
-import os
+
+import numpy as np
+import sentencepiece as smp
+import torch
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 

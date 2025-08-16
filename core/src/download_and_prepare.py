@@ -63,9 +63,10 @@ python core/src/download_and_prepare.py
 
 """
 
-import os
-import requests
 import json
+import os
+
+import requests
 from tqdm import tqdm
 
 

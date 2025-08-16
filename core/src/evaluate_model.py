@@ -35,22 +35,22 @@ License: GPLv3
 
 import argparse
 import json
+import math
 import os
 import sys
 import time
-import math
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Any, Dict, List, Optional, Tuple
 
+import sentencepiece as smp
 import torch
 import torch.nn.functional as F
-import sentencepiece as smp
 
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from model import GPTModel, create_model
 from data_loader import TextDataLoader
+from model import GPTModel, create_model
 
 
 class ModelEvaluator:

@@ -49,11 +49,12 @@ License: GPLv3
 """
 
 import math
+from dataclasses import dataclass
+from typing import Optional, Tuple
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from dataclasses import dataclass
-from typing import Optional, Tuple
 
 
 @dataclass

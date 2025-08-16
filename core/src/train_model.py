@@ -50,13 +50,13 @@ License: GPLv3
 """
 
 import argparse
+import gc
 import json
+import math
 import os
 import time
-import math
-import gc
 from pathlib import Path
-from typing import Dict, Any, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import torch
 import torch.nn as nn
@@ -65,14 +65,14 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 
 # Import our modules
 try:
-    from model import GPTModel, GPTConfig, create_model
     from data_loader import TextDataLoader
+    from model import GPTConfig, GPTModel, create_model
 except ImportError:
     import sys
 
     sys.path.append(os.path.dirname(__file__))
-    from model import GPTModel, GPTConfig, create_model
     from data_loader import TextDataLoader
+    from model import GPTConfig, GPTModel, create_model
 
 
 class ModelTrainer:

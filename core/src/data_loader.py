@@ -48,13 +48,14 @@ Author: Louis Chua Bean Chong
 License: GPLv3
 """
 
-import os
 import gc
+import os
 import random
-import torch
 import time
-from typing import Iterator, Tuple, List, Optional
 from pathlib import Path
+from typing import Iterator, List, Optional, Tuple
+
+import torch
 
 try:
     import sentencepiece as spm
