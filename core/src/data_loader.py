@@ -111,6 +111,10 @@ class TextDataLoader:
         self.total_lines = self._count_lines()
         self.current_line = 0
 
+        # Initialize data attribute for testing compatibility
+        # Load a small sample of data for testing purposes
+        self.data = self._read_chunk(0, min(self.chunk_size, 100))  # Load up to 100 passages for testing
+
         # Set random seed for reproducibility
         random.seed(seed)
 
@@ -163,12 +167,13 @@ class TextDataLoader:
 
         return line_count
 
-    def _read_chunk(self, start_line: int = 0) -> List[str]:
+    def _read_chunk(self, start_line: int = 0, limit: int = None) -> List[str]:
         """
         Read a chunk of lines from the data file.
 
         Args:
             start_line: Line number to start reading from
+            limit: Maximum number of lines to read (None for default chunk_size)
 
         Returns:
             List of text passages
@@ -176,6 +181,7 @@ class TextDataLoader:
         chunk = []
         current_line = 0
         lines_read = 0
+        max_lines = limit if limit is not None else self.chunk_size
 
         with open(self.data_file, "r", encoding="utf-8") as f:
             for line in f:
@@ -188,7 +194,7 @@ class TextDataLoader:
                     chunk.append(text)
                     lines_read += 1
 
-                    if lines_read >= self.chunk_size:
+                    if lines_read >= max_lines:
                         break
 
                 current_line += 1

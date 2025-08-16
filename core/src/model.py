@@ -512,15 +512,16 @@ class GPTModel(nn.Module):
         x = self.transformer.ln_f(x)
 
         # Language modeling head
+        # Always compute full logits for training and evaluation
+        logits = self.lm_head(x)
+        
         if targets is not None:
             # If we have targets, compute loss
-            logits = self.lm_head(x)
             loss = F.cross_entropy(
                 logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1
             )
         else:
-            # If no targets, only compute logits for the last token (more efficient for generation)
-            logits = self.lm_head(x[:, [-1], :])  # Note: using list [-1] to preserve the time dim
+            # If no targets, no loss computation
             loss = None
 
         return logits, loss

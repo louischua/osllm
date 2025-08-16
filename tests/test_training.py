@@ -220,7 +220,7 @@ class TestTrainingLoop(unittest.TestCase):
         optimizer.zero_grad()
 
         # Forward pass
-        logits = self.model(input_ids)
+        logits, _ = self.model(input_ids)
 
         # Loss computation
         loss = torch.nn.functional.cross_entropy(logits.view(-1, vocab_size), targets.view(-1))
@@ -253,8 +253,8 @@ class TestTrainingLoop(unittest.TestCase):
         checkpoint_path = os.path.join(self.temp_dir, "test_checkpoint.pt")
         torch.save(checkpoint, checkpoint_path)
 
-        # Load checkpoint
-        loaded_checkpoint = torch.load(checkpoint_path)
+        # Load checkpoint with weights_only=False for testing compatibility
+        loaded_checkpoint = torch.load(checkpoint_path, weights_only=False)
 
         # Verify checkpoint contents
         self.assertEqual(loaded_checkpoint["step"], 1000)
@@ -282,7 +282,7 @@ class TestTrainingLoop(unittest.TestCase):
         new_lr = optimizer.param_groups[0]["lr"]
         self.assertNotEqual(initial_lr, new_lr)
 
-    @patch("train_model.DataLoader")
+    @patch("train_model.TextDataLoader")
     @patch("train_model.GPTModel")
     def test_training_function_mock(self, mock_model_class, mock_data_loader_class):
         """Test training function with mocked dependencies."""
@@ -335,7 +335,7 @@ class TestModelEvaluation(unittest.TestCase):
         # Forward pass
         self.model.eval()
         with torch.no_grad():
-            logits = self.model(input_ids)
+            logits, _ = self.model(input_ids)
 
         # Calculate loss
         loss = torch.nn.functional.cross_entropy(
@@ -360,7 +360,7 @@ class TestModelEvaluation(unittest.TestCase):
         # Forward pass
         self.model.eval()
         with torch.no_grad():
-            logits = self.model(input_ids)
+            logits, _ = self.model(input_ids)
 
         # Calculate metrics
         loss = torch.nn.functional.cross_entropy(
@@ -392,7 +392,7 @@ class TestModelEvaluation(unittest.TestCase):
             # Forward pass
             self.model.eval()
             with torch.no_grad():
-                logits = self.model(input_ids)
+                logits, _ = self.model(input_ids)
 
             # Calculate loss
             loss = torch.nn.functional.cross_entropy(
@@ -459,7 +459,7 @@ class TestTrainingIntegration(unittest.TestCase):
             optimizer.zero_grad()
 
             # Forward pass
-            logits = model(input_ids)
+            logits, _ = model(input_ids)
 
             # Loss computation
             loss = torch.nn.functional.cross_entropy(logits.view(-1, vocab_size), targets.view(-1))
