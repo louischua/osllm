@@ -86,23 +86,19 @@ jobs:
 
       - name: 🎨 Check code formatting (Black)
         run: |
-          black --check --diff core/ || echo "⚠️ Code formatting issues found"
-        continue-on-error: true
+          black --check --diff core/
 
       - name: 📚 Check import sorting (isort)
         run: |
-          isort --check-only --diff core/ || echo "⚠️ Import sorting issues found"
-        continue-on-error: true
+          isort --check-only --diff core/
 
       - name: 🔍 Lint code (flake8)
         run: |
-          flake8 core/ --max-line-length=100 --extend-ignore=E203,W503 || echo "⚠️ Linting issues found"
-        continue-on-error: true
+          flake8 core/ --max-line-length=100 --extend-ignore=E203,W503
 
       - name: 🔧 Type checking (mypy)
         run: |
-          mypy core/ --ignore-missing-imports || echo "⚠️ Type checking issues found"
-        continue-on-error: true
+          mypy core/ --ignore-missing-imports
 
   # Security Checks
   security:
@@ -121,12 +117,10 @@ jobs:
       - name: 🛡️ Run security scan (bandit)
         run: |
           pip install bandit[toml]==1.7.5
-          bandit -r core/ -f json -o bandit-report.json || echo "⚠️ Security issues found"
-        continue-on-error: true
+          bandit -r core/ -f json -o bandit-report.json
 
       - name: 📊 Upload security scan results
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: security-scan-results
           path: bandit-report.json
@@ -149,12 +143,10 @@ jobs:
       - name: 🔍 Check for dependency vulnerabilities
         run: |
           pip install safety==2.3.5
-          safety check --json --output safety-report.json || echo "⚠️ Dependency vulnerabilities found"
-        continue-on-error: true
+          safety check --json --output safety-report.json
 
       - name: 📊 Upload dependency scan results
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: dependency-scan-results
           path: safety-report.json
@@ -166,7 +158,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [validate]
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.10"]
@@ -201,7 +193,6 @@ jobs:
           python -c "import os; print(f'Current directory: {os.getcwd()}')"
           python -c "import os; print(f'Files in directory: {os.listdir(\".\")}')"
           python -m pytest tests/test_simple.py -v --tb=short
-        continue-on-error: false
 
       - name: 🧪 Run simple tests (Windows)
         if: runner.os == 'Windows'
@@ -213,14 +204,12 @@ jobs:
           python -c "import os; print(f'Current directory: {os.getcwd()}')"
           python -c "import os; print(f'Files in directory: {os.listdir(\".\")}')"
           python -m pytest tests/test_simple.py -v --tb=short
-        continue-on-error: false
 
       - name: 🧪 Run basic tests (Unix)
         if: runner.os != 'Windows'
         run: |
           # Run basic tests (with project imports)
           python -m pytest tests/test_basic.py -v
-        continue-on-error: true
 
       - name: 🧪 Run basic tests (Windows)
         if: runner.os == 'Windows'
@@ -228,7 +217,6 @@ jobs:
         run: |
           # Run basic tests (with project imports)
           python -m pytest tests/test_basic.py -v
-        continue-on-error: true
 
       - name: 🧪 Run full unit tests (Unix)
         if: runner.os != 'Windows'
@@ -245,11 +233,10 @@ jobs:
           
           # Test basic imports first
           python -c "import sys; print('Python path:'); [print(p) for p in sys.path]"
-          python -c "import sys; sys.path.insert(0, '${GITHUB_WORKSPACE}/core/src'); import model; print('✅ Model import successful')" || echo "❌ Model import failed"
+          python -c "import sys; sys.path.insert(0, '${GITHUB_WORKSPACE}/core/src'); import model; print('✅ Model import successful')"
           
           # Run tests with better error handling
-          python -m pytest tests/ -v --cov=core --cov-report=xml --cov-report=term-missing --tb=short || echo "⚠️ Some tests failed"
-        continue-on-error: true
+          python -m pytest tests/ -v --cov=core --cov-report=xml --cov-report=term-missing --tb=short
 
       - name: 🧪 Run full unit tests (Windows)
         if: runner.os == 'Windows'
@@ -267,11 +254,10 @@ jobs:
           
           # Test basic imports first
           python -c "import sys; print('Python path:'); [print(p) for p in sys.path]"
-          python -c "import sys; sys.path.insert(0, r'%GITHUB_WORKSPACE%\core\src'); import model; print('✅ Model import successful')" || echo "❌ Model import failed"
+          python -c "import sys; sys.path.insert(0, r'%GITHUB_WORKSPACE%\core\src'); import model; print('✅ Model import successful')"
           
           # Run tests with better error handling
-          python -m pytest tests/ -v --cov=core --cov-report=xml --cov-report=term-missing --tb=short || echo "⚠️ Some tests failed"
-        continue-on-error: true
+          python -m pytest tests/ -v --cov=core --cov-report=xml --cov-report=term-missing --tb=short
 
       - name: 📊 Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -280,7 +266,7 @@ jobs:
           file: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
-          fail_ci_if_error: false
+          fail_ci_if_error: true
 
   # Integration Tests
   integration:

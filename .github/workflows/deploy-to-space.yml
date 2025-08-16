@@ -94,15 +94,15 @@ jobs:
         python --version
         
         # Use a simpler approach - just try to import the files
-        python -c "import app" || echo "⚠️ app.py import failed"
+        python -c "import app"
         
         # Check optional files if they exist
         if [ -f "space_auth_test.py" ]; then
-          python -c "import space_auth_test" || echo "⚠️ space_auth_test.py import failed"
+          python -c "import space_auth_test"
         fi
         
         if [ -f "openllm_training_with_auth.py" ]; then
-          python -c "import openllm_training_with_auth" || echo "⚠️ openllm_training_with_auth.py import failed"
+          python -c "import openllm_training_with_auth"
         fi
         
         echo "✅ File validation completed"
@@ -240,6 +240,7 @@ jobs:
                 print('✅ All required files deployed')
             else:
                 print(f'⚠️ Missing files: {set(required_files) - set(deployed_files)}')
+                exit(1)
                 
         except Exception as e:
             print(f'❌ Failed to verify deployment: {e}')
