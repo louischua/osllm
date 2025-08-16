@@ -50,16 +50,15 @@ import os
 import shutil
 import sys
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Dict
 
 import sentencepiece as spm
 import torch
-import torch.nn as nn
 
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from model import GPTConfig, GPTModel, create_model
+from model import create_model
 
 
 class ModelExporter:

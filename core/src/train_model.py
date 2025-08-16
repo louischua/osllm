@@ -152,7 +152,7 @@ class ModelTrainer:
         self.start_time = None
         self.step_times = []
 
-        print(f"🚀 ModelTrainer initialized")
+        print("🚀 ModelTrainer initialized")
         print(f"  Device: {device}")
         print(f"  Model parameters: {model.get_num_params():,}")
         print(f"  Learning rate: {learning_rate}")

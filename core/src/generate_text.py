@@ -51,7 +51,7 @@ License: GPLv3
 """
 
 import argparse
-import json
+
 import os
 import sys
 import time
@@ -64,7 +64,7 @@ import torch
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from model import GPTConfig, GPTModel, create_model
+from model import create_model
 
 
 class TextGenerator:
@@ -255,7 +255,7 @@ class TextGenerator:
         # Infer number of attention heads from attention weights
         # The c_attn weight combines query, key, value projections
         if "transformer.h.0.attn.c_attn.weight" in state_dict:
-            attn_weight_shape = state_dict["transformer.h.0.attn.c_attn.weight"].shape
+            _ = state_dict["transformer.h.0.attn.c_attn.weight"].shape
             # Shape is [n_embd, 3 * n_embd] for combined Q,K,V
             # So n_head = n_embd / head_dim, assuming head_dim = 64
             n_head = n_embd // 64  # Standard head dimension
@@ -342,12 +342,12 @@ class TextGenerator:
             # Test tokenization
             test_text = "Hello world"
             tokens = self.tokenizer.encode(test_text)
-            decoded = self.tokenizer.decode(tokens)
+            _ = self.tokenizer.decode(tokens)
 
             # Test model forward pass
             input_ids = torch.tensor([tokens[:5]], dtype=torch.long, device=self.device)
             with torch.no_grad():
-                outputs = self.model(input_ids)
+                _ = self.model(input_ids)
 
             print("✅ Validation passed: tokenization and model forward pass work")
 

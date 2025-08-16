@@ -39,7 +39,7 @@ License: GPLv3
 """
 
 import argparse
-import asyncio
+
 import json
 import time
 from pathlib import Path

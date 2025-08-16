@@ -334,5 +334,5 @@ jobs:
             exit 0
           else
             echo "⚠️ Some checks failed. Please review the logs above."
-            exit 1
+          exit 1
           fi

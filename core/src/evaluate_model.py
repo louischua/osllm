@@ -44,12 +44,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import sentencepiece as smp
 import torch
-import torch.nn.functional as F
+
 
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from data_loader import TextDataLoader
 from model import GPTModel, create_model
 
 

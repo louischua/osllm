@@ -42,19 +42,18 @@ import json
 import os
 import time
 import traceback
-from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import torch
 
 # Import our model architecture
 try:
-    from model import GPTConfig, GPTModel, create_model
+    from model import GPTModel, create_model
 except ImportError:
     import sys
 
     sys.path.append(os.path.dirname(__file__))
-    from model import GPTConfig, GPTModel, create_model
+    from model import GPTModel, create_model
 
 # Import tokenizer if available
 try:

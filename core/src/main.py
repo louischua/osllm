@@ -163,7 +163,7 @@ def cmd_train_model(args):
         )
 
         # Get data statistics
-        data_stats = data_loader.get_data_stats()
+        _ = data_loader.get_data_stats()
 
         # Create trainer
         print("Setting up trainer...")
