@@ -52,7 +52,6 @@ import sys
 from pathlib import Path
 from typing import Dict
 
-import sentencepiece as spm
 import torch
 
 # Add current directory to path for imports

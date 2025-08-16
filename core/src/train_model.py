@@ -56,7 +56,7 @@ import math
 import os
 import time
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict
 
 import torch
 import torch.nn as nn
@@ -66,13 +66,13 @@ from torch.optim.lr_scheduler import CosineAnnealingLR
 # Import our modules
 try:
     from data_loader import TextDataLoader
-    from model import GPTConfig, GPTModel, create_model
+    from model import GPTModel, create_model
 except ImportError:
     import sys
 
     sys.path.append(os.path.dirname(__file__))
     from data_loader import TextDataLoader
-    from model import GPTConfig, GPTModel, create_model
+    from model import GPTModel, create_model
 
 
 class ModelTrainer:
