@@ -458,7 +458,7 @@ def cmd_evaluate(args):
         scores = []
 
         if "perplexity" in evaluation_results["metrics"]:
-            ppl = evaluation_results["metrics"]["perplexity"].get("perplexity", float("in"))
+            ppl = evaluation_results["metrics"]["perplexity"].get("perplexity", float("inf"))
             # Convert perplexity to 0-100 score (lower perplexity is better)
             ppl_score = max(0, 100 - (ppl - 10) * 5)  # Rough conversion
             scores.append(ppl_score)

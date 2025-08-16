@@ -169,7 +169,7 @@ class ModelTrainer:
         # Training state
         self.step = 0
         self.epoch = 0
-        self.best_loss = float("in")
+        self.best_loss = float("inf")
         self.training_log = []
 
         # Performance tracking

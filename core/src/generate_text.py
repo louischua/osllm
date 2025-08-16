@@ -607,7 +607,7 @@ class TextGenerator:
             top_k_values, top_k_indices = torch.topk(logits, top_k_tokens)
 
             # Zero out non-top-k logits
-            filtered_logits = torch.full_like(logits, float("-in"))
+            filtered_logits = torch.full_like(logits, float("-inf"))
             filtered_logits[top_k_indices] = top_k_values
             logits = filtered_logits
 
@@ -629,7 +629,7 @@ class TextGenerator:
 
             # Zero out tokens beyond nucleus
             indices_to_remove = sorted_indices[sorted_indices_to_remove]
-            logits[indices_to_remove] = float("-in")
+            logits[indices_to_remove] = float("-inf")
 
         # Convert logits to probabilities and sample
         # Use multinomial sampling for final token selection
@@ -830,7 +830,7 @@ Examples:
             top_p=args.top_p,
         )
 
-        print(f"\n🎯 Generated text:")
+        print("\n🎯 Generated text:")
         print(f"{generated_text}")
 
     except Exception as e:

@@ -170,8 +170,8 @@ class TestGPTModel(unittest.TestCase):
         with torch.no_grad():
             logits, loss = self.small_model(input_ids)
 
-        # Check output shape - when no targets, only last token logits are returned
-        expected_shape = (batch_size, 1, vocab_size)
+        # Check output shape - when no targets, full logits are returned
+        expected_shape = (batch_size, seq_len, vocab_size)
         self.assertEqual(logits.shape, expected_shape)
 
         # Check that logits are finite
@@ -192,8 +192,8 @@ class TestGPTModel(unittest.TestCase):
         with torch.no_grad():
             logits, loss = self.small_model(input_ids)
 
-        # Check output shape - when no targets, only last token logits are returned
-        expected_shape = (batch_size, 1, vocab_size)
+        # Check output shape - when no targets, full logits are returned
+        expected_shape = (batch_size, seq_len, vocab_size)
         self.assertEqual(logits.shape, expected_shape)
 
     def test_forward_pass_different_lengths(self):
@@ -208,8 +208,8 @@ class TestGPTModel(unittest.TestCase):
             with torch.no_grad():
                 logits, loss = self.small_model(input_ids)
 
-            # When no targets, only last token logits are returned
-            expected_shape = (batch_size, 1, vocab_size)
+            # When no targets, full logits are returned
+            expected_shape = (batch_size, seq_len, vocab_size)
             self.assertEqual(logits.shape, expected_shape)
 
     def test_forward_pass_max_length(self):
@@ -225,8 +225,8 @@ class TestGPTModel(unittest.TestCase):
         with torch.no_grad():
             logits, loss = self.small_model(input_ids)
 
-        # Check output shape - when no targets, only last token logits are returned
-        expected_shape = (batch_size, 1, vocab_size)
+        # Check output shape - when no targets, full logits are returned
+        expected_shape = (batch_size, seq_len, vocab_size)
         self.assertEqual(logits.shape, expected_shape)
 
     def test_forward_pass_with_targets(self):

@@ -544,7 +544,7 @@ class ModelEvaluator:
 
         # Check intrinsic metrics
         if "intrinsic_evaluation" in results:
-            perplexity = results["intrinsic_evaluation"].get("perplexity", float("in"))
+            perplexity = results["intrinsic_evaluation"].get("perplexity", float("inf"))
 
             if perplexity < 12:
                 assessment["quality_level"] = "good"
