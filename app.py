@@ -135,11 +135,11 @@ def create_space_interface():
             env_output = gr.Textbox(label="Environment Status", lines=10, interactive=False)
             env_check_btn.click(check_space_environment, outputs=env_output)
         
-                 with gr.Tab("🔐 Authentication Test"):
-             gr.Markdown("Test Hugging Face authentication using HF access token.")
-             auth_test_btn = gr.Button("Run Authentication Test", variant="primary")
-             auth_output = gr.Textbox(label="Authentication Results", lines=15, interactive=False)
-             auth_test_btn.click(run_authentication_test, outputs=auth_output)
+        with gr.Tab("🔐 Authentication Test"):
+            gr.Markdown("Test Hugging Face authentication using HF access token.")
+            auth_test_btn = gr.Button("Run Authentication Test", variant="primary")
+            auth_output = gr.Textbox(label="Authentication Results", lines=15, interactive=False)
+            auth_test_btn.click(run_authentication_test, outputs=auth_output)
         
         with gr.Tab("🚀 Run Training"):
             gr.Markdown("""
