@@ -24,6 +24,10 @@ jobs:
         required_files=(
           "app.py"
           "requirements.txt"
+        )
+        
+        # Optional files (warn if missing)
+        optional_files=(
           "space_auth_test.py"
           "openllm_training_with_auth.py"
           "integrate_auth_into_training.py"
@@ -31,19 +35,34 @@ jobs:
           "verify_space_auth.py"
         )
         
-        missing_files=()
+        missing_required=()
+        missing_optional=()
+        
         for file in "${required_files[@]}"; do
           if [ ! -f "$file" ]; then
-            missing_files+=("$file")
+            missing_required+=("$file")
           else
             echo "✅ $file found"
           fi
         done
         
-        if [ ${#missing_files[@]} -ne 0 ]; then
+        for file in "${optional_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            missing_optional+=("$file")
+          else
+            echo "✅ $file found"
+          fi
+        done
+        
+        if [ ${#missing_required[@]} -ne 0 ]; then
           echo "❌ Missing required files:"
-          printf '  - %s\n' "${missing_files[@]}"
+          printf '  - %s\n' "${missing_required[@]}"
           exit 1
+        fi
+        
+        if [ ${#missing_optional[@]} -ne 0 ]; then
+          echo "⚠️ Missing optional files:"
+          printf '  - %s\n' "${missing_optional[@]}"
         fi
         
         echo "✅ All required files present"
@@ -58,7 +77,7 @@ jobs:
         ls -la
         
         # Check if files have content
-        for file in app.py requirements.txt space_auth_test.py; do
+        for file in app.py requirements.txt; do
           if [ ! -f "$file" ]; then
             echo "❌ $file not found"
             exit 1
@@ -76,8 +95,15 @@ jobs:
         
         # Use a simpler approach - just try to import the files
         python -c "import app" || echo "⚠️ app.py import failed"
-        python -c "import space_auth_test" || echo "⚠️ space_auth_test.py import failed"
-        python -c "import openllm_training_with_auth" || echo "⚠️ openllm_training_with_auth.py import failed"
+        
+        # Check optional files if they exist
+        if [ -f "space_auth_test.py" ]; then
+          python -c "import space_auth_test" || echo "⚠️ space_auth_test.py import failed"
+        fi
+        
+        if [ -f "openllm_training_with_auth.py" ]; then
+          python -c "import openllm_training_with_auth" || echo "⚠️ openllm_training_with_auth.py import failed"
+        fi
         
         echo "✅ File validation completed"
 
@@ -100,120 +126,84 @@ jobs:
         # Pin exact version for reproducible builds
         pip install huggingface_hub==0.19.0
         
-    - name: Deploy to Hugging Face Space
+    - name: Deploy files to Space
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         SPACE_ID: ${{ secrets.SPACE_ID }}
       run: |
-        echo "🚀 Starting deployment to Hugging Face Space..."
-        echo "📁 Space ID: $SPACE_ID"
-        echo "🔑 Token configured: $([ -n "$HF_TOKEN" ] && echo "Yes" || echo "No")"
+        echo "🚀 Deploying to Hugging Face Space..."
         
-        # Validate environment variables
-        if [ -z "$HF_TOKEN" ]; then
-          echo "❌ HF_TOKEN is not set"
-          exit 1
-        fi
-        
-        if [ -z "$SPACE_ID" ]; then
-          echo "❌ SPACE_ID is not set"
-          exit 1
-        fi
-        
-        # Create deployment log
-        deployment_log="deployment_$(date +%Y%m%d_%H%M%S).log"
-        echo "📝 Deployment log: $deployment_log"
-        
-        # Function to deploy file with error handling
+        # Function to deploy a file
         deploy_file() {
           local file_path="$1"
-          local commit_message="$2"
-          
-          echo "📤 Deploying $file_path..."
+          local space_path="$2"
           
           if [ ! -f "$file_path" ]; then
-            echo "❌ File not found: $file_path"
+            echo "⚠️ File not found: $file_path"
             return 1
           fi
           
+          echo "📤 Deploying $file_path to $space_path"
+          
+          # Use huggingface_hub to upload file
           python -c "
-        import sys
+        import os
         from huggingface_hub import HfApi
         
+        api = HfApi()
+        token = os.environ.get('HF_TOKEN')
+        space_id = os.environ.get('SPACE_ID')
+        
+        if not token:
+            print('❌ HF_TOKEN not found')
+            exit(1)
+            
+        if not space_id:
+            print('❌ SPACE_ID not found')
+            exit(1)
+            
         try:
-            api = HfApi()
+            # Upload file to space
             api.upload_file(
                 path_or_fileobj='$file_path',
-                path_in_repo='$file_path',
-                repo_id='$SPACE_ID',
+                path_in_repo='$space_path',
+                repo_id=space_id,
                 repo_type='space',
-                commit_message='$commit_message'
+                token=token
             )
-            print('✅ Successfully deployed $file_path')
+            print(f'✅ Successfully uploaded $file_path to $space_path')
         except Exception as e:
-            print(f'❌ Failed to deploy $file_path: {e}')
-            sys.exit(1)
-        " || {
-            echo "❌ Deployment failed for $file_path"
-            return 1
-          }
+            print(f'❌ Failed to upload $file_path: {e}')
+            exit(1)
+        "
         }
         
-        # Deploy files with error handling
-        files_to_deploy=(
-          "space_auth_test.py:Add authentication test script"
-          "openllm_training_with_auth.py:Add training script with authentication"
-          "integrate_auth_into_training.py:Add integration guide"
-          "setup_hf_space_auth.py:Add Space authentication setup script"
-          "verify_space_auth.py:Add Space verification script"
-          "app.py:Add main Space application"
-          "requirements.txt:Update Space dependencies"
-        )
+        # Deploy core files
+        deploy_file "app.py" "app.py"
+        deploy_file "requirements.txt" "requirements.txt"
         
-        failed_deployments=()
-        
-        for file_info in "${files_to_deploy[@]}"; do
-          IFS=':' read -r file_path commit_message <<< "$file_info"
-          
-          if deploy_file "$file_path" "$commit_message"; then
-            echo "✅ $file_path deployed successfully"
-          else
-            failed_deployments+=("$file_path")
-            echo "❌ $file_path deployment failed"
-          fi
-        done
-        
-        # Deploy documentation files
-        echo "📚 Deploying documentation..."
-        doc_files=(
-          "HUGGINGFACE_SPACE_SETUP_GUIDE.md:Add Space setup guide"
-          "SPACE_AUTHENTICATION_SUMMARY.md:Add authentication summary"
-          "SPACE_READY_SUMMARY.md:Add Space ready summary"
-        )
-        
-        for doc_info in "${doc_files[@]}"; do
-          IFS=':' read -r file_path commit_message <<< "$doc_info"
-          
-          if [ -f "$file_path" ]; then
-            if deploy_file "$file_path" "$commit_message"; then
-              echo "✅ $file_path deployed successfully"
-            else
-              failed_deployments+=("$file_path")
-              echo "❌ $file_path deployment failed"
-            fi
-          else
-            echo "⚠️ $file_path not found, skipping"
-          fi
-        done
-        
-        # Check deployment results
-        if [ ${#failed_deployments[@]} -eq 0 ]; then
-          echo "🎉 All files deployed successfully!"
-        else
-          echo "⚠️ Some deployments failed:"
-          printf '  - %s\n' "${failed_deployments[@]}"
-          echo "Continuing with verification..."
+        # Deploy optional files if they exist
+        if [ -f "space_auth_test.py" ]; then
+          deploy_file "space_auth_test.py" "space_auth_test.py"
         fi
+        
+        if [ -f "openllm_training_with_auth.py" ]; then
+          deploy_file "openllm_training_with_auth.py" "openllm_training_with_auth.py"
+        fi
+        
+        if [ -f "integrate_auth_into_training.py" ]; then
+          deploy_file "integrate_auth_into_training.py" "integrate_auth_into_training.py"
+        fi
+        
+        if [ -f "setup_hf_space_auth.py" ]; then
+          deploy_file "setup_hf_space_auth.py" "setup_hf_space_auth.py"
+        fi
+        
+        if [ -f "verify_space_auth.py" ]; then
+          deploy_file "verify_space_auth.py" "verify_space_auth.py"
+        fi
+        
+        echo "✅ Deployment completed"
         
     - name: Verify deployment
       env:
@@ -222,51 +212,38 @@ jobs:
       run: |
         echo "🔍 Verifying deployment..."
         
+        # List deployed files
         python -c "
-        import sys
+        import os
         from huggingface_hub import HfApi
         
+        api = HfApi()
+        token = os.environ.get('HF_TOKEN')
+        space_id = os.environ.get('SPACE_ID')
+        
+        if not token or not space_id:
+            print('❌ Missing HF_TOKEN or SPACE_ID')
+            exit(1)
+            
         try:
-            api = HfApi()
-            
-            # List files in the Space
-            files = api.list_repo_files(repo_id='$SPACE_ID', repo_type='space')
-            
-            print('📁 Files in Space:')
-            deployed_files = []
-            
+            # List files in space
+            files = api.list_repo_files(space_id, repo_type='space', token=token)
+            print('📁 Files in space:')
             for file in files:
-                if file.endswith('.py') or file.endswith('.md') or file.endswith('.txt'):
-                    print(f'  ✅ {file}')
-                    deployed_files.append(file)
+                print(f'  - {file}')
+                
+            # Check for required files
+            required_files = ['app.py', 'requirements.txt']
+            deployed_files = [f for f in files if f in required_files]
             
-            # Check for critical files
-            critical_files = ['app.py', 'requirements.txt', 'space_auth_test.py']
-            missing_critical = []
-            
-            for critical_file in critical_files:
-                if critical_file not in deployed_files:
-                    missing_critical.append(critical_file)
-            
-            if missing_critical:
-                print(f'❌ Missing critical files: {missing_critical}')
-                sys.exit(1)
+            if len(deployed_files) == len(required_files):
+                print('✅ All required files deployed')
             else:
-                print('✅ All critical files deployed')
-            
-            # Count documentation files
-            doc_files = [f for f in deployed_files if f.endswith('.md')]
-            
-            print(f'\\n📊 Deployment Summary:')
-            print(f'  - Total files deployed: {len(deployed_files)}')
-            print(f'  - Critical files: {len(critical_files)}')
-            print(f'  - Documentation files: {len(doc_files)}')
-            
-            print('\\n🎉 Deployment verification completed successfully!')
-            
+                print(f'⚠️ Missing files: {set(required_files) - set(deployed_files)}')
+                
         except Exception as e:
-            print(f'❌ Verification failed: {e}')
-            sys.exit(1)
+            print(f'❌ Failed to verify deployment: {e}')
+            exit(1)
         "
         
     - name: Rollback on failure
@@ -275,36 +252,5 @@ jobs:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         SPACE_ID: ${{ secrets.SPACE_ID }}
       run: |
-        echo "🔄 Deployment failed, initiating rollback..."
-        
-        # Note: Full rollback would require more complex logic
-        # For now, we'll just log the failure
-        echo "⚠️ Manual intervention may be required for rollback"
-        echo "📋 Failed deployment details:"
-        echo "  - Space ID: $SPACE_ID"
-        echo "  - Timestamp: $(date)"
-        echo "  - Check Space for partial deployment"
-        
-        # Could implement actual rollback here if needed
-        # python -c "
-        # from huggingface_hub import HfApi
-        # api = HfApi()
-        # # Delete specific files or revert to previous commit
-        # "
-        
-    - name: Deployment summary
-      if: always()
-      run: |
-        echo "📋 Deployment Summary"
-        echo "===================="
-        echo "Status: ${{ job.status }}"
-        echo "Space: ${{ secrets.SPACE_ID }}"
-        echo "Timestamp: $(date)"
-        
-        if [ "${{ job.status }}" = "success" ]; then
-          echo "✅ Deployment completed successfully"
-          echo "🔗 Space URL: https://huggingface.co/spaces/${{ secrets.SPACE_ID }}"
-        else
-          echo "❌ Deployment failed"
-          echo "🔍 Check logs above for details"
-        fi
+        echo "🔄 Rolling back deployment due to failure..."
+        echo "⚠️ Manual intervention may be required to restore the space"

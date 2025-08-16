@@ -204,7 +204,7 @@ class ModelTrainer:
                 
                 def get_lr(self):
                     if self.last_epoch < self.warmup_steps:
-                        # Linear warmup
+            # Linear warmup
                         factor = self.last_epoch / self.warmup_steps
                         return [base_lr * (0.01 + 0.99 * factor) for base_lr in self.base_lrs]
                     else:

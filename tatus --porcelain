@@ -1,0 +1,5 @@
+warning: in the working copy of 'requirements.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_inference.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_training.py', LF will be replaced by CRLF the next time Git touches it
+core/src/train_model.py
+tests/test_simple.py

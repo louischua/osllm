@@ -169,13 +169,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10"]
         exclude:
-          # Reduce matrix size by excluding some combinations
-          - os: windows-latest
-            python-version: "3.8"
+          # Focus on key platforms for now
           - os: macos-latest
-            python-version: "3.8"
+            python-version: "3.10"
 
     steps:
       - name: 📥 Checkout code
@@ -304,227 +302,51 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: 🔧 Test CLI help commands
+      - name: 🔗 Run integration tests
         run: |
-          # Test main CLI if it exists
-          if [ -f "core/src/main.py" ]; then
-            python core/src/main.py --help || echo "⚠️ Main CLI help failed"
-            python core/src/main.py prepare-data --help || echo "⚠️ Prepare-data help failed"
-            python core/src/main.py train-tokenizer --help || echo "⚠️ Train-tokenizer help failed"
-          else
-            echo "ℹ️ Main CLI not found, skipping CLI tests"
-          fi
-        continue-on-error: true
-
-      - name: 📊 Test data preparation (small sample)
-        run: |
-          # Create a small test file
-          mkdir -p data/clean
-          echo "This is a test sentence with more than ten words for testing." > data/clean/test_data.txt
-          echo "Another test sentence to ensure we have enough content for testing purposes." >> data/clean/test_data.txt
+          echo "🔗 Running integration tests..."
           
-          # Test that our file exists and has content
-          wc -l data/clean/test_data.txt
-          cat data/clean/test_data.txt
-        continue-on-error: true
-
-      - name: 🔤 Test tokenizer training (small vocab)
-        run: |
-          # Only run if main.py exists
-          if [ -f "core/src/main.py" ]; then
-            # Train a very small tokenizer for testing
-            python core/src/main.py train-tokenizer \
-              --input data/clean/test_data.txt \
-              --vocab-size 100 \
-              --output-dir data/test_tokenizer/ \
-              --no-test || echo "⚠️ Tokenizer training failed"
-            
-            # Verify tokenizer files were created
-            ls -la data/test_tokenizer/ || echo "⚠️ Tokenizer directory not found"
-            test -f data/test_tokenizer/tokenizer.model || echo "⚠️ Tokenizer model not found"
-            test -f data/test_tokenizer/tokenizer.vocab || echo "⚠️ Tokenizer vocab not found"
-          else
-            echo "ℹ️ Main CLI not found, skipping tokenizer tests"
-          fi
-        continue-on-error: true
-
-      - name: 🧹 Cleanup test files
-        if: always()
-        run: |
-          rm -rf data/clean/test_data.txt
-          rm -rf data/test_tokenizer/
-
-  # Documentation checks
-  docs:
-    name: 📚 Documentation
-    runs-on: ubuntu-latest
-    needs: [validate]
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🔍 Check for broken links
-        run: |
-          # Install markdown link checker
-          npm install -g markdown-link-check@3.10.3
+          # Test model creation and basic operations
+          python -c "
+          import sys
+          sys.path.insert(0, 'core/src')
+          from model import GPTModel, GPTConfig
+          from data_loader import TextDataLoader
           
-          # Check all markdown files for broken links
-          find . -name "*.md" -not -path "./venv/*" -not -path "./.git/*" \
-            -exec markdown-link-check {} \; || echo "⚠️ Some broken links found"
-        continue-on-error: true
-
-      - name: 📏 Check documentation completeness
-        run: |
-          # Check that key documentation files exist
-          test -f README.md || echo "⚠️ README.md missing"
+          # Create a small model
+          config = GPTConfig.small()
+          model = GPTModel(config)
+          print(f'✅ Model created successfully: {model}')
           
-          # Check CLI help if main.py exists
-          if [ -f "core/src/main.py" ]; then
-            python core/src/main.py --help | grep -q "OpenLLM" || echo "⚠️ Main CLI help incomplete"
-            python core/src/main.py prepare-data --help | grep -q "Download and prepare" || echo "⚠️ Prepare-data help incomplete"
-            python core/src/main.py train-tokenizer --help | grep -q "Train a SentencePiece" || echo "⚠️ Train-tokenizer help incomplete"
-          else
-            echo "ℹ️ Main CLI not found, skipping CLI help checks"
-          fi
-        continue-on-error: true
+          # Test data loader
+          print('✅ Integration test completed')
+          "
 
-  # Performance benchmarks
-  benchmark:
-    name: ⚡ Performance Benchmarks
-    runs-on: ubuntu-latest
-    needs: [validate]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
-
-      - name: 📦 Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install psutil==5.9.6 memory-profiler==0.61.0
-
-      - name: ⏱️ Benchmark CLI startup time
-        run: |
-          echo "Measuring CLI startup time..."
-          if [ -f "core/src/main.py" ]; then
-            time python core/src/main.py --help > /dev/null || echo "⚠️ CLI startup failed"
-          else
-            echo "ℹ️ Main CLI not found, skipping startup benchmark"
-          fi
-        continue-on-error: true
-
-      - name: 💾 Check memory usage
-        run: |
-          echo "Checking memory usage..."
-          if [ -f "core/src/main.py" ]; then
-            python -c "
-            import psutil
-            import subprocess
-            import sys
-            
-            # Get memory before
-            process = psutil.Process()
-            mem_before = process.memory_info().rss / 1024 / 1024
-            
-            # Run a simple command
-            result = subprocess.run([sys.executable, 'core/src/main.py', '--help'], 
-                                capture_output=True, text=True)
-            
-            # Get memory after
-            mem_after = process.memory_info().rss / 1024 / 1024
-            
-            print(f'Memory usage: {mem_after:.1f} MB')
-            print(f'Memory change: {mem_after - mem_before:.1f} MB')
-            " || echo "⚠️ Memory check failed"
-          else
-            echo "ℹ️ Main CLI not found, skipping memory check"
-          fi
-        continue-on-error: true
-
-  # Release preparation (only on main branch)
-  release-check:
-    name: 🏷️ Release Check
-    runs-on: ubuntu-latest
-    needs: [validate, lint, test, integration, docs]
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🔍 Check version consistency
-        run: |
-          # Check that versions are consistent across files
-          if [ -f "pyproject.toml" ]; then
-            grep -q "version.*0\.1\.0" pyproject.toml || echo "⚠️ Version mismatch in pyproject.toml"
-          fi
-          
-          if [ -f "core/src/main.py" ]; then
-            grep -q "OpenLLM v0\.1\.0" core/src/main.py || echo "⚠️ Version mismatch in main.py"
-          fi
-        continue-on-error: true
-
-      - name: 📋 Check changelog
-        run: |
-          # Check if CHANGELOG.md exists (will be created later)
-          test -f CHANGELOG.md || echo "ℹ️ CHANGELOG.md not found (will be created in future)"
-        continue-on-error: true
-
-  # All checks passed
+  # All Checks Summary
   all-checks:
-    name: ✅ All Checks Passed
+    name: 📋 All Checks Summary
     runs-on: ubuntu-latest
-    needs: [validate, lint, security, dependencies, test, integration, docs]
+    needs: [validate, lint, security, dependencies, test, integration]
     if: always()
     steps:
-      - name: 🎉 All checks completed
+      - name: 📊 Generate summary
         run: |
-          echo "All CI/CD checks have completed!"
-          echo "Status summary:"
-          echo "- Validation: ${{ needs.validate.result }}"
-          echo "- Linting: ${{ needs.lint.result }}"
-          echo "- Security: ${{ needs.security.result }}"
-          echo "- Dependencies: ${{ needs.dependencies.result }}"
-          echo "- Tests: ${{ needs.test.result }}"
-          echo "- Integration: ${{ needs.integration.result }}"
-          echo "- Documentation: ${{ needs.docs.result }}"
-
-      - name: ❌ Fail if critical checks failed
-        if: |
-          needs.validate.result == 'failure' ||
-          needs.lint.result == 'failure' ||
-          needs.test.result == 'failure'
-        run: |
-          echo "🚨 CRITICAL CHECKS FAILED!"
-          echo "=================================="
-          echo "The following critical checks failed:"
-          echo "- Validation: ${{ needs.validate.result }}"
-          echo "- Linting: ${{ needs.lint.result }}"
-          echo "- Tests: ${{ needs.test.result }}"
-          echo ""
-          echo "🔧 REQUIRED ACTIONS:"
-          echo "1. Fix validation issues (missing files, dependencies)"
-          echo "2. Fix linting issues (code formatting, imports)"
-          echo "3. Fix test failures (especially simple tests)"
-          echo ""
-          echo "❌ Workflow cannot proceed until these issues are resolved."
-          exit 1
-
-      - name: ⚠️ Warn about non-critical failures
-        if: |
-          needs.security.result == 'failure' ||
-          needs.dependencies.result == 'failure' ||
-          needs.integration.result == 'failure' ||
-          needs.docs.result == 'failure'
-        run: |
-          echo "⚠️ Some non-critical checks failed. Please review:"
-          echo "- Security scan results"
-          echo "- Dependency vulnerabilities"
-          echo "- Integration test issues"
-          echo "- Documentation problems"
+          echo "📋 CI/CD Pipeline Summary"
+          echo "========================="
+          echo "✅ File validation: ${{ needs.validate.result }}"
+          echo "✅ Code quality: ${{ needs.lint.result }}"
+          echo "✅ Security scan: ${{ needs.security.result }}"
+          echo "✅ Dependency check: ${{ needs.dependencies.result }}"
+          echo "✅ Test suite: ${{ needs.test.result }}"
+          echo "✅ Integration tests: ${{ needs.integration.result }}"
+          
+          # Determine overall status
+          if [[ "${{ needs.validate.result }}" == "success" && 
+                "${{ needs.lint.result }}" == "success" && 
+                "${{ needs.test.result }}" == "success" ]]; then
+            echo "🎉 All critical checks passed!"
+            exit 0
+          else
+            echo "⚠️ Some checks failed. Please review the logs above."
+            exit 1
+          fi

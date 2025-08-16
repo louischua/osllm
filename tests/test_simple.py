@@ -56,9 +56,11 @@ class TestSimpleFunctionality(unittest.TestCase):
         test_path = Path("test_file.txt")
         self.assertIsInstance(test_path, Path)
         
-        # Test path joining
+        # Test path joining - use platform-agnostic comparison
         joined_path = Path("dir1") / "dir2" / "file.txt"
-        self.assertEqual(str(joined_path), "dir1/dir2/file.txt")
+        # Convert to string and normalize separators for cross-platform compatibility
+        path_str = str(joined_path).replace('\\', '/')
+        self.assertEqual(path_str, "dir1/dir2/file.txt")
         
         print("✅ Path operations work")
     
@@ -94,7 +96,9 @@ class TestSimpleFunctionality(unittest.TestCase):
         """Test environment variable access."""
         # Test that we can access environment variables
         env_vars = os.environ
-        self.assertIsInstance(env_vars, dict)
+        # os.environ is a mapping object, not a dict, but it behaves like a dict
+        self.assertTrue(hasattr(env_vars, '__getitem__'))
+        self.assertTrue(hasattr(env_vars, '__contains__'))
         
         # Test specific environment variables that should exist
         if 'PATH' in env_vars:
