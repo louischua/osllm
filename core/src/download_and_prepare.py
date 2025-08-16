@@ -79,7 +79,7 @@ def download_file(url, filename):
         filename (str): Local path where file should be saved
     """
     # Stream the download to handle large files efficiently
-    response = requests.get(url, stream=True)
+    response = requests.get(url, stream=True, timeout=30)
     total_size = int(response.headers.get("content-length", 0))
 
     # Use tqdm progress bar to show download progress
@@ -223,8 +223,8 @@ def prepare_training_data(output_path="data/clean/training_data.txt", min_words=
         try:
             os.remove(file)
             print(f"Removed {file}")
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Warning: Could not remove {file}: {e}")
 
 
 if __name__ == "__main__":

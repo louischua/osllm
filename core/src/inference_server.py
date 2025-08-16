@@ -39,7 +39,6 @@ License: GPLv3
 """
 
 import argparse
-
 import json
 import time
 from pathlib import Path
@@ -72,8 +71,10 @@ from model import create_model
 
 class TextGenerationConfig(BaseModel):
     """Configuration for text generation parameters."""
-    
-    max_new_tokens: int = Field(256, description="Maximum number of tokens to generate", ge=1, le=2048)
+
+    max_new_tokens: int = Field(
+        256, description="Maximum number of tokens to generate", ge=1, le=2048
+    )
     temperature: float = Field(0.7, description="Sampling temperature", ge=0.1, le=2.0)
     top_k: Optional[int] = Field(40, description="Top-k sampling parameter", ge=1, le=1000)
     top_p: Optional[float] = Field(0.9, description="Nucleus sampling parameter", ge=0.1, le=1.0)
@@ -500,7 +501,6 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """Initialize inference engine on startup."""
-    global inference_engine
     print("🚀 Starting OpenLLM Inference Server...")
 
 
@@ -650,13 +650,13 @@ Examples:
 def load_model(model_path: str, model_format: str = "auto"):
     """
     Load model for testing purposes.
-    
+
     This function is used by tests to load models without starting the full server.
-    
+
     Args:
         model_path: Path to exported model directory
         model_format: Model format (pytorch, huggingface, onnx, auto)
-        
+
     Returns:
         OpenLLMInference: Initialized inference engine
     """

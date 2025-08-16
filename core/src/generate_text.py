@@ -51,7 +51,6 @@ License: GPLv3
 """
 
 import argparse
-
 import os
 import sys
 import time
@@ -847,17 +846,17 @@ Examples:
 def load_tokenizer(tokenizer_path: str):
     """
     Load tokenizer for testing purposes.
-    
+
     This function is used by tests to load tokenizers without initializing the full generator.
-    
+
     Args:
         tokenizer_path: Path to tokenizer model file
-        
+
     Returns:
         SentencePieceProcessor: Loaded tokenizer
     """
     import sentencepiece as spm
-    
+
     tokenizer = spm.SentencePieceProcessor()
     tokenizer.load(tokenizer_path)
     return tokenizer

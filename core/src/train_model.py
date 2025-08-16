@@ -77,7 +77,7 @@ except ImportError:
 
 class TrainingConfig:
     """Configuration for model training parameters."""
-    
+
     def __init__(
         self,
         learning_rate: float = 1e-4,

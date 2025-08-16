@@ -805,9 +805,9 @@ Examples:
         else:
             # No enterprise plugin found (normal for open-source-only usage)
             pass
-    except Exception:
+    except Exception as e:
         # Never fail core CLI due to enterprise integration issues
-        pass
+        print(f"Warning: Enterprise integration failed: {e}")
 
     return parser
 

@@ -4,8 +4,8 @@
 # Hugging Face Hub for authentication and model upload
 huggingface_hub>=0.19.0
 
-# Gradio for web interface (latest stable version)
-gradio==4.44.1
+# Gradio for web interface (latest stable version with security fixes)
+gradio>=5.31.0
 
 # PyTorch for model training
 torch>=2.0.0

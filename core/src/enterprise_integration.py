@@ -112,9 +112,9 @@ def load_enterprise_cli(subparsers: Any) -> bool:
             enterprise_mod.register_cli(subparsers)
             print("🔌 Loaded enterprise commands from openllm_enterprise package")
             return True
-        except Exception:
+        except Exception as e:
             # Fail gracefully; core must continue to work
-            pass
+            print(f"Warning: Enterprise module registration failed: {e}")
 
     # 2) Try explicit path via environment variable
     enterprise_path = os.environ.get("OPENLLM_ENTERPRISE_PATH")
@@ -128,9 +128,9 @@ def load_enterprise_cli(subparsers: Any) -> bool:
                     f"{enterprise_path}"
                 )
                 return True
-            except Exception:
+            except Exception as e:
                 # Fail gracefully
-                pass
+                print(f"Warning: Enterprise module registration failed: {e}")
 
     # Not found (by design this is optional)
     return False
