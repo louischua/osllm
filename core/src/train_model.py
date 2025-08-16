@@ -75,6 +75,30 @@ except ImportError:
     from model import GPTModel, create_model
 
 
+class TrainingConfig:
+    """Configuration for model training parameters."""
+    
+    def __init__(
+        self,
+        learning_rate: float = 1e-4,
+        batch_size: int = 32,
+        max_steps: int = 100000,
+        warmup_steps: int = 10000,
+        gradient_clipping: float = 1.0,
+        weight_decay: float = 0.01,
+        mixed_precision: bool = True,
+        gradient_checkpointing: bool = True,
+    ):
+        self.learning_rate = learning_rate
+        self.batch_size = batch_size
+        self.max_steps = max_steps
+        self.warmup_steps = warmup_steps
+        self.gradient_clipping = gradient_clipping
+        self.weight_decay = weight_decay
+        self.mixed_precision = mixed_precision
+        self.gradient_checkpointing = gradient_checkpointing
+
+
 class ModelTrainer:
     """
     Comprehensive trainer for GPT-style language models.

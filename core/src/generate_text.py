@@ -740,220 +740,129 @@ def save_results_to_file(results: List[str], output_path: str, prompts: List[str
 
 
 def main():
-    """Main function for text generation script."""
+    """Main function for command-line text generation."""
     parser = argparse.ArgumentParser(
-        description="Generate text using trained OpenLLM models",
+        description="OpenLLM Text Generation",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   # Basic text generation
   python core/src/generate_text.py \\
-    --model_dir models/small-extended-4k \\
-    --prompt "The history of artificial intelligence" \\
-    --max_length 256 \\
-    --temperature 0.7
+    --model_dir ./openllm-trained \\
+    --prompt "Hello, how are you?" \\
+    --max_length 100
 
-  # Multiple samples with different settings
+  # Advanced generation with parameters
   python core/src/generate_text.py \\
-    --model_dir models/small-extended-4k \\
-    --prompt "Once upon a time" \\
-    --max_length 100 \\
-    --num_samples 3 \\
-    --temperature 0.8
-
-  # Batch generation from file
-  python core/src/generate_text.py \\
-    --model_dir models/small-extended-4k \\
-    --prompts_file prompts.txt \\
-    --output_file results.txt
+    --model_dir ./openllm-trained \\
+    --prompt "The future of AI is" \\
+    --max_length 200 \\
+    --temperature 0.8 \\
+    --top_k 50 \\
+    --top_p 0.9
         """,
     )
 
-    # Model and data arguments
     parser.add_argument(
-        "--model_dir", required=True, help="Directory containing trained model checkpoints"
+        "--model_dir",
+        required=True,
+        help="Directory containing trained model checkpoints",
     )
 
-    parser.add_argument("--prompt", help="Input text prompt for generation")
+    parser.add_argument(
+        "--prompt",
+        required=True,
+        help="Input text prompt for generation",
+    )
 
-    parser.add_argument("--prompts_file", help="Path to file containing prompts (one per line)")
-
-    # Generation parameters
     parser.add_argument(
         "--max_length",
         type=int,
-        default=256,
-        help="Maximum number of tokens to generate (default: 256)",
+        default=100,
+        help="Maximum number of tokens to generate (default: 100)",
     )
 
     parser.add_argument(
         "--temperature",
         type=float,
         default=0.7,
-        help="Sampling temperature (0.1-2.0, default: 0.7)",
+        help="Sampling temperature (default: 0.7)",
     )
 
     parser.add_argument(
-        "--top_k", type=int, default=40, help="Top-k sampling parameter (default: 40, 0 = disabled)"
+        "--top_k",
+        type=int,
+        default=40,
+        help="Top-k sampling parameter (default: 40)",
     )
 
     parser.add_argument(
         "--top_p",
         type=float,
         default=0.9,
-        help="Nucleus sampling parameter (default: 0.9, 1.0 = disabled)",
+        help="Nucleus sampling parameter (default: 0.9)",
     )
-
-    parser.add_argument(
-        "--num_samples",
-        type=int,
-        default=1,
-        help="Number of samples to generate per prompt (default: 1)",
-    )
-
-    parser.add_argument(
-        "--repetition_penalty",
-        type=float,
-        default=1.0,
-        help="Repetition penalty (1.0 = no penalty, default: 1.0)",
-    )
-
-    parser.add_argument(
-        "--no_sample", action="store_true", help="Use greedy decoding instead of sampling"
-    )
-
-    # Output options
-    parser.add_argument("--output_file", help="Path to save generation results")
 
     parser.add_argument(
         "--device",
-        choices=["auto", "cpu", "cuda"],
         default="auto",
+        choices=["auto", "cpu", "cuda"],
         help="Device to use for generation (default: auto)",
     )
 
     args = parser.parse_args()
 
-    # Validate arguments
-    if not args.prompt and not args.prompts_file:
-        parser.error("Either --prompt or --prompts_file must be provided")
-
-    if args.prompt and args.prompts_file:
-        parser.error("Cannot specify both --prompt and --prompts_file")
-
-    print("📝 OpenLLM Text Generation")
+    print("🚀 OpenLLM Text Generation")
     print("=" * 50)
 
     try:
         # Initialize text generator
-        # This loads the model and sets up all necessary components
         generator = TextGenerator(args.model_dir, args.device)
 
-        # Prepare prompts for generation
-        # Handle both single prompt and batch file inputs
-        if args.prompt:
-            prompts = [args.prompt]
-        else:
-            prompts = load_prompts_from_file(args.prompts_file)
-
-        # Set up generation parameters
-        # Convert arguments to generation parameters
-        generation_kwargs = {
-            "max_length": args.max_length,
-            "temperature": args.temperature,
-            "top_k": args.top_k if args.top_k > 0 else None,
-            "top_p": args.top_p if args.top_p < 1.0 else None,
-            "num_return_sequences": args.num_samples,
-            "do_sample": not args.no_sample,
-            "repetition_penalty": args.repetition_penalty,
-        }
-
-        print("\n🎯 Generation Settings:")
-        for key, value in generation_kwargs.items():
-            print(f"   {key}: {value}")
-        print()
-
         # Generate text
-        # Process all prompts and collect results
-        start_time = time.time()
+        print(f"📝 Prompt: {args.prompt}")
+        print(f"⚙️  Parameters: max_length={args.max_length}, temperature={args.temperature}")
 
-        if len(prompts) == 1:
-            # Single prompt generation
-            results = generator.generate(prompts[0], **generation_kwargs)
-        else:
-            # Batch generation
-            batch_results = generator.generate_batch(prompts, **generation_kwargs)
-            results = [result for sublist in batch_results for result in sublist]
-
-        generation_time = time.time() - start_time
-
-        # Display results
-        # Format and show generated text with clear presentation
-        print("\n" + "=" * 60)
-        print("📊 GENERATION RESULTS")
-        print("=" * 60)
-
-        total_samples = (
-            len(results) if isinstance(results[0], str) else sum(len(r) for r in results)
+        generated_text = generator.generate(
+            prompt=args.prompt,
+            max_length=args.max_length,
+            temperature=args.temperature,
+            top_k=args.top_k,
+            top_p=args.top_p,
         )
-        print(f"🎯 Total samples: {total_samples}")
-        print(f"⏱️  Generation time: {generation_time:.1f} seconds")
-        print(f"📈 Speed: {total_samples / generation_time:.1f} samples/second")
 
-        # Show individual results
-        if len(prompts) == 1:
-            # Single prompt results
-            print(f"\n💭 Prompt: '{prompts[0]}'")
-            print("-" * 50)
-
-            for i, text in enumerate(results):
-                if len(results) > 1:
-                    print(f"\n[Sample {i + 1}]")
-                print(text)
-        else:
-            # Batch results
-            for i, (prompt, result_group) in enumerate(zip(prompts, batch_results)):
-                print(f"\n💭 Prompt {i + 1}: '{prompt[:100]}{'...' if len(prompt) > 100 else ''}'")
-                print("-" * 50)
-
-                for j, text in enumerate(result_group):
-                    if len(result_group) > 1:
-                        print(f"\n[Sample {j + 1}]")
-                    print(text)
-                print()
-
-        # Save results if requested
-        # Write output to file with proper formatting
-        if args.output_file:
-            if len(prompts) == 1:
-                save_results_to_file(results, args.output_file, [prompts[0]])
-            else:
-                # Flatten batch results for saving
-                flat_results = []
-                flat_prompts = []
-                for prompt, result_group in zip(prompts, batch_results):
-                    for result in result_group:
-                        flat_results.append(result)
-                        flat_prompts.append(prompt)
-
-                save_results_to_file(flat_results, args.output_file, flat_prompts)
-
-        print("\n🎉 Text generation completed successfully!")
-
-        return True
-
-    except KeyboardInterrupt:
-        print("\n⚠️  Generation interrupted by user")
-        return False
+        print(f"\n🎯 Generated text:")
+        print(f"{generated_text}")
 
     except Exception as e:
-        print(f"\n❌ Generation failed: {e}")
+        print(f"\n❌ Error: {e}")
         import traceback
 
         traceback.print_exc()
         return False
 
+    return True
+
+
+def load_tokenizer(tokenizer_path: str):
+    """
+    Load tokenizer for testing purposes.
+    
+    This function is used by tests to load tokenizers without initializing the full generator.
+    
+    Args:
+        tokenizer_path: Path to tokenizer model file
+        
+    Returns:
+        SentencePieceProcessor: Loaded tokenizer
+    """
+    import sentencepiece as spm
+    
+    tokenizer = spm.SentencePieceProcessor()
+    tokenizer.load(tokenizer_path)
+    return tokenizer
+
 
 if __name__ == "__main__":
     success = main()
-    sys.exit(0 if success else 1)
+    exit(0 if success else 1)

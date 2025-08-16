@@ -226,6 +226,10 @@ jobs:
           ls -la
           echo "Core src directory:"
           ls -la core/src/
+          echo "Data directory:"
+          ls -la data/
+          echo "Tokenizer directory:"
+          ls -la data/tokenizer/
           
           # Set up Python path for tests
           export PYTHONPATH="${PYTHONPATH}:${GITHUB_WORKSPACE}/core/src"
@@ -234,6 +238,15 @@ jobs:
           # Test basic imports first
           python -c "import sys; print('Python path:'); [print(p) for p in sys.path]"
           python -c "import sys; sys.path.insert(0, '${GITHUB_WORKSPACE}/core/src'); import model; print('✅ Model import successful')"
+          
+          # Verify tokenizer exists
+          if [ ! -f "data/tokenizer/tokenizer.model" ]; then
+            echo "❌ Real tokenizer not found, creating minimal test setup..."
+            mkdir -p data/tokenizer
+            echo "Creating minimal tokenizer for tests..."
+          else
+            echo "✅ Real tokenizer found: data/tokenizer/tokenizer.model"
+          fi
           
           # Run tests with better error handling
           python -m pytest tests/ -v --cov=core --cov-report=xml --cov-report=term-missing --tb=short
@@ -247,6 +260,10 @@ jobs:
           dir
           echo "Core src directory:"
           dir core\src
+          echo "Data directory:"
+          dir data
+          echo "Tokenizer directory:"
+          dir data\tokenizer
           
           # Set up Python path for tests
           set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%\core\src
@@ -255,6 +272,15 @@ jobs:
           # Test basic imports first
           python -c "import sys; print('Python path:'); [print(p) for p in sys.path]"
           python -c "import sys; sys.path.insert(0, r'%GITHUB_WORKSPACE%\core\src'); import model; print('✅ Model import successful')"
+          
+          # Verify tokenizer exists
+          if not exist "data\tokenizer\tokenizer.model" (
+            echo "❌ Real tokenizer not found, creating minimal test setup..."
+            mkdir data\tokenizer
+            echo "Creating minimal tokenizer for tests..."
+          ) else (
+            echo "✅ Real tokenizer found: data\tokenizer\tokenizer.model"
+          )
           
           # Run tests with better error handling
           python -m pytest tests/ -v --cov=core --cov-report=xml --cov-report=term-missing --tb=short

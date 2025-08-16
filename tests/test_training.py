@@ -84,10 +84,10 @@ class TestDataLoader(unittest.TestCase):
     
     def test_data_loader_initialization(self):
         """Test TextDataLoader initialization."""
-        # Create data loader
+        # Create data loader with real tokenizer
         data_loader = TextDataLoader(
             data_file=self.data_file,
-            tokenizer_path="dummy_tokenizer.model",
+            tokenizer_path="data/tokenizer/tokenizer.model",
             seq_len=10,
             batch_size=2
         )
@@ -98,10 +98,10 @@ class TestDataLoader(unittest.TestCase):
     
     def test_data_loading(self):
         """Test that data is loaded correctly."""
-        # Create data loader
+        # Create data loader with real tokenizer
         data_loader = TextDataLoader(
             data_file=self.data_file,
-            tokenizer_path="dummy_tokenizer.model",
+            tokenizer_path="data/tokenizer/tokenizer.model",
             seq_len=10,
             batch_size=2
         )
@@ -111,10 +111,10 @@ class TestDataLoader(unittest.TestCase):
     
     def test_batch_generation(self):
         """Test batch generation functionality."""
-        # Create data loader
+        # Create data loader with real tokenizer
         data_loader = TextDataLoader(
             data_file=self.data_file,
-            tokenizer_path="dummy_tokenizer.model",
+            tokenizer_path="data/tokenizer/tokenizer.model",
             seq_len=10,
             batch_size=2
         )
@@ -131,10 +131,10 @@ class TestDataLoader(unittest.TestCase):
         mock_tokenizer.encode.return_value = [1, 2, 3, 4, 5]
         mock_tokenizer.vocab_size.return_value = 32000
         
-        # Create data loader
+        # Create data loader with real tokenizer
         data_loader = TextDataLoader(
             data_file=self.data_file,
-            tokenizer_path="dummy_tokenizer.model",
+            tokenizer_path="data/tokenizer/tokenizer.model",
             seq_len=10,
             batch_size=2
         )

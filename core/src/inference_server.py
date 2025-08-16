@@ -64,9 +64,23 @@ import numpy as np
 import sentencepiece as smp
 import torch
 
+# Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from model import create_model
+
+
+class TextGenerationConfig(BaseModel):
+    """Configuration for text generation parameters."""
+    
+    max_new_tokens: int = Field(256, description="Maximum number of tokens to generate", ge=1, le=2048)
+    temperature: float = Field(0.7, description="Sampling temperature", ge=0.1, le=2.0)
+    top_k: Optional[int] = Field(40, description="Top-k sampling parameter", ge=1, le=1000)
+    top_p: Optional[float] = Field(0.9, description="Nucleus sampling parameter", ge=0.1, le=1.0)
+    num_return_sequences: int = Field(1, description="Number of sequences to generate", ge=1, le=5)
+    stop_sequences: Optional[List[str]] = Field(
+        None, description="Stop generation at these sequences"
+    )
 
 
 class GenerationRequest(BaseModel):
@@ -584,7 +598,11 @@ Examples:
         """,
     )
 
-    parser.add_argument("--model_path", required=True, help="Path to exported model directory")
+    parser.add_argument(
+        "--model_path",
+        required=True,
+        help="Path to exported model directory",
+    )
 
     parser.add_argument(
         "--format",
@@ -594,56 +612,55 @@ Examples:
     )
 
     parser.add_argument(
-        "--host", default="127.0.0.1", help="Host to bind server (default: 127.0.0.1)"
+        "--host",
+        default="127.0.0.1",
+        help="Host to bind to (default: 127.0.0.1)",
     )
 
     parser.add_argument(
-        "--port", type=int, default=8000, help="Port to bind server (default: 8000)"
+        "--port",
+        type=int,
+        default=8000,
+        help="Port to bind to (default: 8000)",
     )
 
     parser.add_argument(
         "--max_length",
         type=int,
         default=512,
-        help="Default maximum generation length (default: 512)",
-    )
-
-    parser.add_argument(
-        "--workers", type=int, default=1, help="Number of worker processes (default: 1)"
+        help="Maximum generation length (default: 512)",
     )
 
     args = parser.parse_args()
 
-    print("🌐 OpenLLM Inference Server")
-    print("=" * 50)
+    # Initialize inference engine
+    global inference_engine
+    inference_engine = OpenLLMInference(args.model_path, args.format)
 
-    try:
-        # Initialize inference engine
-        global inference_engine
-        inference_engine = OpenLLMInference(args.model_path, args.format)
+    # Start server
+    print(f"🚀 Starting server on {args.host}:{args.port}")
+    uvicorn.run(
+        app,
+        host=args.host,
+        port=args.port,
+        log_level="info",
+    )
 
-        # Start server
-        print(f"\n🚀 Starting server on {args.host}:{args.port}")
-        print(f"📚 API docs: http://{args.host}:{args.port}/docs")
-        print(f"❤️  Health check: http://{args.host}:{args.port}/health")
 
-        uvicorn.run(
-            "inference_server:app",
-            host=args.host,
-            port=args.port,
-            workers=args.workers,
-            reload=False,
-            log_level="info",
-        )
-
-    except Exception as e:
-        print(f"\n❌ Server failed to start: {e}")
-        import traceback
-
-        traceback.print_exc()
-        return False
-
-    return True
+def load_model(model_path: str, model_format: str = "auto"):
+    """
+    Load model for testing purposes.
+    
+    This function is used by tests to load models without starting the full server.
+    
+    Args:
+        model_path: Path to exported model directory
+        model_format: Model format (pytorch, huggingface, onnx, auto)
+        
+    Returns:
+        OpenLLMInference: Initialized inference engine
+    """
+    return OpenLLMInference(model_path, model_format)
 
 
 if __name__ == "__main__":
