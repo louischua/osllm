@@ -47,8 +47,8 @@ sys.path.insert(0, core_src_path)
 # Import after path setup
 try:
     from model import GPTConfig, GPTModel
-    from inference_server import app
-    from generate_text import TextGenerator
+    from inference_server import app, TextGenerationConfig, load_model
+    from generate_text import TextGenerator, load_tokenizer
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print(f"📁 Core src path: {core_src_path}")
@@ -80,7 +80,7 @@ class TestInferenceServer(unittest.TestCase):
         
         # Test that the app has the expected routes
         routes = [route.path for route in app.routes]
-        expected_routes = ['/', '/health', '/generate', '/generate/stream']
+        expected_routes = ['/', '/health', '/generate', '/info']
         
         for route in expected_routes:
             self.assertIn(route, routes)

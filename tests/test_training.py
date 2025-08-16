@@ -45,7 +45,7 @@ sys.path.insert(0, core_src_path)
 try:
     from model import GPTConfig, GPTModel
     from data_loader import TextDataLoader
-    from train_model import ModelTrainer
+    from train_model import ModelTrainer, TrainingConfig
     from evaluate_model import ModelEvaluator
 except ImportError as e:
     print(f"❌ Import error: {e}")
