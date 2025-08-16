@@ -352,6 +352,7 @@ class ModelExporter:
     def _optimize_onnx_model(self, onnx_path: Path):
         """Apply ONNX optimizations for inference."""
         try:
+            import onnxruntime
             from onnxruntime.tools import optimizer
 
             print("🔧 Applying ONNX optimizations...")
