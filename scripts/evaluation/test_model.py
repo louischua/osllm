@@ -11,8 +11,8 @@ import sentencepiece as spm
 # Add the src directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'core', 'src'))
 
-from model import create_model, GPTModel
-from train_model import ModelTrainer
+from core.src.model import create_model, GPTModel
+from core.src.train_model import ModelTrainer
 
 
 def load_trained_model(checkpoint_path, model_size="small", device="cpu"):

@@ -8,6 +8,7 @@ This module provides comprehensive training functionality with:
 - Real-time progress monitoring
 - Configurable training settings
 - Hugging Face integration
+- Loading existing models from HF Hub
 
 Author: Louis Chua Bean Chong
 License: GPLv3
@@ -28,7 +29,7 @@ from dataclasses import dataclass, asdict
 core_src_path = str(Path(__file__).parent / "core" / "src")
 sys.path.insert(0, core_src_path)
 
-from huggingface_hub import HfApi, login, whoami, create_repo
+from huggingface_hub import HfApi, login, whoami, create_repo, snapshot_download
 from train_model import ModelTrainer, TextDataLoader
 from model import GPTConfig, GPTModel
 from evaluate_model import ModelEvaluator
@@ -74,6 +75,11 @@ class TrainingConfig:
     gradient_clipping: float = 1.0
     early_stopping_patience: int = 5
     max_grad_norm: float = 1.0
+    
+    # Model loading settings
+    load_from_hf: bool = False
+    hf_model_id: str = ""
+    resume_from_step: int = 0
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert config to dictionary."""
@@ -184,10 +190,81 @@ class RealTrainingManager:
         
         return config
     
+    def load_model_from_huggingface(self, model_id: str) -> GPTModel:
+        """Load model from Hugging Face Hub."""
+        print(f"📥 Loading model from Hugging Face: {model_id}")
+        
+        try:
+            # Download model files
+            local_dir = snapshot_download(
+                repo_id=model_id,
+                repo_type="model",
+                local_dir=f"downloaded_models/{model_id.replace('/', '_')}"
+            )
+            
+            print(f"✅ Model downloaded to: {local_dir}")
+            
+            # Load config
+            config_path = Path(local_dir) / "config.json"
+            if config_path.exists():
+                with open(config_path, 'r') as f:
+                    config_data = json.load(f)
+                
+                # Create model config from loaded data
+                config = GPTConfig(
+                    vocab_size=config_data.get('vocab_size', 32000),
+                    block_size=config_data.get('block_size', 1024),
+                    n_layer=config_data.get('n_layer', 6),
+                    n_head=config_data.get('n_head', 6),
+                    n_embd=config_data.get('n_embd', 384)
+                )
+                
+                print(f"📊 Loaded model config: {config}")
+            else:
+                # Fallback to default config
+                config = self.create_model_config()
+                print(f"⚠️ Config file not found, using default config")
+            
+            # Create model
+            model = GPTModel(config)
+            
+            # Load model weights
+            model_path = Path(local_dir) / "pytorch_model.bin"
+            if model_path.exists():
+                state_dict = torch.load(model_path, map_location=self.device)
+                model.load_state_dict(state_dict)
+                print(f"✅ Model weights loaded successfully")
+                
+                # Try to load training history if available
+                if 'training_config' in config_data and 'training_history' in config_data['training_config']:
+                    self.training_history = config_data['training_config']['training_history']
+                    print(f"📈 Loaded training history: {len(self.training_history)} steps")
+                    
+                    # Set resume step
+                    if self.training_history:
+                        self.config.resume_from_step = self.training_history[-1]['step']
+                        print(f"🔄 Will resume from step: {self.config.resume_from_step}")
+                
+                return model
+            else:
+                raise FileNotFoundError(f"Model file not found: {model_path}")
+                
+        except Exception as e:
+            print(f"❌ Failed to load model from Hugging Face: {e}")
+            raise
+    
     def load_or_create_model(self, checkpoint_path: Optional[str] = None) -> GPTModel:
         """Load existing model or create new one."""
         config = self.create_model_config()
         
+        # Check if we should load from Hugging Face
+        if self.config.load_from_hf and self.config.hf_model_id:
+            try:
+                return self.load_model_from_huggingface(self.config.hf_model_id)
+            except Exception as e:
+                print(f"⚠️ Failed to load from HF, creating new model: {e}")
+        
+        # Check for local checkpoint
         if checkpoint_path and Path(checkpoint_path).exists():
             print(f"📂 Loading model from checkpoint: {checkpoint_path}")
             checkpoint = torch.load(checkpoint_path, map_location=self.device)
@@ -288,6 +365,10 @@ class RealTrainingManager:
         print(f"🔄 Training Steps: {self.config.training_steps}")
         print(f"👤 User: {self.username}")
         print(f"🖥️ Device: {self.device}")
+        
+        if self.config.load_from_hf and self.config.hf_model_id:
+            print(f"📥 Loading from HF model: {self.config.hf_model_id}")
+            print(f"🔄 Resuming from step: {self.config.resume_from_step}")
         
         # Load or create model
         model = self.load_or_create_model(resume_from)
@@ -470,9 +551,13 @@ class RealTrainingManager:
             json.dump(config_dict, f, indent=2)
         
         # Create model card
-        readme_content = f"""# OpenLLM {self.config.model_size.title()} Model
+        base_model_info = ""
+        if self.config.load_from_hf and self.config.hf_model_id:
+            base_model_info = f"\nThis model was trained by resuming from [{self.config.hf_model_id}](https://huggingface.co/{self.config.hf_model_id})."
+        
+        readme_content = f"""# OpenLLM {self.config.model_size.title()} Model - Extended
 
-This is a real OpenLLM {self.config.model_size} model trained for {self.config.training_steps} steps.
+This is a real OpenLLM {self.config.model_size} model trained for {self.config.training_steps} steps.{base_model_info}
 
 ## Model Details
 
@@ -513,7 +598,7 @@ GPL-3.0
             f.write(readme_content)
         
         # Upload to Hugging Face
-        repo_name = f"openllm-{self.config.model_size}-{self.config.training_steps}steps-real"
+        repo_name = f"openllm-{self.config.model_size}-{self.config.training_steps}steps-extended"
         repo_id = f"{self.username}/{repo_name}"
         
         try:
@@ -526,7 +611,7 @@ GPL-3.0
                 folder_path=str(model_path),
                 repo_id=repo_id,
                 repo_type="model",
-                commit_message=f"Add real OpenLLM {self.config.model_size} model ({self.config.training_steps} steps)"
+                commit_message=f"Add extended OpenLLM {self.config.model_size} model ({self.config.training_steps} steps)"
             )
             
             print(f"✅ Model uploaded successfully!")
@@ -576,21 +661,49 @@ def get_default_configs() -> Dict[str, TrainingConfig]:
     }
 
 
-if __name__ == "__main__":
-    # Example usage
+def resume_training_from_hf_model(hf_model_id: str, additional_steps: int = 1000):
+    """Resume training from a Hugging Face model."""
+    print(f"🔄 Resuming training from {hf_model_id}")
+    print(f"📈 Additional steps: {additional_steps}")
+    
+    # Create configuration for resuming
     config = TrainingConfig(
         model_size="small",
-        training_steps=1000,  # Short for testing
+        training_steps=additional_steps,
         batch_size=16,
-        learning_rate=3e-4
+        learning_rate=3e-4,
+        load_from_hf=True,
+        hf_model_id=hf_model_id,
+        save_every=500,
+        eval_every=250
     )
     
+    # Initialize training manager
     manager = RealTrainingManager(config)
+    
+    # Run training
     model = manager.train()
+    
+    # Upload model
     repo_id = manager.upload_model(model)
     
     if repo_id:
         print(f"🎉 Training and upload completed successfully!")
-        print(f"🚀 Your model is ready at: https://huggingface.co/{repo_id}")
+        print(f"🚀 Your extended model is ready at: https://huggingface.co/{repo_id}")
+        return repo_id
     else:
         print(f"⚠️ Training completed but upload failed")
+        return None
+
+
+if __name__ == "__main__":
+    # Example usage for resuming from 7k model to 8k
+    hf_model_id = "lemms/openllm-small-extended-7k"
+    additional_steps = 1000  # Train for 1000 more steps to reach 8k
+    
+    repo_id = resume_training_from_hf_model(hf_model_id, additional_steps)
+    
+    if repo_id:
+        print(f"🎉 Successfully created 8k model: {repo_id}")
+    else:
+        print(f"❌ Failed to create 8k model")

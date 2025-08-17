@@ -42,12 +42,18 @@ import os
 import sys
 from pathlib import Path
 
+# Set console encoding for Windows compatibility
+if sys.platform == "win32":
+    import codecs
+    sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+    sys.stderr = codecs.getwriter("utf-8")(sys.stderr.detach())
+
 # Add the current directory to Python path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
     from download_and_prepare import prepare_training_data
-    from test_model import ModelTester
+    from model_test import ModelTester
     from train_tokenizer import (
         count_training_sentences,
         save_huggingface_config,

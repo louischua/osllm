@@ -29,9 +29,9 @@ class TestBasicFunctionality(unittest.TestCase):
         required_files = [
             "README.md",
             "requirements.txt",
-            "app.py",
-            "space_auth_test.py",
-            "openllm_training_with_auth.py",
+            "deployment/huggingface/space_app_main.py",  # app.py was moved
+            "deployment/huggingface/space_auth.py",      # space_auth_test.py was moved
+            "scripts/training/training_with_auth.py",    # openllm_training_with_auth.py was moved
         ]
 
         for file_path in required_files:

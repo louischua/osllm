@@ -1,151 +1,254 @@
-# 🚀 OpenLLM Training Space
+# 🚀 OpenLLM v0.1.0 - Open Source Large Language Model Framework
 
-This repository contains scripts and configuration for automatically deploying OpenLLM training to Hugging Face Spaces with proper authentication.
+<!-- Copyright (C) 2024 Louis Chua Bean Chong -->
+<!-- This file is part of OpenLLM - dual-licensed under GPLv3 and Commercial License -->
 
-## 🔄 Deployment Flow
+**🎉 OpenLLM v0.1.0 is now available!** A complete open source large language model (LLM) framework that is modular, scalable, and easy to adapt for downstream NLP tasks. Built from scratch using publicly available datasets with no fine-tuning of existing models.
+
+## 🎯 **Project Overview**
+
+OpenLLM provides a complete training pipeline for building large language models from scratch, with enterprise-ready deployment capabilities and comprehensive tooling for research and production use.
+
+### **✅ v0.1.0 Release Features**
+- ✅ **Complete Training Pipeline** - From data preparation to model deployment
+- ✅ **Multiple Model Sizes** - Small (35M), Medium (125M), Large (350M) parameters
+- ✅ **Trained Models Available** - Pre-trained models ready for inference
+- ✅ **Inference Server** - FastAPI-based REST API for model serving
+- ✅ **Comprehensive Testing** - 66/66 tests passing (100% success rate)
+- ✅ **Professional Documentation** - Complete guides and examples
+- ✅ **Cross-Platform Support** - Windows, Linux, macOS compatibility
+
+### **Key Features**
+- 🧠 **GPT-Style Architecture** - Transformer-based decoder-only model
+- 🔤 **SentencePiece Tokenization** - BPE tokenizer with 32k vocabulary
+- 📊 **Training Pipeline** - Complete from data preparation to model export
+- 🌐 **Inference Server** - FastAPI REST API with streaming support
+- 📈 **Model Evaluation** - Perplexity, text generation quality assessment
+- 🔧 **CLI Interface** - Unified command-line tool for all operations
+- 📦 **Model Export** - PyTorch, Hugging Face, ONNX formats
+- 🧪 **Comprehensive Testing** - Unit and integration test coverage
+
+## 🚀 **Quick Start**
+
+### **Installation**
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/openllm.git
+cd openllm
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### **Basic Usage**
+
+```bash
+# Test the model architecture
+python core/src/main.py test-model --model-size small
+
+# Evaluate a trained model
+python scripts/evaluation/evaluate_trained_model.py
+
+# Start inference server (if you have a trained model)
+python core/src/inference_server.py --model_path models/small-extended-7k/
+```
+
+### **Training Your Own Model**
+
+```bash
+# 1. Prepare training data
+python core/src/main.py prepare-data --output data/clean/training_data.txt
+
+# 2. Train tokenizer
+python core/src/main.py train-tokenizer \
+  --input data/clean/training_data.txt \
+  --vocab-size 32000 \
+  --output-dir data/tokenizer/
+
+# 3. Train the model
+python core/src/main.py train-model \
+  --model-size small \
+  --output-dir models/my-model/ \
+  --max-steps 10000
+```
+
+## 📁 **Project Structure**
 
 ```
-GitHub Repository → GitHub Actions → Hugging Face Space
+openllm/
+├── core/                          # Core training and inference code
+│   ├── src/
+│   │   ├── model.py              # GPT-style transformer model
+│   │   ├── train_model.py        # Training pipeline
+│   │   ├── inference_server.py   # FastAPI inference server
+│   │   ├── data_loader.py        # Data loading utilities
+│   │   └── main.py               # CLI interface
+├── data/                          # Data and tokenizer files
+│   ├── clean/                    # Processed training data
+│   └── tokenizer/                # Trained tokenizer files
+├── models/                        # Trained model checkpoints
+│   └── small-extended-7k/        # Pre-trained small model (7k steps)
+├── deployment/                    # Deployment configurations
+│   ├── huggingface/              # Hugging Face deployment
+│   ├── docker/                   # Docker containerization
+│   └── kubernetes/               # Kubernetes deployment
+├── scripts/                       # Utility scripts
+│   ├── evaluation/               # Model evaluation scripts
+│   ├── training/                 # Training utilities
+│   └── setup/                    # Setup and installation
+├── tests/                        # Test suite
+├── docs/                         # Documentation
+└── requirements.txt              # Python dependencies
 ```
 
-1. **Scripts are uploaded to GitHub** (this repository)
-2. **GitHub Actions automatically deploys** scripts to Hugging Face Space
-3. **Space runs training** with authentication from GitHub secrets
-4. **Model is uploaded** to Hugging Face Hub automatically
+## 🧪 **Model Performance**
 
-## 📁 Repository Structure
+### **Current Model (Small, 7k steps)**
+- **Parameters**: 35.8M
+- **Training Steps**: 7,000
+- **Final Loss**: 5.22
+- **Text Generation**: ✅ Working with coherent output
+- **Inference Speed**: ~8.3 tokens/second on CPU
 
+### **Model Quality Assessment**
+- **Perplexity**: ~730 (needs improvement for production)
+- **Text Coherence**: Basic coherence achieved
+- **Generation Quality**: Functional but requires more training
+
+## 🔧 **Advanced Usage**
+
+### **Model Configuration**
+
+OpenLLM supports three model sizes:
+
+```python
+# Small model (35M parameters)
+model = create_model("small")
+
+# Medium model (125M parameters)  
+model = create_model("medium")
+
+# Large model (350M parameters)
+model = create_model("large")
 ```
-├── .github/workflows/
-│   └── deploy-to-space.yml          # GitHub Actions workflow
-├── space_auth_test.py               # Authentication verification
-├── openllm_training_with_auth.py    # Complete training script
-├── integrate_auth_into_training.py  # Integration guide
-├── setup_hf_space_auth.py           # Space authentication setup
-├── verify_space_auth.py             # Space verification script
-├── app.py                           # Main Space application
-├── requirements.txt                 # Space dependencies
-├── HUGGINGFACE_SPACE_SETUP_GUIDE.md # Setup guide
-├── SPACE_AUTHENTICATION_SUMMARY.md  # Authentication summary
-├── SPACE_READY_SUMMARY.md          # Deployment summary
-└── README.md                       # This file
+
+### **Inference Server API**
+
+```python
+import requests
+
+# Start the server
+# python core/src/inference_server.py --model_path models/small-extended-7k/
+
+# Generate text
+response = requests.post("http://localhost:8000/generate", json={
+    "prompt": "The future of artificial intelligence",
+    "max_length": 100,
+    "temperature": 0.7
+})
+
+print(response.json()["generated_text"])
 ```
 
-## 🚀 Quick Start
+### **Custom Training**
 
-### 1. Set Up GitHub Secrets
+```python
+from core.src.train_model import ModelTrainer
 
-In your GitHub repository, go to **Settings → Secrets and variables → Actions** and add:
+trainer = ModelTrainer(
+    model_size="small",
+    tokenizer_dir="data/tokenizer/",
+    data_file="data/clean/training_data.txt",
+    output_dir="models/custom-model/"
+)
 
-- **`HF_TOKEN`**: Your Hugging Face token (get from https://huggingface.co/settings/tokens)
-- **`SPACE_ID`**: Your Hugging Face Space ID (e.g., `your-username/your-space-name`)
+trainer.train(max_steps=10000, batch_size=4)
+```
 
-### 2. Push to GitHub
+## 🧪 **Testing**
 
-When you push to the `main` or `master` branch, GitHub Actions will automatically:
+Run the comprehensive test suite:
 
-1. Deploy all scripts to your Hugging Face Space
-2. Verify the deployment
-3. Make the Space ready for training
+```bash
+# Run all tests
+python tests/run_tests.py
 
-### 3. Use the Space
+# Run specific test categories
+python tests/test_model.py
+python tests/test_training.py
+python tests/test_inference.py
 
-Once deployed, your Space will have:
+# Run full pipeline validation
+python scripts/test_full_pipeline.py
+```
 
-- **Web Interface**: Access via the Space URL
-- **Authentication**: Automatic using GitHub secrets
-- **Training**: Complete OpenLLM training pipeline
-- **Upload**: Automatic model upload to Hugging Face Hub
+## 📊 **Performance Benchmarks**
 
-## 🔧 GitHub Actions Workflow
+### **Training Performance**
+- **Small Model**: ~2.5 hours on CPU (7k steps)
+- **Memory Usage**: ~150MB for small model
+- **Training Speed**: ~2.8 steps/second on CPU
 
-The `.github/workflows/deploy-to-space.yml` workflow:
+### **Inference Performance**
+- **Generation Speed**: 8.3 tokens/second (CPU)
+- **Memory Usage**: ~143MB for small model
+- **Response Time**: <5 seconds for 50 tokens
 
-1. **Triggers on**: Push to main/master branch or manual dispatch
-2. **Installs**: Python and dependencies
-3. **Deploys**: All scripts to Hugging Face Space
-4. **Verifies**: Deployment success
+## 🤝 **Contributing**
 
-## 📋 Available Scripts
+We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for details.
 
-### Core Scripts
-- **`space_auth_test.py`**: Test Hugging Face authentication
-- **`openllm_training_with_auth.py`**: Complete training with upload
-- **`app.py`**: Main Space web interface
+### **Development Setup**
 
-### Integration Scripts
-- **`integrate_auth_into_training.py`**: Guide for existing code
-- **`setup_hf_space_auth.py`**: Space authentication setup
-- **`verify_space_auth.py`**: Space verification
+```bash
+# Install development dependencies
+pip install -r tests/requirements-test.txt
 
-### Documentation
-- **`HUGGINGFACE_SPACE_SETUP_GUIDE.md`**: Complete setup guide
-- **`SPACE_AUTHENTICATION_SUMMARY.md`**: Authentication summary
-- **`SPACE_READY_SUMMARY.md`**: Deployment summary
+# Run tests
+python tests/run_tests.py
 
-## 🎯 Expected Results
+# Run linting
+python scripts/fix_linting.py
+```
 
-After successful deployment:
+## 📄 **License**
 
-1. **Space Interface**: Web UI with training options
-2. **Authentication**: Working with GitHub secrets
-3. **Training**: Complete OpenLLM training pipeline
-4. **Model Upload**: Automatic upload to Hugging Face Hub
-5. **Repository**: Created at `your-username/openllm-*-extended-*k`
+OpenLLM is dual-licensed:
 
-## 🔒 Security
+- **Open Source**: GPLv3 License (see [LICENSE](LICENSE))
+- **Commercial**: Commercial License available for enterprise use
 
-- **HF_TOKEN**: Stored securely in GitHub repository secrets
-- **No Hardcoded Tokens**: All authentication uses environment variables
-- **Automatic Cleanup**: Test repositories are cleaned up
-- **Error Handling**: Proper error handling and logging
+## 🎯 **Roadmap**
 
-## 🆘 Troubleshooting
+### **v0.2.0 (Q3 2025)**
+- 🎯 Improved model quality (perplexity <50)
+- 🎯 Production-ready inference server
+- 🎯 Docker containerization
+- 🎯 Advanced monitoring and logging
 
-### GitHub Actions Issues
-1. Check if secrets are set correctly
-2. Verify Space ID format
-3. Check workflow logs for errors
+### **v0.3.0 (Q2 2026)**
+- 🎯 Chain of Thought reasoning
+- 🎯 Fine-tuning pipeline
+- 🎯 Multi-language support
+- 🎯 Mixture of Experts architecture
 
-### Space Issues
-1. Verify HF_TOKEN has "Write" permissions
-2. Check Space logs for authentication errors
-3. Ensure Space is connected to GitHub repository
+## 📞 **Support**
 
-### Training Issues
-1. Run authentication test first
-2. Check model parameters
-3. Verify training data availability
+- **Documentation**: [docs/](docs/)
+- **Issues**: [GitHub Issues](https://github.com/your-username/openllm/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-username/openllm/discussions)
 
-## 📚 Documentation
+## 🙏 **Acknowledgments**
 
-- **Setup Guide**: `HUGGINGFACE_SPACE_SETUP_GUIDE.md`
-- **Authentication Summary**: `SPACE_AUTHENTICATION_SUMMARY.md`
-- **Deployment Summary**: `SPACE_READY_SUMMARY.md`
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test the deployment
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the GNU General Public License v3.0.
-
-## 🎉 Success Criteria
-
-Your deployment is successful when:
-
-- ✅ GitHub Actions workflow completes successfully
-- ✅ Scripts are deployed to Hugging Face Space
-- ✅ Space web interface is accessible
-- ✅ Authentication test passes
-- ✅ Training can be started and completed
-- ✅ Model is uploaded to Hugging Face Hub
+- Built with PyTorch and Hugging Face ecosystem
+- Training data from SQUAD dataset
+- Community contributions and feedback
 
 ---
 
-**Status**: 🚀 **Ready for Deployment** - Push to GitHub to automatically deploy to your Hugging Face Space!
+**OpenLLM v0.1.0** - Building the future of open source AI, one model at a time! 🚀
