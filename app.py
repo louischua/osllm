@@ -244,9 +244,5 @@ if __name__ == "__main__":
         # Security mitigations for Gradio vulnerabilities
         allowed_paths=[],  # Restrict file access
         auth=None,  # Disable authentication to prevent code injection
-        show_error=False,  # Don't expose error details
         quiet=True,  # Reduce logging
-        # Disable potentially vulnerable features
-        enable_queue=False,
-        max_threads=1,  # Limit concurrent requests
     )
