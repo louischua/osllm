@@ -131,7 +131,6 @@ def create_space_interface():
         theme=gr.themes.Soft(),
         # Security mitigations
         analytics_enabled=False,  # Disable analytics
-        show_error=False,  # Don't expose error details
     ) as interface:
         gr.Markdown(
             """
