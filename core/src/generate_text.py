@@ -490,7 +490,6 @@ class TextGenerator:
             # Main generation loop
             # Generate one token at a time until stopping condition
             for step in range(max_length):
-
                 # Check context length limits
                 # Prevent exceeding model's maximum sequence length
                 if len(generated_tokens) >= self.config.block_size:

@@ -759,8 +759,8 @@ def create_test_model():
     """
     try:
         # Create a real model with minimal parameters
-        from model import GPTConfig, GPTModel
         import sentencepiece as smp
+        from model import GPTConfig, GPTModel
 
         # Create minimal config for testing
         config = GPTConfig.small()

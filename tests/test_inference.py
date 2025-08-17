@@ -87,6 +87,7 @@ class TestInferenceServer(unittest.TestCase):
     def tearDown(self):
         """Clean up test fixtures."""
         import shutil
+
         import inference_server
 
         # Reset global inference engine
@@ -255,6 +256,7 @@ class TestTextGeneration(unittest.TestCase):
     def tearDown(self):
         """Clean up test fixtures."""
         import shutil
+
         import inference_server
 
         # Reset global inference engine

@@ -177,7 +177,6 @@ def prepare_training_data(output_path="data/clean/training_data.txt", min_words=
                 # Clean and filter each context passage for high-quality training data
                 # This preprocessing is crucial for effective language model training
                 for context in tqdm(contexts, desc=f"Processing {os.path.basename(file_path)}"):
-
                     # Text normalization and cleaning pipeline
                     # Step 1: Normalize whitespace to ensure consistent formatting
                     # - Collapse multiple spaces/tabs into single spaces
