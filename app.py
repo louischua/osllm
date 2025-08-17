@@ -158,11 +158,12 @@ def create_space_interface():
             # Import required modules
             import json
             import time
-            import torch
             from datetime import datetime
-            from huggingface_hub import HfApi, whoami, create_repo, snapshot_download
-            from train_model import TextDataLoader
+
+            import torch
+            from huggingface_hub import HfApi, create_repo, snapshot_download, whoami
             from model import GPTConfig, GPTModel
+            from train_model import TextDataLoader
 
             print("🚀 Resuming Training from 7k to 8k Model")
             print("=" * 50)
@@ -485,11 +486,12 @@ GPL-3.0
             # Import required modules
             import json
             import time
-            import torch
             from datetime import datetime
-            from huggingface_hub import HfApi, whoami, create_repo, snapshot_download
-            from train_model import TextDataLoader
+
+            import torch
+            from huggingface_hub import HfApi, create_repo, snapshot_download, whoami
             from model import GPTConfig, GPTModel
+            from train_model import TextDataLoader
 
             print("🚀 Resuming Training from 7k to 8k Model")
             print("=" * 50)
