@@ -15,11 +15,6 @@ from pathlib import Path
 
 import gradio as gr
 
-# Add core/src to path for imports
-core_src_path = str(Path(__file__).parent / "core" / "src")
-if core_src_path not in sys.path:
-    sys.path.insert(0, core_src_path)
-
 # Import our authentication and training modules
 try:
     from openllm_training_with_auth import OpenLLMTrainingManager
@@ -879,8 +874,7 @@ GPL-3.0
         
         1. **Environment Check**: Verify Space configuration and authentication
         2. **Authentication Test**: Test Hugging Face authentication
-        3. **Run Training**: Start OpenLLM training with automatic upload
-        4. **Resume 7k to 8k**: Load 7k model and resume training to 8k steps
+        3. **Training Interface**: Unified interface for fresh training and resume training
         """
         )
 
@@ -896,16 +890,27 @@ GPL-3.0
             auth_output = gr.Textbox(label="Authentication Results", lines=15, interactive=False)
             auth_test_btn.click(run_authentication_test, outputs=auth_output)
 
-        with gr.Tab("🚀 Run Training"):
+        with gr.Tab("🚀 Training Interface"):
             gr.Markdown(
                 """
-            Start OpenLLM training with automatic model upload.
+            # 🚀 OpenLLM Training Interface
             
-            **Training Parameters:**
+            Choose your training mode and configure parameters for model training.
+            
+            ## 🎯 Training Modes
+            
+            **1. Fresh Training**: Start training from scratch with a new model
+            **2. Resume Training**: Load the 7k model and continue training to 8k steps
+            
+            ## 📊 Training Parameters
+            
             - **Model Size**: Choose the model size (small, medium, large)
             - **Training Steps**: Number of training steps (default: 8000)
+            - **Training Mode**: Select between fresh training or resume training
+            - **Real Training**: Enable comprehensive training with checkpoints and validation
             
-            **Expected Results:**
+            ## 🎉 Expected Results
+            
             - Training will complete successfully
             - Model will be uploaded to Hugging Face Hub
             - Repository will be created with proper model files
@@ -913,18 +918,28 @@ GPL-3.0
             )
 
             with gr.Row():
+                training_mode = gr.Radio(
+                    choices=["Fresh Training", "Resume 7k to 8k"],
+                    value="Fresh Training",
+                    label="Training Mode",
+                    info="Choose between fresh training or resuming from 7k model",
+                )
+
+            with gr.Row():
                 model_size = gr.Dropdown(
                     choices=["small", "medium", "large"],
                     value="small",
                     label="Model Size",
-                    info="Choose the model size for training",
+                    info="Choose the model size for training (only applies to fresh training)",
+                    interactive=True,
                 )
                 training_steps = gr.Number(
                     value=8000,
                     label="Training Steps",
-                    info="Number of training steps",
+                    info="Number of training steps (only applies to fresh training)",
                     minimum=1000,
                     maximum=50000,
+                    interactive=True,
                 )
 
             with gr.Row():
@@ -934,40 +949,37 @@ GPL-3.0
                     info="Enable real model training with checkpoints and validation (slower but more realistic)",
                 )
 
+            # Function to update UI based on training mode
+            def update_ui_for_mode(mode):
+                """Update UI elements based on selected training mode."""
+                if mode == "Resume 7k to 8k":
+                    return gr.Dropdown(interactive=False), gr.Number(interactive=False)
+                else:
+                    return gr.Dropdown(interactive=True), gr.Number(interactive=True)
+
+            # Update UI when training mode changes
+            training_mode.change(
+                update_ui_for_mode,
+                inputs=[training_mode],
+                outputs=[model_size, training_steps],
+            )
+
+            # Unified training function
+            def unified_training(mode, model_size, training_steps, use_real_training):
+                """Unified training function that handles both fresh and resume training."""
+                if mode == "Resume 7k to 8k":
+                    return resume_training_from_7k_to_8k()
+                else:
+                    return run_training(model_size, training_steps, use_real_training)
+
             train_btn = gr.Button("Start Training", variant="primary", size="lg")
-            train_output = gr.Textbox(label="Training Results", lines=20, interactive=False)
+            train_output = gr.Textbox(label="Training Results", lines=25, interactive=False)
 
             train_btn.click(
-                run_training,
-                inputs=[model_size, training_steps, use_real_training],
+                unified_training,
+                inputs=[training_mode, model_size, training_steps, use_real_training],
                 outputs=train_output,
             )
-
-        with gr.Tab("🔄 Resume 7k to 8k"):
-            gr.Markdown(
-                """
-            **Resume Training from 7k to 8k Model**
-            
-            This feature loads the existing 7k model from Hugging Face Hub and resumes training
-            to create an 8k model.
-            
-            **Process:**
-            1. Downloads the 7k model from lemms/openllm-small-extended-7k
-            2. Resumes training for 1000 additional steps
-            3. Creates a new 8k model with extended training
-            4. Uploads the result to Hugging Face Hub
-            
-            **Expected Results:**
-            - Model will be loaded from HF Hub
-            - Training will resume from step 7000
-            - New 8k model will be uploaded to HF Hub
-            """
-            )
-
-            resume_btn = gr.Button("Resume Training 7k → 8k", variant="primary", size="lg")
-            resume_output = gr.Textbox(label="Resume Training Results", lines=25, interactive=False)
-
-            resume_btn.click(resume_training_from_7k_to_8k, outputs=resume_output)
 
         with gr.Tab("📚 Documentation"):
             gr.Markdown(
