@@ -11,13 +11,14 @@ License: GPLv3
 
 import os
 import sys
-import gradio as gr
 from pathlib import Path
+
+import gradio as gr
 
 # Import our authentication and training modules
 try:
-    from space_auth_test import test_space_authentication
     from openllm_training_with_auth import OpenLLMTrainingManager
+    from space_auth_test import test_space_authentication
 
     MODULES_AVAILABLE = True
 except ImportError as e:
@@ -35,8 +36,8 @@ def create_space_interface():
                 return "❌ Required modules not available. Please check deployment."
 
             # Capture output from authentication test
-            import io
             import contextlib
+            import io
 
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
@@ -74,8 +75,8 @@ def create_space_interface():
             training_steps = int(float(training_steps))
 
             # Capture output from training
-            import io
             import contextlib
+            import io
 
             output = io.StringIO()
             with contextlib.redirect_stdout(output):

@@ -86,15 +86,15 @@ jobs:
 
       - name: 🎨 Check code formatting (Black)
         run: |
-          black --check --diff core/src/ tests/
+          black --check --diff core/src/ tests/ app.py
 
       - name: 📚 Check import sorting (isort)
         run: |
-          isort --check-only --diff core/src/ tests/
+          isort --check-only --diff core/src/ tests/ app.py
 
       - name: 🔍 Lint code (flake8)
         run: |
-          flake8 core/src/ tests/ --max-line-length=100 --extend-ignore=E203,W503 || echo "⚠️ Some linting issues found, but continuing..."
+          flake8 core/src/ tests/ app.py --max-line-length=100 --extend-ignore=E203,W503 || echo "⚠️ Some linting issues found, but continuing..."
 
       - name: 🔧 Type checking (mypy)
         run: |
@@ -117,7 +117,7 @@ jobs:
       - name: 🛡️ Run security scan (bandit)
         run: |
           pip install bandit[toml]==1.7.5
-          bandit -r core/src/ -f json -o bandit-report.json --exit-zero
+          bandit -r core/src/ app.py -f json -o bandit-report.json --exit-zero || echo "⚠️ Security scan completed with warnings"
 
       - name: 📊 Upload security scan results
         uses: actions/upload-artifact@v4
@@ -143,7 +143,7 @@ jobs:
       - name: 🔍 Check for dependency vulnerabilities
         run: |
           pip install safety==2.3.5
-          safety check --json --output safety-report.json --continue-on-error
+          safety check --json --output safety-report.json --continue-on-error || echo "⚠️ Dependency check completed with warnings"
 
       - name: 📊 Upload dependency scan results
         uses: actions/upload-artifact@v4
@@ -248,6 +248,9 @@ jobs:
             echo "✅ Real tokenizer found: data/tokenizer/tokenizer.model"
           fi
           
+          # No model downloads needed - tests use mock models
+          echo "✅ Tests will use mock models (no downloads needed)"
+          
           # Run tests with better error handling - focus on tests that work
           echo "🧪 Running simple tests first..."
           python -m pytest tests/test_simple.py -v --tb=short
@@ -286,14 +289,8 @@ jobs:
           python -c "import sys; print('Python path:'); [print(p) for p in sys.path]"
           python -c "import sys; sys.path.insert(0, r'%GITHUB_WORKSPACE%\core\src'); import model; print('✅ Model import successful')"
           
-          # Verify tokenizer exists
-          if not exist "data\tokenizer\tokenizer.model" (
-            echo "❌ Real tokenizer not found, creating minimal test setup..."
-            mkdir data\tokenizer
-            echo "Creating minimal tokenizer for tests..."
-          ) else (
-            echo "✅ Real tokenizer found: data\tokenizer\tokenizer.model"
-          )
+          # No model downloads needed - tests use mock models
+          echo "✅ Tests will use mock models (no downloads needed)"
           
           # Run tests with better error handling - focus on tests that work
           echo "🧪 Running simple tests first..."
