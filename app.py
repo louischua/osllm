@@ -15,6 +15,11 @@ from pathlib import Path
 
 import gradio as gr
 
+# Add core/src to path for imports
+core_src_path = str(Path(__file__).parent / "core" / "src")
+if core_src_path not in sys.path:
+    sys.path.insert(0, core_src_path)
+
 # Import our authentication and training modules
 try:
     from openllm_training_with_auth import OpenLLMTrainingManager
