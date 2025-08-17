@@ -111,12 +111,24 @@ def create_space_interface():
             else:
                 result += "ℹ️ Running in local environment\n"
 
-            if hf_token:
-                result += f"✅ HF access token found: {hf_token[:8]}...{hf_token[-4:]}\n"
-                result += "   - Source: HF access token in Space settings\n"
-            else:
-                result += "❌ HF access token not found\n"
-                result += "   - Please set HF_TOKEN in Space settings with HF access token\n"
+            # Test Space's built-in authentication
+            try:
+                from huggingface_hub import whoami
+                user_info = whoami()
+                result += f"✅ Space built-in authentication working\n"
+                result += f"   - User: {user_info['name']}\n"
+                result += f"   - Full name: {user_info['fullname']}\n"
+                result += f"   - Authentication: Space built-in token\n"
+            except Exception as auth_error:
+                result += f"❌ Space built-in authentication failed: {str(auth_error)[:50]}...\n"
+                
+                if hf_token:
+                    result += f"✅ HF access token found: {hf_token[:8]}...{hf_token[-4:]}\n"
+                    result += "   - Source: HF access token in Space settings\n"
+                else:
+                    result += "❌ HF access token not found\n"
+                    result += "   - Please set HF_TOKEN in Space settings with HF access token\n"
+                    result += "   - Or ensure Space has proper authentication permissions\n"
 
             result += f"\n📁 Available modules: {'✅' if MODULES_AVAILABLE else '❌'}"
 
