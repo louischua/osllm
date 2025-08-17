@@ -122,9 +122,22 @@ GPL-3.0
         """Upload trained model to Hugging Face Hub."""
         print(f"📤 Uploading model to Hugging Face Hub...")
 
+        # Ensure username is set correctly before upload
+        if not self.username or self.username == "unknown" or self.username == "None":
+            try:
+                from huggingface_hub import whoami
+                user_info = whoami()
+                self.username = user_info.get("name", "lemms")
+                print(f"🔧 Fixed username: {self.username}")
+            except Exception as e:
+                print(f"⚠️ Could not retrieve username for upload: {e}")
+                self.username = "lemms"  # Fallback to known username
+                print(f"🔧 Using fallback username: {self.username}")
+
         # Create model repository name
         repo_name = f"openllm-{model_size}-{steps}steps"
         repo_id = f"{self.username}/{repo_name}"
+        print(f"📁 Creating repository: {repo_id}")
 
         try:
             # Create repository
@@ -178,7 +191,20 @@ GPL-3.0
         print(f"=" * 40)
         print(f"📊 Model Size: {model_size}")
         print(f"🔄 Training Steps: {steps}")
-        print(f"👤 User: {self.username}")
+        
+        # Ensure username is set correctly
+        if not self.username or self.username == "unknown":
+            try:
+                from huggingface_hub import whoami
+                user_info = whoami()
+                self.username = user_info.get("name", "lemms")
+                print(f"👤 User: {self.username} (retrieved from authentication)")
+            except Exception as e:
+                print(f"⚠️ Could not retrieve username: {e}")
+                self.username = "lemms"  # Fallback to known username
+                print(f"👤 User: {self.username} (using fallback)")
+        else:
+            print(f"👤 User: {self.username}")
 
         # Simulate training process
         print(f"\n🔄 Step 1: Initializing training...")
