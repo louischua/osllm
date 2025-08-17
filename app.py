@@ -114,6 +114,7 @@ def create_space_interface():
             # Test Space's built-in authentication
             try:
                 from huggingface_hub import whoami
+
                 user_info = whoami()
                 result += f"✅ Space built-in authentication working\n"
                 result += f"   - User: {user_info['name']}\n"
@@ -121,7 +122,7 @@ def create_space_interface():
                 result += f"   - Authentication: Space built-in token\n"
             except Exception as auth_error:
                 result += f"❌ Space built-in authentication failed: {str(auth_error)[:50]}...\n"
-                
+
                 if hf_token:
                     result += f"✅ HF access token found: {hf_token[:8]}...{hf_token[-4:]}\n"
                     result += "   - Source: HF access token in Space settings\n"
