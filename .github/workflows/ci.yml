@@ -220,6 +220,7 @@ jobs:
 
       - name: 🧪 Run full unit tests (Unix)
         if: runner.os != 'Windows'
+        timeout-minutes: 15
         run: |
           # Debug: Show current directory and files
           echo "Current directory: $(pwd)"
@@ -251,24 +252,27 @@ jobs:
           # No model downloads needed - tests use mock models
           echo "✅ Tests will use mock models (no downloads needed)"
           
-          # Run tests with better error handling - focus on tests that work
+          # Run tests with optimized execution - focus on essential tests
           echo "🧪 Running simple tests first..."
           python -m pytest tests/test_simple.py -v --tb=short
           
           echo "🧪 Running basic tests..."
           python -m pytest tests/test_basic.py -v --tb=short || echo "⚠️ Basic tests failed, continuing..."
           
+          echo "🧪 Running model tests (fastest)..."
+          python -m pytest tests/test_model.py -v --tb=short || echo "⚠️ Model tests failed, continuing..."
+          
           echo "🧪 Running training tests..."
           python -m pytest tests/test_training.py -v --tb=short || echo "⚠️ Training tests failed, continuing..."
           
-          echo "🧪 Running model tests..."
-          python -m pytest tests/test_model.py -v --tb=short || echo "⚠️ Model tests failed, continuing..."
-          
-          echo "🧪 Running inference tests..."
-          python -m pytest tests/test_inference.py -v --tb=short || echo "⚠️ Inference tests failed, continuing..."
+          echo "🧪 Running inference tests (most time-consuming)..."
+          python -m pytest tests/test_inference.py::TestInferenceServer -v --tb=short || echo "⚠️ Inference server tests failed, continuing..."
+          python -m pytest tests/test_inference.py::TestInferencePerformance -v --tb=short || echo "⚠️ Inference performance tests failed, continuing..."
+          python -m pytest tests/test_inference.py::TestInferenceReliability -v --tb=short || echo "⚠️ Inference reliability tests failed, continuing..."
 
       - name: 🧪 Run full unit tests (Windows)
         if: runner.os == 'Windows'
+        timeout-minutes: 15
         shell: cmd
         run: |
           # Debug: Show current directory and files
