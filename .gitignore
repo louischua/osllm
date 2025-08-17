@@ -74,6 +74,7 @@ ipython_config.py
 .env.development
 .env.test
 .env.production
+env_template.txt
 
 # ML/AI specific
 # Large model files
