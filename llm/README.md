@@ -16,6 +16,8 @@ license: gpl-3.0
 
 Welcome to the **OpenLLM Inference Space**! This is an interactive web application where you can experiment with different AI language models that we've trained from scratch. Think of it as a "playground" where you can see how AI models learn and improve over time.
 
+**Note**: This space is specifically for **model inference and comparison**. For live model training, visit our **[Training Space](https://huggingface.co/spaces/lemms/openllm)**.
+
 ### 🎯 What Makes This Special?
 
 Unlike most AI demos that use models from big companies, **all the models here were trained by us using our own OpenLLM framework**. This means:

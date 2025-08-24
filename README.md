@@ -225,16 +225,27 @@ else:
 # This is like the model saying "I should have predicted 'mat'"
 ```
 
-## 🌐 Live Demo
+## 🌐 Live Demos
 
-### Try It Yourself!
-Visit our live demo: https://huggingface.co/spaces/lemms/llm
+### 🎯 Model Testing and Comparison
+Visit **[https://huggingface.co/spaces/lemms/llm](https://huggingface.co/spaces/lemms/llm)** to test our trained models:
 
 You can:
 - **Select different models**: Try the 4k model (basic) vs the 9k model (advanced)
 - **Adjust creativity**: Higher temperature = more creative, Lower = more predictable
 - **Control length**: Generate short or long responses
 - **See the difference**: Compare how different training levels affect output quality
+
+### 🔧 Live Model Training
+Visit **[https://huggingface.co/spaces/lemms/openllm](https://huggingface.co/spaces/lemms/openllm)** to train your own models:
+
+You can:
+- **Start training** from existing model checkpoints
+- **Configure parameters**: Learning rate, batch size, training steps
+- **Monitor progress**: Watch loss curves and metrics in real-time
+- **Download models**: Get your trained models for local use
+
+**For detailed information about both spaces, see [Hugging Face Spaces Guide](docs/HUGGING_FACE_SPACES_GUIDE.md)**
 
 ### Example Interactions
 
@@ -476,7 +487,8 @@ python app.py
 ### Contact Information
 - **Author**: Louis Chua Bean Chong
 - **GitHub**: https://github.com/louischua/openllm
-- **Live Demo**: https://huggingface.co/spaces/lemms/llm
+- **Model Demo**: https://huggingface.co/spaces/lemms/llm
+- **Training Demo**: https://huggingface.co/spaces/lemms/openllm
 
 ## 📄 License
 
