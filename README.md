@@ -472,6 +472,9 @@ python app.py
 - **GPT-2/3**: Commercial models that inspired this project
 - **BERT**: Another popular transformer architecture
 
+### Project Roadmap
+- **[Development Roadmap](docs/roadmap.md)**: Detailed roadmap and future plans for OpenLLM
+
 ### Community
 - **GitHub Discussions**: Ask questions and share ideas
 - **Discord/Slack**: Join our community chat
