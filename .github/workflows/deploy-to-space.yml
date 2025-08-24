@@ -1,4 +1,4 @@
-name: Deploy to Hugging Face Space
+name: Deploy to Hugging Face Spaces
 
 on:
   push:
@@ -25,10 +25,17 @@ jobs:
       run: |
         echo "🔍 Validating files for deployment..."
         
-        # Required files for Space deployment
-        required_files=(
+        # Required files for Inference Space deployment
+        inference_files=(
           "llm/app.py"
           "llm/requirements.txt"
+        )
+        
+        # Required files for Training Space deployment
+        training_files=(
+          "training_space/app.py"
+          "training_space/requirements.txt"
+          "training_space/README.md"
         )
         
         # Optional files (warn if missing)
@@ -40,12 +47,23 @@ jobs:
           "verify_space_auth.py"
         )
         
-        missing_required=()
+        missing_inference=()
+        missing_training=()
         missing_optional=()
         
-        for file in "${required_files[@]}"; do
+        echo "📋 Checking Inference Space files..."
+        for file in "${inference_files[@]}"; do
           if [ ! -f "$file" ]; then
-            missing_required+=("$file")
+            missing_inference+=("$file")
+          else
+            echo "✅ $file found"
+          fi
+        done
+        
+        echo "📋 Checking Training Space files..."
+        for file in "${training_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            missing_training+=("$file")
           else
             echo "✅ $file found"
           fi
@@ -59,9 +77,15 @@ jobs:
           fi
         done
         
-        if [ ${#missing_required[@]} -ne 0 ]; then
-          echo "❌ Missing required files:"
-          printf '  - %s\n' "${missing_required[@]}"
+        if [ ${#missing_inference[@]} -ne 0 ]; then
+          echo "❌ Missing inference space files:"
+          printf '  - %s\n' "${missing_inference[@]}"
+          exit 1
+        fi
+        
+        if [ ${#missing_training[@]} -ne 0 ]; then
+          echo "❌ Missing training space files:"
+          printf '  - %s\n' "${missing_training[@]}"
           exit 1
         fi
         
@@ -87,8 +111,23 @@ jobs:
         echo "Files in current directory:"
         ls -la
         
-        # Check if files have content
+        # Check inference space files
+        echo "🔍 Validating Inference Space files..."
         for file in llm/app.py llm/requirements.txt; do
+          if [ ! -f "$file" ]; then
+            echo "❌ $file not found"
+            exit 1
+          elif [ ! -s "$file" ]; then
+            echo "❌ $file is empty"
+            exit 1
+          else
+            echo "✅ $file has content ($(wc -c < "$file") bytes)"
+          fi
+        done
+        
+        # Check training space files
+        echo "🔍 Validating Training Space files..."
+        for file in training_space/app.py training_space/requirements.txt training_space/README.md; do
           if [ ! -f "$file" ]; then
             echo "❌ $file not found"
             exit 1
@@ -104,8 +143,11 @@ jobs:
         echo "🔍 Validating Python syntax..."
         python --version
         
-        # Use a simpler approach - just try to import the files
+        # Validate inference space app
         python -c "import sys; sys.path.append('llm'); import app"
+        
+        # Validate training space app
+        python -c "import sys; sys.path.append('training_space'); import app"
         
         # Check optional files if they exist
         if [ -f "space_auth_test.py" ]; then
@@ -118,8 +160,8 @@ jobs:
         
         echo "✅ File validation completed"
 
-  deploy-to-space:
-    name: 🚀 Deploy to Space
+  deploy-inference-space:
+    name: 🚀 Deploy Inference Space (lemms/llm)
     runs-on: ubuntu-latest
     needs: [validate-deployment]
     steps:
@@ -134,15 +176,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        # Pin exact version for reproducible builds
         pip install huggingface_hub==0.19.0
         
-    - name: Deploy files to Space
+    - name: Deploy files to Inference Space
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         SPACE_ID: ${{ secrets.SPACE_ID }}
       run: |
-        echo "🚀 Deploying to Hugging Face Space..."
+        echo "🚀 Deploying to Inference Space (lemms/llm)..."
         
         # Function to deploy a file
         deploy_file() {
@@ -156,7 +197,6 @@ jobs:
           
           echo "📤 Deploying $file_path to $space_path"
           
-          # Use huggingface_hub to upload file
           python -c "
         import os
         from huggingface_hub import HfApi
@@ -174,7 +214,6 @@ jobs:
             exit(1)
             
         try:
-            # Upload file to space
             api.upload_file(
                 path_or_fileobj='$file_path',
                 path_in_repo='$space_path',
@@ -189,41 +228,112 @@ jobs:
         "
         }
         
-        # Deploy core files
+        # Deploy inference space files
         deploy_file "llm/app.py" "app.py"
         deploy_file "llm/requirements.txt" "requirements.txt"
         
-        # Deploy optional files if they exist
-        if [ -f "space_auth_test.py" ]; then
-          deploy_file "space_auth_test.py" "space_auth_test.py"
-        fi
+        echo "✅ Inference Space deployment completed"
+
+  deploy-training-space:
+    name: 🚀 Deploy Training Space (lemms/openllm)
+    runs-on: ubuntu-latest
+    needs: [validate-deployment]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
         
-        if [ -f "openllm_training_with_auth.py" ]; then
-          deploy_file "openllm_training_with_auth.py" "openllm_training_with_auth.py"
-        fi
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install huggingface_hub==0.19.0
         
-        if [ -f "integrate_auth_into_training.py" ]; then
-          deploy_file "integrate_auth_into_training.py" "integrate_auth_into_training.py"
-        fi
+    - name: Deploy files to Training Space
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        TRAINING_SPACE_ID: ${{ secrets.TRAINING_SPACE_ID }}
+      run: |
+        echo "🚀 Deploying to Training Space (lemms/openllm)..."
         
-        if [ -f "setup_hf_space_auth.py" ]; then
-          deploy_file "setup_hf_space_auth.py" "setup_hf_space_auth.py"
-        fi
+        # Function to deploy a file
+        deploy_file() {
+          local file_path="$1"
+          local space_path="$2"
+          
+          if [ ! -f "$file_path" ]; then
+            echo "⚠️ File not found: $file_path"
+            return 1
+          fi
+          
+          echo "📤 Deploying $file_path to $space_path"
+          
+          python -c "
+        import os
+        from huggingface_hub import HfApi
         
-        if [ -f "verify_space_auth.py" ]; then
-          deploy_file "verify_space_auth.py" "verify_space_auth.py"
-        fi
+        api = HfApi()
+        token = os.environ.get('HF_TOKEN')
+        space_id = os.environ.get('TRAINING_SPACE_ID')
         
-        echo "✅ Deployment completed"
+        if not token:
+            print('❌ HF_TOKEN not found')
+            exit(1)
+            
+        if not space_id:
+            print('❌ TRAINING_SPACE_ID not found')
+            exit(1)
+            
+        try:
+            api.upload_file(
+                path_or_fileobj='$file_path',
+                path_in_repo='$space_path',
+                repo_id=space_id,
+                repo_type='space',
+                token=token
+            )
+            print(f'✅ Successfully uploaded $file_path to $space_path')
+        except Exception as e:
+            print(f'❌ Failed to upload $file_path: {e}')
+            exit(1)
+        "
+        }
         
-    - name: Verify deployment
+        # Deploy training space files
+        deploy_file "training_space/app.py" "app.py"
+        deploy_file "training_space/requirements.txt" "requirements.txt"
+        deploy_file "training_space/README.md" "README.md"
+        
+        echo "✅ Training Space deployment completed"
+
+  verify-deployment:
+    name: 🔍 Verify Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-inference-space, deploy-training-space]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install huggingface_hub==0.19.0
+        
+    - name: Verify Inference Space deployment
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         SPACE_ID: ${{ secrets.SPACE_ID }}
       run: |
-        echo "🔍 Verifying deployment..."
+        echo "🔍 Verifying Inference Space deployment..."
         
-        # List deployed files
         python -c "
         import os
         from huggingface_hub import HfApi
@@ -237,32 +347,83 @@ jobs:
             exit(1)
             
         try:
-            # List files in space
             files = api.list_repo_files(space_id, repo_type='space', token=token)
-            print('📁 Files in space:')
+            print('📁 Files in Inference Space:')
             for file in files:
                 print(f'  - {file}')
                 
-            # Check for required files
             required_files = ['app.py', 'requirements.txt']
             deployed_files = [f for f in files if f in required_files]
             
             if len(deployed_files) == len(required_files):
-                print('✅ All required files deployed')
+                print('✅ All required files deployed to Inference Space')
             else:
                 print(f'⚠️ Missing files: {set(required_files) - set(deployed_files)}')
                 exit(1)
                 
         except Exception as e:
-            print(f'❌ Failed to verify deployment: {e}')
+            print(f'❌ Failed to verify Inference Space: {e}')
             exit(1)
         "
+        
+    - name: Verify Training Space deployment
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        TRAINING_SPACE_ID: ${{ secrets.TRAINING_SPACE_ID }}
+      run: |
+        echo "🔍 Verifying Training Space deployment..."
+        
+        python -c "
+        import os
+        from huggingface_hub import HfApi
+        
+        api = HfApi()
+        token = os.environ.get('HF_TOKEN')
+        space_id = os.environ.get('TRAINING_SPACE_ID')
+        
+        if not token or not space_id:
+            print('❌ Missing HF_TOKEN or TRAINING_SPACE_ID')
+            exit(1)
+            
+        try:
+            files = api.list_repo_files(space_id, repo_type='space', token=token)
+            print('📁 Files in Training Space:')
+            for file in files:
+                print(f'  - {file}')
+                
+            required_files = ['app.py', 'requirements.txt', 'README.md']
+            deployed_files = [f for f in files if f in required_files]
+            
+            if len(deployed_files) == len(required_files):
+                print('✅ All required files deployed to Training Space')
+            else:
+                print(f'⚠️ Missing files: {set(required_files) - set(deployed_files)}')
+                exit(1)
+                
+        except Exception as e:
+            print(f'❌ Failed to verify Training Space: {e}')
+            exit(1)
+        "
+        
+    - name: Deployment Summary
+      run: |
+        echo "🎉 Deployment Summary"
+        echo "=================="
+        echo "✅ Inference Space (lemms/llm): Deployed and verified"
+        echo "✅ Training Space (lemms/openllm): Deployed and verified"
+        echo ""
+        echo "🌐 Spaces are available at:"
+        echo "  - Inference: https://huggingface.co/spaces/lemms/llm"
+        echo "  - Training: https://huggingface.co/spaces/lemms/openllm"
+        echo ""
+        echo "⏳ Spaces will take a few minutes to build and become available."
         
     - name: Rollback on failure
       if: failure()
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         SPACE_ID: ${{ secrets.SPACE_ID }}
+        TRAINING_SPACE_ID: ${{ secrets.TRAINING_SPACE_ID }}
       run: |
         echo "🔄 Rolling back deployment due to failure..."
-        echo "⚠️ Manual intervention may be required to restore the space"
+        echo "⚠️ Manual intervention may be required to restore the spaces"
