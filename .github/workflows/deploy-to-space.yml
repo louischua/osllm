@@ -255,7 +255,6 @@ jobs:
     - name: Deploy files to Training Space
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        TRAINING_SPACE_ID: ${{ secrets.TRAINING_SPACE_ID }}
       run: |
         echo "🚀 Deploying to Training Space (lemms/openllm)..."
         
@@ -277,14 +276,10 @@ jobs:
         
         api = HfApi()
         token = os.environ.get('HF_TOKEN')
-        space_id = os.environ.get('TRAINING_SPACE_ID')
+        space_id = 'lemms/openllm'  # Hardcoded training space ID
         
         if not token:
             print('❌ HF_TOKEN not found')
-            exit(1)
-            
-        if not space_id:
-            print('❌ TRAINING_SPACE_ID not found')
             exit(1)
             
         try:
@@ -369,7 +364,6 @@ jobs:
     - name: Verify Training Space deployment
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        TRAINING_SPACE_ID: ${{ secrets.TRAINING_SPACE_ID }}
       run: |
         echo "🔍 Verifying Training Space deployment..."
         
@@ -379,10 +373,10 @@ jobs:
         
         api = HfApi()
         token = os.environ.get('HF_TOKEN')
-        space_id = os.environ.get('TRAINING_SPACE_ID')
+        space_id = 'lemms/openllm'  # Hardcoded training space ID
         
-        if not token or not space_id:
-            print('❌ Missing HF_TOKEN or TRAINING_SPACE_ID')
+        if not token:
+            print('❌ Missing HF_TOKEN')
             exit(1)
             
         try:
@@ -423,7 +417,6 @@ jobs:
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         SPACE_ID: ${{ secrets.SPACE_ID }}
-        TRAINING_SPACE_ID: ${{ secrets.TRAINING_SPACE_ID }}
       run: |
         echo "🔄 Rolling back deployment due to failure..."
         echo "⚠️ Manual intervention may be required to restore the spaces"
