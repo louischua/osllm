@@ -98,32 +98,42 @@
 
 ### 🔮 **Planned Features (Future Versions)**
 
-#### **v0.2.0 - Enhanced Training (Q1 2025)**
-- 📝 **Multi-Language Support** - Training on multilingual datasets
+> **📅 Timeline Note**: These timelines have been adjusted for realism based on typical development cycles for AI/ML projects. Each version represents 6-12 months of focused development work.
+
+#### **v0.2.0 - Enhanced Training (Q2-Q3 2025)**
+- 📝 **Mixed Precision Training** - FP16/BF16 training for efficiency
 - 📝 **Custom Datasets** - Support for user-provided training data
 - 📝 **Advanced Architectures** - Support for newer transformer variants
-- 📝 **Distributed Training** - Multi-node training for large models
-- 📝 **Mixed Precision** - FP16/BF16 training for efficiency
+- 📝 **Performance Optimization** - Memory management and training speed improvements
+- 📝 **Extended Model Sizes** - Support for larger models (up to 1B parameters)
 
-#### **v0.3.0 - Advanced Features (Q2 2025)**
+#### **v0.3.0 - Fine-tuning & Efficiency (Q4 2025 - Q1 2026)**
 - 📝 **Fine-tuning Pipeline** - Task-specific model adaptation
-- 📝 **RLHF (Reinforcement Learning from Human Feedback)** - Alignment training
-- 📝 **Instruction Tuning** - Chat/instruction-following capabilities
 - 📝 **Parameter-Efficient Fine-tuning** - LoRA, AdaLoRA, QLoRA support
-- 📝 **Chain of Thought Reasoning** - Advanced reasoning capabilities
+- 📝 **Instruction Tuning** - Chat/instruction-following capabilities
+- 📝 **Distributed Training** - Multi-GPU training for large models
+- 📝 **Model Compression** - Quantization and pruning techniques
 
-#### **v0.4.0 - Multi-Modal (Q3 2025)**
-- 📝 **Multi-Modal Foundation Models** - Vision-Language models
-- 📝 **Image Understanding** - CLIP-style vision encoders
-- 📝 **Multi-Modal Training** - Joint vision-language training
-- 📝 **Cross-Modal Generation** - Image-to-text and text-to-image
+#### **v0.4.0 - Multi-Language & Advanced Features (Q2-Q3 2026)**
+- 📝 **Multi-Language Support** - Training on multilingual datasets
+- 📝 **Advanced Reasoning** - Chain of Thought and step-by-step reasoning
+- 📝 **Model Evaluation** - Comprehensive benchmarking and evaluation
+- 📝 **Production Deployment** - Enterprise-grade deployment tools
+- 📝 **Community Features** - Enhanced documentation and tutorials
 
-#### **v1.0.0 - Mixture of Experts (Q4 2025)**
-- 📝 **Sparse Activation** - Efficient scaling with selective expert activation
-- 📝 **Expert Routing** - Dynamic routing mechanisms for optimal expert selection
-- 📝 **Load Balancing** - Balanced expert utilization and training stability
-- 📝 **MoE Scaling** - Support for 100+ experts and trillion+ parameter models
-- 📝 **MoE Inference Optimization** - Efficient serving and deployment strategies
+#### **v0.5.0 - Research & Innovation (Q4 2026 - Q1 2027)**
+- 📝 **RLHF Research** - Initial research into reinforcement learning from human feedback
+- 📝 **Advanced Architectures** - Experimental transformer variants
+- 📝 **Curriculum Learning** - Progressive difficulty training approaches
+- 📝 **Meta-Learning** - Learning to learn new tasks
+- 📝 **Research Collaboration** - Academic partnerships and publications
+
+#### **v1.0.0 - Multi-Modal & MoE (Q2-Q4 2027)**
+- 📝 **Multi-Modal Foundation Models** - Vision-Language models (research phase)
+- 📝 **MoE Architecture Research** - Initial Mixture of Experts implementation
+- 📝 **Advanced Scaling** - Support for larger models and distributed training
+- 📝 **Enterprise Features** - Commercial-grade capabilities
+- 📝 **Industry Integration** - Production deployment and optimization
 
 ### 🎯 **Success Metrics**
 
@@ -136,11 +146,11 @@
 - ✅ **Community**: Open source project with professional standards
 
 #### **Future Targets**
-- 📊 **Model Performance**: Achieve <4.5 loss and <100 perplexity
-- 📊 **Training Scale**: Support models up to 10B parameters
-- 📊 **Multi-Language**: Support 10+ languages
-- 📊 **Community**: 1000+ GitHub stars and 100+ contributors
-- 📊 **Enterprise**: Commercial licensing and support
+- 📊 **Model Performance**: Achieve <4.8 loss and <150 perplexity (v0.2.0)
+- 📊 **Training Scale**: Support models up to 1B parameters (v0.2.0), 10B parameters (v1.0.0)
+- 📊 **Multi-Language**: Support 5+ languages (v0.4.0), 10+ languages (v1.0.0)
+- 📊 **Community**: 500+ GitHub stars and 50+ contributors (v0.3.0)
+- 📊 **Enterprise**: Commercial licensing and support (v0.4.0)
 
 ### 🛠️ **Technical Roadmap**
 
