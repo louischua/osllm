@@ -27,8 +27,8 @@ jobs:
         
         # Required files for Space deployment
         required_files=(
-          "app.py"
-          "requirements.txt"
+          "llm/app.py"
+          "llm/requirements.txt"
         )
         
         # Optional files (warn if missing)
@@ -88,7 +88,7 @@ jobs:
         ls -la
         
         # Check if files have content
-        for file in app.py requirements.txt; do
+        for file in llm/app.py llm/requirements.txt; do
           if [ ! -f "$file" ]; then
             echo "❌ $file not found"
             exit 1
@@ -105,7 +105,7 @@ jobs:
         python --version
         
         # Use a simpler approach - just try to import the files
-        python -c "import app"
+        python -c "import sys; sys.path.append('llm'); import app"
         
         # Check optional files if they exist
         if [ -f "space_auth_test.py" ]; then
@@ -190,8 +190,8 @@ jobs:
         }
         
         # Deploy core files
-        deploy_file "app.py" "app.py"
-        deploy_file "requirements.txt" "requirements.txt"
+        deploy_file "llm/app.py" "app.py"
+        deploy_file "llm/requirements.txt" "requirements.txt"
         
         # Deploy optional files if they exist
         if [ -f "space_auth_test.py" ]; then

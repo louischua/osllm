@@ -32,10 +32,10 @@ jobs:
           test -f .github/workflows/deploy-to-space.yml || (echo "❌ deploy-to-space.yml missing" && exit 1)
           
           # Core functionality files (if they exist)
-          if [ -f "app.py" ]; then
-            echo "✅ app.py found"
+          if [ -f "llm/app.py" ]; then
+            echo "✅ llm/app.py found"
           else
-            echo "⚠️ app.py not found (optional for core pipeline)"
+            echo "⚠️ llm/app.py not found (optional for core pipeline)"
           fi
           
           if [ -f "space_auth_test.py" ]; then
@@ -86,15 +86,15 @@ jobs:
 
       - name: 🎨 Check code formatting (Black)
         run: |
-          black --check --diff core/src/ tests/ app.py
+          black --check --diff core/src/ tests/ llm/app.py
 
       - name: 📚 Check import sorting (isort)
         run: |
-          isort --check-only --diff core/src/ tests/ app.py
+          isort --check-only --diff core/src/ tests/ llm/app.py
 
       - name: 🔍 Lint code (flake8)
         run: |
-          flake8 core/src/ tests/ app.py --max-line-length=100 --extend-ignore=E203,W503 || echo "⚠️ Some linting issues found, but continuing..."
+          flake8 core/src/ tests/ llm/app.py --max-line-length=100 --extend-ignore=E203,W503 || echo "⚠️ Some linting issues found, but continuing..."
 
       - name: 🔧 Type checking (mypy)
         run: |
@@ -117,7 +117,7 @@ jobs:
       - name: 🛡️ Run security scan (bandit)
         run: |
           pip install bandit[toml]==1.7.5
-          bandit -r core/src/ app.py -f json -o bandit-report.json --exit-zero || echo "⚠️ Security scan completed with warnings"
+          bandit -r core/src/ llm/app.py -f json -o bandit-report.json --exit-zero || echo "⚠️ Security scan completed with warnings"
 
       - name: 📊 Upload security scan results
         uses: actions/upload-artifact@v4
