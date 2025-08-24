@@ -126,6 +126,7 @@ GPL-3.0
         if not self.username or self.username == "unknown" or self.username == "None":
             try:
                 from huggingface_hub import whoami
+
                 user_info = whoami()
                 self.username = user_info.get("name", "lemms")
                 print(f"🔧 Fixed username: {self.username}")
@@ -191,11 +192,12 @@ GPL-3.0
         print(f"=" * 40)
         print(f"📊 Model Size: {model_size}")
         print(f"🔄 Training Steps: {steps}")
-        
+
         # Ensure username is set correctly
         if not self.username or self.username == "unknown":
             try:
                 from huggingface_hub import whoami
+
                 user_info = whoami()
                 self.username = user_info.get("name", "lemms")
                 print(f"👤 User: {self.username} (retrieved from authentication)")

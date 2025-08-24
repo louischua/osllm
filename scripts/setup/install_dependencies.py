@@ -13,17 +13,18 @@ import subprocess
 import sys
 import os
 
+
 def run_command(command, description):
     """
     Run a shell command and handle errors.
-    
+
     Args:
         command: Command to run
         description: Description of what the command does
     """
     print(f"\n🔧 {description}")
     print(f"Running: {command}")
-    
+
     try:
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         if result.returncode == 0:
@@ -37,18 +38,19 @@ def run_command(command, description):
     except Exception as e:
         print(f"❌ Exception: {e}")
         return False
-    
+
     return True
+
 
 def main():
     """Install all required dependencies manually."""
     print("🚀 Manual Dependency Installation for OpenLLM Training")
     print("=" * 60)
-    
+
     # Check Python version
     print(f"🐍 Python version: {sys.version}")
     print(f"📁 Working directory: {os.getcwd()}")
-    
+
     # Core dependencies that might be missing
     dependencies = [
         ("sentencepiece>=0.1.99", "SentencePiece tokenization library (CRITICAL for OpenLLM)"),
@@ -64,27 +66,27 @@ def main():
         ("tqdm>=4.65.0", "Progress bars"),
         ("requests>=2.31.0", "HTTP library"),
     ]
-    
+
     print(f"\n📦 Installing {len(dependencies)} dependencies...")
-    
+
     success_count = 0
     for package, description in dependencies:
         command = f"pip install {package}"
         if run_command(command, description):
             success_count += 1
-    
+
     print(f"\n" + "=" * 60)
     print(f"🎯 Installation Summary:")
     print(f"✅ Successful: {success_count}/{len(dependencies)}")
     print(f"❌ Failed: {len(dependencies) - success_count}/{len(dependencies)}")
-    
+
     if success_count == len(dependencies):
         print("\n🎉 All dependencies installed successfully!")
         print("💡 You can now try the training again.")
     else:
         print("\n⚠️ Some dependencies failed to install.")
         print("💡 Check the error messages above and try again.")
-    
+
     # Test critical imports
     print(f"\n🧪 Testing critical imports...")
     test_imports = [
@@ -94,16 +96,17 @@ def main():
         ("torch", "PyTorch"),
         ("gradio", "Gradio"),
     ]
-    
+
     for module, name in test_imports:
         try:
             __import__(module)
             print(f"✅ {name} - Import successful")
         except ImportError as e:
             print(f"❌ {name} - Import failed: {e}")
-    
+
     print(f"\n🔧 Manual installation complete!")
     print("💡 If imports still fail, try restarting the Space.")
+
 
 if __name__ == "__main__":
     main()

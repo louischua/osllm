@@ -36,6 +36,7 @@ try:
     from model import GPTModel, create_model
 except ImportError:
     import sys
+
     sys.path.append(os.path.dirname(__file__))
     from data_loader import TextDataLoader
     from model import GPTModel, create_model
@@ -118,8 +119,8 @@ class ImprovedModelTrainer:
         # Training state
         self.step = 0
         self.epoch = 0
-        self.best_loss = float('inf')
-        self.best_validation_loss = float('inf')
+        self.best_loss = float("inf")
+        self.best_validation_loss = float("inf")
         self.training_log = []
         self.validation_log = []
         self.step_times = []
@@ -131,20 +132,15 @@ class ImprovedModelTrainer:
 
         # Setup optimizer and scheduler
         self.optimizer = optim.AdamW(
-            self.model.parameters(),
-            lr=learning_rate,
-            weight_decay=weight_decay,
-            betas=(0.9, 0.95)
+            self.model.parameters(), lr=learning_rate, weight_decay=weight_decay, betas=(0.9, 0.95)
         )
 
         self.scheduler = CosineAnnealingLR(
-            self.optimizer,
-            T_max=max_steps,
-            eta_min=learning_rate * 0.1
+            self.optimizer, T_max=max_steps, eta_min=learning_rate * 0.1
         )
 
         # Enable gradient checkpointing if requested
-        if hasattr(self.model, 'use_checkpoint'):
+        if hasattr(self.model, "use_checkpoint"):
             self.model.use_checkpoint = True
 
         print(f"✅ Trainer initialized with {self.model.get_num_params():,} parameters")
@@ -158,12 +154,20 @@ class ImprovedModelTrainer:
             }
         else:
             import psutil
+
             process = psutil.Process()
             return {
                 "cpu_memory_mb": process.memory_info().rss / 1024**2,
             }
 
-    def _log_step(self, step: int, loss: float, lr: float, step_time: float, validation_loss: Optional[float] = None) -> None:
+    def _log_step(
+        self,
+        step: int,
+        loss: float,
+        lr: float,
+        step_time: float,
+        validation_loss: Optional[float] = None,
+    ) -> None:
         """Log training step with comprehensive information."""
         # Calculate perplexity (cap at exp(10) to avoid overflow)
         perplexity = math.exp(min(loss, 10))
@@ -207,7 +211,9 @@ class ImprovedModelTrainer:
         )
 
         if validation_loss is not None:
-            print(f"  Val Loss: {validation_loss:.4f} | Val PPL: {math.exp(min(validation_loss, 10)):.2f}")
+            print(
+                f"  Val Loss: {validation_loss:.4f} | Val PPL: {math.exp(min(validation_loss, 10)):.2f}"
+            )
 
     def _evaluate_model(self) -> float:
         """Evaluate model on validation set if available."""
@@ -236,7 +242,7 @@ class ImprovedModelTrainer:
 
     def _save_checkpoint(self, step: int, is_best: bool = False, is_final: bool = False) -> None:
         """Save comprehensive model checkpoint with full metadata."""
-        
+
         # Create comprehensive checkpoint with all metadata
         checkpoint = {
             "step": step,
@@ -270,9 +276,11 @@ class ImprovedModelTrainer:
             },
             "training_stats": {
                 "total_time": time.time() - self.start_time if self.start_time else 0,
-                "average_step_time": sum(self.step_times) / len(self.step_times) if self.step_times else 0,
+                "average_step_time": sum(self.step_times) / len(self.step_times)
+                if self.step_times
+                else 0,
                 "no_improvement_count": self.no_improvement_count,
-            }
+            },
         }
 
         # Save regular checkpoint
@@ -321,7 +329,7 @@ class ImprovedModelTrainer:
 
         # Load model state
         self.model.load_state_dict(checkpoint["model_state_dict"])
-        
+
         # Load optimizer state (handle compatibility issues)
         try:
             self.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
@@ -329,7 +337,7 @@ class ImprovedModelTrainer:
         except (ValueError, KeyError) as e:
             print(f"⚠️  Could not load optimizer state: {e}")
             print("🔄 Starting with fresh optimizer state")
-        
+
         # Load scheduler state (handle compatibility issues)
         try:
             self.scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
@@ -342,14 +350,14 @@ class ImprovedModelTrainer:
         self.step = checkpoint["step"]
         self.epoch = checkpoint["epoch"]
         self.best_loss = checkpoint["best_loss"]
-        self.best_validation_loss = checkpoint.get("best_validation_loss", float('inf'))
+        self.best_validation_loss = checkpoint.get("best_validation_loss", float("inf"))
         self.training_log = checkpoint.get("training_log", [])
         self.validation_log = checkpoint.get("validation_log", [])
 
         print("✅ Checkpoint loaded successfully")
         print(f"  Resuming from step: {self.step:,}")
         print(f"  Best loss so far: {self.best_loss:.4f}")
-        if self.best_validation_loss != float('inf'):
+        if self.best_validation_loss != float("inf"):
             print(f"  Best validation loss: {self.best_validation_loss:.4f}")
 
     def train(self) -> None:
@@ -409,18 +417,20 @@ class ImprovedModelTrainer:
                 self.step_times.append(step_time)
 
                 # Get current learning rate
-                current_lr = self.optimizer.param_groups[0]['lr']
+                current_lr = self.optimizer.param_groups[0]["lr"]
 
                 # Evaluate on validation set if needed
                 validation_loss = None
                 if self.step % self.eval_every == 0:
                     validation_loss = self._evaluate_model()
                     if validation_loss is not None:
-                        self.validation_log.append({
-                            "step": self.step,
-                            "validation_loss": validation_loss,
-                            "validation_perplexity": math.exp(min(validation_loss, 10))
-                        })
+                        self.validation_log.append(
+                            {
+                                "step": self.step,
+                                "validation_loss": validation_loss,
+                                "validation_perplexity": math.exp(min(validation_loss, 10)),
+                            }
+                        )
 
                         # Update best validation loss
                         if validation_loss < self.best_validation_loss:
@@ -431,7 +441,9 @@ class ImprovedModelTrainer:
 
                 # Log progress
                 if self.step % self.log_every == 0:
-                    self._log_step(self.step, accumulated_loss, current_lr, step_time, validation_loss)
+                    self._log_step(
+                        self.step, accumulated_loss, current_lr, step_time, validation_loss
+                    )
 
                 # Save checkpoint
                 if self.step % self.save_every == 0:
@@ -446,7 +458,9 @@ class ImprovedModelTrainer:
 
                 # Check for early stopping
                 if self.no_improvement_count >= self.early_stopping_patience:
-                    print(f"\n⚠️  Early stopping triggered after {self.early_stopping_patience} steps without improvement")
+                    print(
+                        f"\n⚠️  Early stopping triggered after {self.early_stopping_patience} steps without improvement"
+                    )
                     break
 
                 # Reset accumulated loss
@@ -471,9 +485,11 @@ class ImprovedModelTrainer:
         print(f"  Average time per step: {avg_step_time:.2f}s")
         print(f"  Final loss: {self.best_loss:.4f}")
         print(f"  Final perplexity: {math.exp(min(self.best_loss, 10)):.2f}")
-        if self.best_validation_loss != float('inf'):
+        if self.best_validation_loss != float("inf"):
             print(f"  Best validation loss: {self.best_validation_loss:.4f}")
-            print(f"  Best validation perplexity: {math.exp(min(self.best_validation_loss, 10)):.2f}")
+            print(
+                f"  Best validation perplexity: {math.exp(min(self.best_validation_loss, 10)):.2f}"
+            )
         print(f"  Model saved to: {self.output_dir}")
 
 
@@ -576,8 +592,10 @@ Examples:
     )
 
     parser.add_argument(
-        "--early-stopping-patience", type=int, default=5, 
-        help="Early stopping patience (default: 5)"
+        "--early-stopping-patience",
+        type=int,
+        default=5,
+        help="Early stopping patience (default: 5)",
     )
 
     args = parser.parse_args()
@@ -658,6 +676,7 @@ Examples:
     except Exception as e:
         print(f"\n❌ Training failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 

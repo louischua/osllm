@@ -18,16 +18,17 @@ import json
 import sentencepiece as smp
 from pathlib import Path
 
+
 def load_model_manual(model_dir="."):
     """Manually load model in HF format."""
     model_dir = Path(model_dir)
 
     # Load config
-    with open(model_dir / "config.json", 'r') as f:
+    with open(model_dir / "config.json", "r") as f:
         config = json.load(f)
 
     # Load model weights
-    state_dict = torch.load(model_dir / "pytorch_model.bin", map_location='cpu')
+    state_dict = torch.load(model_dir / "pytorch_model.bin", map_location="cpu")
 
     # Load tokenizer
     tokenizer = smp.SentencePieceProcessor()
@@ -37,6 +38,7 @@ def load_model_manual(model_dir="."):
     print(f"Vocabulary size: {config['vocab_size']}")
 
     return state_dict, tokenizer
+
 
 if __name__ == "__main__":
     state_dict, tokenizer = load_model_manual()
