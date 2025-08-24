@@ -15,30 +15,30 @@ License: GPLv3
 
 import asyncio
 import json
-import time
-import threading
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Optional, List, Dict, Any, AsyncGenerator
-from collections import deque
-import torch
-import torch.nn.functional as F
-from fastapi import FastAPI, HTTPException, BackgroundTasks
-from fastapi.responses import StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-import uvicorn
 import logging
-import psutil
 import os
 import sys
+import threading
+import time
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import Any, AsyncGenerator, Dict, List, Optional
+
+import psutil
+import torch
+import torch.nn.functional as F
+import uvicorn
+from fastapi import BackgroundTasks, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, Field
 
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from model import GPTConfig, GPTModel
 from quantization import QuantizedModel, quantize_model_dynamic
-
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

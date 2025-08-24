@@ -3,16 +3,17 @@
 OpenLLM Real Models App - Final working version with correct attribute naming
 """
 
+import json
+import logging
+import math
+from pathlib import Path
+from typing import Any, Dict, Optional
+
 import gradio as gr
+import sentencepiece as spm
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import json
-import logging
-import sentencepiece as spm
-import math
-from pathlib import Path
-from typing import Dict, Any, Optional
 from huggingface_hub import snapshot_download
 
 # Set up logging

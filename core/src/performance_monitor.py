@@ -10,17 +10,18 @@ Author: Louis Chua Bean Chong
 License: GPLv3
 """
 
-import time
-import psutil
-import torch
-import threading
-from typing import Dict, List, Any, Optional, Callable
-from dataclasses import dataclass, field
-from collections import deque
 import json
 import logging
+import threading
+import time
+from collections import deque
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
+
 import numpy as np
+import psutil
+import torch
 
 logger = logging.getLogger(__name__)
 

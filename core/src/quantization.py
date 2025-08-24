@@ -9,11 +9,12 @@ Author: Louis Chua Bean Chong
 License: GPLv3
 """
 
+import copy
+from typing import Any, Dict, Optional
+
 import torch
 import torch.nn as nn
 import torch.quantization as quantization
-from typing import Optional, Dict, Any
-import copy
 
 
 class QuantizedModel:

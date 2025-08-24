@@ -9,10 +9,11 @@ Author: Louis Chua Bean Chong
 License: GPLv3
 """
 
+from typing import Callable, Optional
+
 import torch
 import torch.nn as nn
-from torch.cuda.amp import autocast, GradScaler
-from typing import Optional, Callable
+from torch.cuda.amp import GradScaler, autocast
 
 
 class MixedPrecisionTrainer:

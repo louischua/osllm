@@ -9,17 +9,18 @@ Author: Louis Chua Bean Chong
 License: GPLv3
 """
 
+import os
+import queue
+import threading
+import time
+from collections import deque
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+import psutil
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset, Sampler
-from typing import Optional, List, Tuple, Dict, Any
-import numpy as np
-import threading
-import queue
-import time
-from collections import deque
-import psutil
-import os
 
 
 class OptimizedDataset(Dataset):
