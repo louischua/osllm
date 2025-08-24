@@ -1,0 +1,12 @@
+gradio>=4.44.1
+torch>=2.0.0
+transformers>=4.30.0
+tokenizers>=0.13.0
+sentencepiece>=0.1.99
+requests>=2.31.0
+tqdm>=4.65.0
+pandas>=2.0.0
+numpy>=1.24.0
+pydantic>=2.0.0
+fastapi>=0.100.0
+uvicorn>=0.22.0
