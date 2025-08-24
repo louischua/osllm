@@ -1,40 +1,36 @@
-# OpenLLM Training Space Requirements
-# Core dependencies for Space deployment
+# OpenLLM Core Requirements
+# Core dependencies for training and inference
 
-# Hugging Face Hub for authentication and model upload
-huggingface_hub>=0.19.0
-
-# Gradio for web interface (latest stable version with security fixes)
-gradio>=5.31.0
-
-# PyTorch for model training
+# PyTorch for deep learning
 torch>=2.0.0
 torchvision>=0.15.0
-
-# Transformers for model handling
-transformers>=4.35.0
 
 # SentencePiece for tokenization
 sentencepiece>=0.1.99
 
-# NumPy and other utilities
-numpy>=1.24.0
-pandas>=2.0.0
-
-# Additional utilities
-requests>=2.31.0
-tqdm>=4.65.0
-
-# Testing dependencies
-pytest>=7.0.0
-pytest-cov>=4.0.0
-
-# Development dependencies
-black>=23.0.0
-isort>=5.12.0
-bandit>=1.7.7
-safety>=2.3.0
+# NumPy for numerical operations
+numpy>=1.21.0
 
 # FastAPI for inference server
 fastapi>=0.100.0
-uvicorn>=0.23.0
+uvicorn>=0.20.0
+
+# Pydantic for data validation
+pydantic>=2.0.0
+
+# HTTP client for testing
+httpx>=0.24.0
+
+# Hugging Face Hub for model sharing
+huggingface_hub>=0.16.0
+
+# Gradio for web interface (optional)
+gradio>=4.0.0
+
+# Additional utilities
+typing-extensions>=4.0.0
+requests>=2.28.0
+tqdm>=4.64.0
+
+# For better performance (optional)
+# accelerate>=0.20.0  # Uncomment for better GPU support

@@ -414,12 +414,13 @@ class GPTModel(nn.Module):
     - Text generation (inference)
     """
 
-    def __init__(self, config: GPTConfig):
+    def __init__(self, config: GPTConfig, use_checkpoint=True):
         super().__init__()
         assert config.vocab_size is not None, "vocab_size must be specified"
         assert config.block_size is not None, "block_size must be specified"
 
         self.config = config
+        self.use_checkpoint = use_checkpoint
 
         # Embeddings
         self.transformer = nn.ModuleDict(
@@ -504,9 +505,20 @@ class GPTModel(nn.Module):
         # Combine embeddings and apply dropout
         x = self.transformer.drop(tok_emb + pos_emb)
 
-        # Pass through transformer blocks
-        for block in self.transformer.h:
-            x = block(x)
+        # Pass through transformer blocks with optional gradient checkpointing
+        if self.use_checkpoint and self.training:
+            # Use gradient checkpointing to save memory during training
+            try:
+                for block in self.transformer.h:
+                    x = torch.utils.checkpoint.checkpoint(block, x)
+            except AttributeError:
+                # Fallback for older PyTorch versions
+                for block in self.transformer.h:
+                    x = block(x)
+        else:
+            # Standard forward pass
+            for block in self.transformer.h:
+                x = block(x)
 
         # Final layer normalization
         x = self.transformer.ln_f(x)
