@@ -247,6 +247,15 @@ You can:
 
 **For detailed information about both spaces, see [Hugging Face Spaces Guide](docs/HUGGING_FACE_SPACES_GUIDE.md)**
 
+### 🚀 Automatic Deployment
+Both spaces are automatically deployed via GitHub Actions whenever changes are pushed to the main branch. The deployment system:
+- **Validates files** before deployment
+- **Deploys both spaces** simultaneously
+- **Verifies deployment** success
+- **Provides detailed logs** for troubleshooting
+
+See [GitHub Actions Setup Guide](docs/GITHUB_ACTIONS_SETUP.md) for configuration details.
+
 ### Example Interactions
 
 **Prompt**: "Explain quantum physics"
@@ -492,6 +501,7 @@ python app.py
 - **GitHub**: https://github.com/louischua/openllm
 - **Model Demo**: https://huggingface.co/spaces/lemms/llm
 - **Training Demo**: https://huggingface.co/spaces/lemms/openllm
+- **GitHub Actions**: https://github.com/louischua/osllm/actions
 
 ## 📄 License
 

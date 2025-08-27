@@ -28,10 +28,7 @@ To enable automatic deployment, you need to configure the following secrets in y
 
 **Value**: `lemms/llm`
 
-### **3. TRAINING_SPACE_ID**
-**Purpose**: Identifier for the training space (lemms/openllm)
-
-**Value**: `lemms/openllm`
+**Note**: The training space ID (`lemms/openllm`) is hardcoded in the workflow and doesn't require a separate secret.
 
 ## ⚙️ Setting Up GitHub Secrets
 
@@ -51,15 +48,10 @@ Click "New repository secret" and add each secret:
 - **Name**: `SPACE_ID`
 - **Value**: `lemms/llm`
 
-#### **Secret 3: TRAINING_SPACE_ID**
-- **Name**: `TRAINING_SPACE_ID`
-- **Value**: `lemms/openllm`
-
 ### **Step 3: Verify Secrets**
 After adding all secrets, you should see:
 - ✅ `HF_TOKEN` (hidden)
 - ✅ `SPACE_ID` (hidden)
-- ✅ `TRAINING_SPACE_ID` (hidden)
 
 ## 🔄 How the Deployment Works
 
@@ -134,8 +126,8 @@ openllm/
 #### **1. "HF_TOKEN not found"**
 **Solution**: Ensure you've added the `HF_TOKEN` secret with the correct value
 
-#### **2. "SPACE_ID not found" or "TRAINING_SPACE_ID not found"**
-**Solution**: Verify both space ID secrets are set correctly
+#### **2. "SPACE_ID not found"**
+**Solution**: Verify the SPACE_ID secret is set correctly
 
 #### **3. "File not found" errors**
 **Solution**: Ensure all required files exist in the correct locations
@@ -149,7 +141,7 @@ openllm/
 - [Create Training Space](https://huggingface.co/new-space?owner=lemms&space=openllm)
 
 ### **Debugging Steps**
-1. **Check Secrets**: Verify all secrets are set correctly
+1. **Check Secrets**: Verify HF_TOKEN and SPACE_ID are set correctly
 2. **Check Files**: Ensure all required files exist
 3. **Check Permissions**: Verify Hugging Face token permissions
 4. **Check Spaces**: Ensure both spaces exist on Hugging Face
