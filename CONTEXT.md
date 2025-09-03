@@ -1,4 +1,4 @@
-# Cursor AI Context — OpenLLM Project Description
+# OpenLLM Project Description
 
 ## Objective
 
